@@ -1,0 +1,47 @@
+﻿/* Imagen real como fondo de la barra superior */
+.md-header {
+  height: 120px;
+  background-image: url("../img/cabecera-aso.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Oscurece un poco para que se lean buscador y navegación */
+.md-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 20, 40, 0.45);
+  z-index: -1;
+}
+
+/* Ajuste del contenido superior */
+.md-header__inner {
+  height: 120px;
+  align-items: flex-start;
+  padding-top: 0.8rem;
+}
+
+/* Buscador real de MkDocs */
+.md-search {
+  margin-left: auto;
+}
+
+/* Oculta el nombre del sitio si ya aparece en la imagen */
+.md-header__title {
+  display: none;
+}
+
+/* Barra de navegación real */
+.md-tabs {
+  background-color: #06182b;
+  border-top: 1px solid rgba(80, 180, 255, 0.3);
+}
+
+/* Altura del menú */
+.md-tabs__link {
+  font-size: 0.85rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
