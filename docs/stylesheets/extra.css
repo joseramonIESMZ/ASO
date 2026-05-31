@@ -1,47 +1,131 @@
-﻿/* Imagen real como fondo de la barra superior */
-.md-header {
-  height: 120px;
-  background-image: url("../img/cabecera-aso.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+﻿/* ==========================================================================
+   1. CABECERA NATIVA Y TEXTO PLANO
+   ========================================================================== */
+   .md-header {
+    background-color: #1a237e !important; /* Color índigo corporativo sólido */
+    height: 60px; /* Altura estándar y estilizada para texto plano */
+  }
+  
+  /* Forzamos a que el título sea visible, no se corte y ocupe su lugar */
+  .md-header__title {
+    display: inline-block !important;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01rem;
+    color: #ffffff !important;
+  }
+  
+  /* Ajuste del contenedor interno para centrar el texto con el buscador */
+  .md-header__inner {
+    height: 60px;
+    align-items: center;
+    padding-top: 0;
+  }
+  
+  /* Buscador alineado a la derecha */
+  .md-search {
+    margin-left: auto;
+  }
+  
+  /* ==========================================================================
+     2. TABS Y MENÚS DE NAVEGACIÓN SUPERIOR
+     ========================================================================== */
+  .md-tabs {
+    height: 30px;
+  }
+  
+  .md-tabs__list {
+    height: 30px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .md-tabs__link {
+    display: flex;
+    align-items: center;
+    height: 20px;
+  }
+  
+  /* ==========================================================================
+     3. CONFIGURACIÓN DE ANCHURA MAXIMA DE MKDOCS-MATERIAL
+     ========================================================================== */
+  .md-grid {
+    max-width: 100% !important;
+  }
+  
+  .md-main__inner {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  .md-content {
+    margin: 2rem !important;
+  }
+  
+  /* NUEVO: Separación del menú lateral izquierdo respecto al menú superior */
+  .md-sidebar--primary {
+    padding-top: 2rem !important; /* Añade espacio interno arriba del menú */
+  }
+  /* ==========================================================================
+     4. LAYOUT ESTRUCTURAL (Control nativo sin romper elementos internos)
+     ========================================================================== */
+  .aso-layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) 300px;
+    gap: 2rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem 0;
+  }
+  
+  .aso-left {
+    padding-left: 1rem;
+    position: sticky;
+    top: 120px;
+    align-self: start;
+    font-size: 0.85rem;
+  }
+  
+  .aso-right {
+    padding-right: 1rem;
+    position: sticky;
+    top: 120px;
+    align-self: start;
+    font-size: 0.85rem;
+  }
+  
+  .aso-left h3,
+  .aso-right h3 {
+    margin-top: 0;
+  }
+  
+  .aso-left a,
+  .aso-right a {
+    display: block;
+    margin: 0.45rem 0;
+    text-decoration: none;
+  }
+  
+  .aso-center {
+    min-width: 0;
+  }
+  
+  /* Adaptación estricta para pantallas móviles y tablets */
+  @media screen and (max-width: 1024px) {
+    .aso-layout {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+  
+    .aso-left,
+    .aso-right {
+      position: static;
+      padding: 0;
+    }
+    
+    .md-header {
+      background-size: cover; /* En móvil sí sacrificamos extremos para no dejar huecos */
+    }
+  }
 
-/* Oscurece un poco para que se lean buscador y navegación */
-.md-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 20, 40, 0.45);
-  z-index: -1;
-}
-
-/* Ajuste del contenido superior */
-.md-header__inner {
-  height: 120px;
-  align-items: flex-start;
-  padding-top: 0.8rem;
-}
-
-/* Buscador real de MkDocs */
-.md-search {
-  margin-left: auto;
-}
-
-/* Oculta el nombre del sitio si ya aparece en la imagen */
-.md-header__title {
-  display: none;
-}
-
-/* Barra de navegación real */
-.md-tabs {
-  background-color: #06182b;
-  border-top: 1px solid rgba(80, 180, 255, 0.3);
-}
-
-/* Altura del menú */
-.md-tabs__link {
-  font-size: 0.85rem;
-  padding-top: 0.8rem;
-  padding-bottom: 0.8rem;
-}

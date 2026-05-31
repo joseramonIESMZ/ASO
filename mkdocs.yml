@@ -1,4 +1,4 @@
-site_name: ASO Infrastructure Lab
+site_name: ASO Administración de Sistemas Operativos
 site_url: https://joseramonIESMZ.github.io/ASO
 docs_dir: docs
 use_directory_urls: true
@@ -6,14 +6,34 @@ use_directory_urls: true
 theme:
   name: material
   language: es
-  #custom_dir: overrides
+  custom_dir: overrides
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
   features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.expand
     - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tabs           # 🚀 Activa tus pestañas superiores
+    - navigation.tabs.sticky    # 🚀 Hace que las pestañas superiores te sigan al bajar
+    # - navigation.sections     <-- ELIMINADO: Rompe el comportamiento de las pestañas
+    # - navigation.expand       <-- ELIMINADO: Provocaba el conflicto principal
     - content.code.copy
     - search.highlight
+    - toc.integrate
+    - navigation.sticky
+    - navigation.top
 
 extra_css:
   - stylesheets/extra.css
@@ -22,14 +42,15 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.inlinehilite
 
 nav:
-  - Inicio: index.md
-  - Windows Server: apuntes/windows-server.md
-  - Linux: apuntes/linux.md
-  - Active Directory: apuntes/ad.md
-  - PowerShell: apuntes/powershell.md
-  - Samba: apuntes/samba.md
-  - Bash: apuntes/bash.md
-  - Proxmox: apuntes/proxmox.md
-  - SQL Server: apuntes/sql-server.md
+  - 'Inicio': index.md
+  - 'Windows Server': # Al pulsar aquí arriba, se cargará su submenú correspondiente
+      - 'Fundamentos de Administración de Windows Server': apuntes/windows-server/fundamentos-core.md
+      - 'Administración Remota (WinRM)': apuntes/windows-server/administracion-remota.md
+      - 'Políticas de Grupo (GPO)': apuntes/windows-server/politicas-gpo.md
+      - 'Programación de tareas': apuntes/windows-server/programacion-tareas.md
+      - 'Supervisión y mantenimiento': apuntes/windows-server/supervision-mantenimiento.md

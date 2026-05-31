@@ -1,0 +1,36 @@
+site_name: ASO Infrastructure Lab
+site_url: https://joseramonIESMZ.github.io/ASO
+docs_dir: docs
+use_directory_urls: true
+
+theme:
+  name: material
+  language: es
+  #custom_dir: overrides
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - search.highlight
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+nav:
+  - Inicio: index.md
+  - Windows Server: apuntes/windows-server.md
+  - Linux: apuntes/linux.md
+  - Active Directory: apuntes/ad.md
+  - PowerShell: apuntes/powershell.md
+  - Samba: apuntes/samba.md
+  - Bash: apuntes/bash.md
+  - Proxmox: apuntes/proxmox.md
+  - SQL Server: apuntes/sql-server.md
