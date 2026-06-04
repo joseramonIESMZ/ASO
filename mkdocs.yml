@@ -25,13 +25,11 @@ theme:
   features:
     - navigation.instant
     - navigation.instant.prefetch
-    - navigation.tabs           # 🚀 Activa tus pestañas superiores
-    - navigation.tabs.sticky    # 🚀 Hace que las pestañas superiores te sigan al bajar
-    # - navigation.sections     <-- ELIMINADO: Rompe el comportamiento de las pestañas
-    # - navigation.expand       <-- ELIMINADO: Provocaba el conflicto principal
+    - navigation.tabs           # 🚀 OBLIGATORIO: Activa el menú de pestañas superior
+    - navigation.tabs.sticky    # Hace que las pestañas superiores se queden fijas
+    # ❌ IMPORTANTE: 'toc.integrate' DEBE ESTAR ELIMINADO. Si lo pones, la columna de la derecha se mete dentro de la izquierda y rompe las 3 columnas.
     - content.code.copy
     - search.highlight
-    - toc.integrate
     - navigation.sticky
     - navigation.top
 
@@ -41,16 +39,22 @@ extra_css:
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.inlinehilite
 
 nav:
   - 'Inicio': index.md
-  - 'Windows Server': # Al pulsar aquí arriba, se cargará su submenú correspondiente
+  - 'Windows Server':
       - 'Fundamentos de Administración de Windows Server': apuntes/windows-server/fundamentos-core.md
       - 'Administración Remota (WinRM)': apuntes/windows-server/administracion-remota.md
-      - 'Políticas de Grupo (GPO)': apuntes/windows-server/politicas-gpo.md
-      - 'Programación de tareas': apuntes/windows-server/programacion-tareas.md
       - 'Supervisión y mantenimiento': apuntes/windows-server/supervision-mantenimiento.md
+      - 'Programación de tareas': apuntes/windows-server/programacion-tareas.md
+      - 'Políticas de Grupo (GPO)': apuntes/windows-server/politicas-gpo.md
+      
+      

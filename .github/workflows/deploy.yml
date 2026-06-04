@@ -1,0 +1,32 @@
+﻿name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master # Se activará cuando subas cambios a main o master
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar entorno de Python
+        uses: actions/setup-python@v5
+        with:
+          python-python: '3.x'
+
+      - name: Instalar MkDocs Material y dependencias
+        run: |
+          pip install mkdocs-material
+          # Si en el futuro instalas plugins o macros, los añades aquí abajo:
+          # pip install mkdocs-macros-plugin
+
+      - name: Compilar y Desplegar en GitHub Pages
+        run: |
+          mkdocs gh-deploy --force
