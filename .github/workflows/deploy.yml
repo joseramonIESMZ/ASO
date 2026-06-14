@@ -1,32 +1,48 @@
-﻿name: Deploy MkDocs to GitHub Pages
+﻿name: Deploy Zensical to GitHub Pages
 
 on:
   push:
     branches:
       - main
-      - master # Se activará cuando subas cambios a main o master
+      - master
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar entorno de Python
+      - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-python: '3.x'
+          python-version: '3.x'
 
-      - name: Instalar MkDocs Material y dependencias
+      - name: Instalar Zensical
         run: |
-          pip install mkdocs-material
-          # Si en el futuro instalas plugins o macros, los añades aquí abajo:
-          # pip install mkdocs-macros-plugin
+          pip install zensical
 
-      - name: Compilar y Desplegar en GitHub Pages
+      - name: Compilar sitio
         run: |
-          mkdocs gh-deploy --force
+          zensical build
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir artefacto
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Desplegar en GitHub Pages
+        uses: actions/deploy-pages@v4
