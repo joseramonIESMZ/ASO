@@ -1,0 +1,113 @@
+﻿/* ==========================================================================
+   ESTILOS PERSONALIZADOS - PROYECTO INTEGRADOR ASO
+   Versión limpia y optimizada (Comportamiento 100% Nativo de 3 Columnas)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. CABECERA NATIVA Y CONFIGURACIÓN ESTÉTICA
+   ========================================================================== */
+   .md-header {
+    background-color: #1a237e !important; /* Color índigo corporativo sólido */
+    height: 60px; /* Altura estándar y estilizada para texto plano */
+  }
+  
+  /* Forzamos a que el título sea visible, no se corte y ocupe su lugar */
+  .md-header__title {
+    display: inline-block !important;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01rem;
+    color: #ffffff !important;
+  }
+  
+  /* Ajuste del contenedor interno para centrar el texto con el buscador */
+  .md-header__inner {
+    height: 60px;
+    align-items: center;
+    padding-top: 0;
+  }
+  
+  /* Buscador alineado a la derecha */
+  .md-search {
+    margin-left: auto;
+  }
+  
+  /* ==========================================================================
+     2. TABS Y MENÚS DE NAVEGACIÓN SUPERIOR (Pestañas nativas)
+     ========================================================================== */
+  .md-tabs {
+    height: 30px;
+  }
+  
+  .md-tabs__list {
+    height: 30px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .md-tabs__link {
+    display: flex;
+    align-items: center;
+    height: 20px;
+  }
+  
+  /* ==========================================================================
+     3. SEPARACIÓN VISUAL Y AJUSTE DE ANCHURA MAXIMA (Layout Nativo)
+     ========================================================================== */
+  
+  /* Forzar a que la documentación aproveche el 100% del ancho de la pantalla */
+  .md-grid {
+    max-width: 100% !important;
+  }
+  
+  .md-main__inner {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  /* Columna central: Añade un margen de 2rem para dar "aire" al texto de los apuntes */
+  .md-content {
+    margin: 2rem !important;
+  }
+  
+  /* Columna izquierda: Añade espacio arriba para que el menú de secciones no toque la cabecera */
+  .md-sidebar--primary {
+    padding-top: 2rem !important; 
+  }
+  
+  /* Columna derecha: Añade el mismo espacio arriba para equilibrar el índice de la página (TOC) */
+  .md-sidebar--secondary {
+    padding-top: 2rem !important;
+  }
+  
+  /* ==========================================================================
+     4. CORRECCIÓN DE ANCLAJES (Scroll Margin)
+     Garantiza que al pulsar en un enlace del índice de la derecha, la pantalla 
+     baje dejando el título H2/H3 perfectamente visible bajo la cabecera fija */
+  :target {
+    scroll-margin-top: 5rem;
+  }
+
+  /* ==========================================================================
+   5. FOOTER SIEMPRE VISIBLE (Sticky / Fixed Footer)
+   Garantiza que el pie de página quede fijo en la parte inferior de la pantalla
+   ========================================================================== */
+.md-footer {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10; /* Se asegura de flotar por encima del contenido al hacer scroll */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Sutil sombra superior para darle relieve */
+}
+
+/* Compensación de margen inferior en el contenedor principal:
+   Evita que el último párrafo de los apuntes quede oculto detrás del footer fijo */
+.md-main__inner {
+  margin-bottom: 80px !important; /* Ajusta este valor si tu footer es más alto */
+}
+
+/* Ajuste sutil para equilibrar las columnas laterales con el nuevo límite del footer */
+.md-sidebar {
+  height: calc(100vh - 160px) !important;
+}

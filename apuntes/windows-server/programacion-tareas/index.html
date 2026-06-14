@@ -1,0 +1,1537 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://joseramonIESMZ.github.io/ASO/apuntes/windows-server/programacion-tareas/">
+      
+      
+        <link rel="prev" href="../supervision-mantenimiento/">
+      
+      
+        <link rel="next" href="../../linux/fundamentos-core/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Programación de tareas - ASO Administración de Sistemas Operativos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#programacion-de-tareas-automatizadas" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-header__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ASO Administración de Sistemas Operativos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Programación de tareas
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Windows Server
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../linux/fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Linux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../active-directory/fundamentos-ad-core/" class="md-tabs__link">
+          
+  
+  
+  Active Directory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../powershell/fundamentos-powershell-core/" class="md-tabs__link">
+          
+  
+  
+  PowerShell
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../samba/fundamentos-samba-core/" class="md-tabs__link">
+          
+  
+  
+  Samba
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-nav__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ASO Administración de Sistemas Operativos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows Server
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion-windows-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalación de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administracion-remota/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (WinRM)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-del-programador-de-tareas-task-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Arquitectura del Programador de Tareas (Task Scheduler)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#laboratorio-tecnico-registro-de-eventos-desde-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Laboratorio Técnico: Registro de Eventos desde Scripts
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Linux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/administracion-remota-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (SSH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/programacion-tareas.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Active Directory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/fundamentos-ad-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/implementacion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/administracion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/filtros-busquedas-avanzadas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Filtros y búsquedas avanzadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/politicas-gpo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Políticas de Grupo (GPO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PowerShell
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PowerShell
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../powershell/fundamentos-powershell-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de PowerShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Samba
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Samba
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/fundamentos-samba-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/implementacion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/administracion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-del-programador-de-tareas-task-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Arquitectura del Programador de Tareas (Task Scheduler)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#laboratorio-tecnico-registro-de-eventos-desde-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Laboratorio Técnico: Registro de Eventos desde Scripts
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="programacion-de-tareas-automatizadas">Programación de Tareas Automatizadas</h1>
+<h2 id="relacion-con-el-curriculo-ra-y-ce">🎯 Relación con el Currículo (RA y CE)</h2>
+<ul>
+<li><strong>Resultado de Aprendizaje 2 (RA2):</strong> Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.<ul>
+<li><strong>CE 2.e:</strong> Se han utilizado estructuras de control y variables en la creación de scripts.</li>
+<li><strong>CE 2.f:</strong> Se han depurado y documentado los scripts realizados.</li>
+<li><strong>CE 2.g:</strong> Se han programado tareas de mantenimiento preventivo y correctivo utilizando las herramientas del sistema operativo.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="arquitectura-del-programador-de-tareas-task-scheduler">🏢 Arquitectura del Programador de Tareas (Task Scheduler)</h2>
+<p>La automatización de procesos recurrentes y scripts administrativos en Windows Server se centraliza a través del <strong>Programador de Tareas (Task Scheduler)</strong>. Este servicio subyacente (<code>Taskschd.msc</code>) se ejecuta de manera permanente en segundo plano con el propósito de vigilar eventos y lanzar acciones de control sin requerir la intervención humana o la apertura de interfaces de usuario.</p>
+<p>Cualquier objeto tarea registrado dentro del sistema está compuesto estructuralmente por cuatro componentes lógicos definidos en un esquema almacén XML:</p>
+<ul>
+<li><strong>Desencadenadores (Triggers):</strong> Especifican las condiciones de tiempo o evento que dictaminan cuándo debe inicializarse la ejecución (ej: a una hora exacta, al arrancar el host, al iniciar sesión).</li>
+<li><strong>Acciones (Actions):</strong> Definen la operación física concreta que va a realizar el sistema operativo (ejecutar un binario, lanzar un script de PowerShell Core, inicializar un ejecutable).</li>
+<li><strong>Condiciones (Conditions):</strong> Requisitos de estado adicionales que validan si el contexto de hardware es apto para la tarea (ej: evaluar si el equipo está inactivo o conectado a la red eléctrica).</li>
+<li><strong>Configuraciones (Settings):</strong> Parámetros avanzados de comportamiento operativo (conmutación en paralelo, reintentos automatizados ante fallos o detención por tiempo de seguridad).</li>
+</ul>
+<hr />
+<h2 id="laboratorio-tecnico-registro-de-eventos-desde-scripts">🛠️ Laboratorio Técnico: Registro de Eventos desde Scripts</h2>
+<p>Para auditar de forma fehaciente que nuestras tareas programadas se ejecutan en los tiempos estipulados por la organización, utilizaremos el <strong>Visor de Eventos (Event Viewer)</strong> como mecanismo de validación centralizado.</p>
+<p>A continuación, se detalla el script base de verificación de infraestructura que los alumnos deben implementar en el volumen de almacenamiento del servidor. Este código se encarga de dar de alta una nueva fuente de registro en el log de <em>Aplicación</em> y escribir una entrada informativa cada vez que es invocado:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># E:\scripts\pruebatarea.ps1</span>
+<span class="c"># Script de validación operativa para tareas programadas</span>
+
+<span class="nv">$Mensaje</span> <span class="p">=</span> <span class="s2">&quot;La tarea programada se ha ejecutado correctamente en </span><span class="p">$(</span><span class="nb">Get-Date</span><span class="p">)</span><span class="s2">&quot;</span>
+<span class="nv">$Fuente</span>  <span class="p">=</span> <span class="s2">&quot;MiTareaProgramada&quot;</span>
+
+<span class="c"># Validar la existencia de la fuente de eventos en el registro del sistema operativo</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="no">[System.Diagnostics.EventLog]</span><span class="p">::</span><span class="n">SourceExists</span><span class="p">(</span><span class="nv">$Fuente</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c"># Requiere privilegios elevados de Administrador para su inicialización</span>
+    <span class="nb">New-EventLog</span> <span class="n">-LogName</span> <span class="n">Application</span> <span class="n">-Source</span> <span class="nv">$Fuente</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c"># Inyectar la entrada informativa en el log de Aplicación</span>
+<span class="nb">Write-EventLog</span> <span class="n">-LogName</span> <span class="n">Application</span> <span class="n">-Source</span> <span class="nv">$Fuente</span> <span class="n">-EntryType</span> <span class="n">Information</span> <span class="n">-EventId</span> <span class="n">1000</span> <span class="n">-Message</span> <span class="nv">$Mensaje</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<p>💻 Gestión Operativa mediante PowerShell Core
+El aprovisionamiento de tareas programadas en entornos Server Core se realiza utilizando el módulo nativo de administración de tareas.</p>
+<ol>
+<li>Programación Básica (Contexto de Sesión Interactiva)
+Por defecto, si registramos una tarea de forma simplificada, el sistema asume de manera automática que la acción se ejecutará bajo el contexto del usuario actual y únicamente si dicho usuario mantiene una sesión interactiva abierta en el equipo[cite: 11].</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c"># Paso 1: Definir la acción (Lanzar el motor de PowerShell pasando el script por parámetro)</span>
+<span class="nv">$Action</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;powershell.exe&quot;</span> <span class="n">-Argument</span> <span class="s2">&quot;-File E:\scripts\pruebatarea.ps1&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># Paso 2: Definir el disparador cronológico (Ejecución diaria a las 16:30)</span>
+<span class="nv">$Trigger</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-Daily</span> <span class="n">-At</span> <span class="n">4</span><span class="p">:</span><span class="n">30pm</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># Paso 3: Registrar de forma persistente la tarea lista para ejecución</span>
+<span class="nb">Register-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;PruebaTarea&quot;</span> <span class="n">-Action</span> <span class="nv">$Action</span> <span class="n">-Trigger</span> <span class="nv">$Trigger</span> <span class="n">-Description</span> <span class="s2">&quot;Tarea de prueba básica&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<ol>
+<li>Programación Avanzada (Sin Sesión Iniciada y Usuario Específico)
+Para scripts de infraestructura críticos (como las tareas de monitorización centralizada contra SQL Server), las acciones deben ejecutarse independientemente de si el administrador tiene la sesión abierta en el servidor[cite: 11].</li>
+</ol>
+<p>Para independizar la tarea del inicio de sesión, debemos instanciar un objeto de seguridad tipo Principal (New-ScheduledTaskPrincipal), asignando el tipo de logon mediante contraseña persistente (-LogonType Password)[cite: 11].</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Paso 1: Configurar la acción y el trigger (En este caso, ejecución única en 5 minutos)</span>
+<span class="nv">$Action</span>  <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;powershell.exe&quot;</span> <span class="n">-Argument</span> <span class="s2">&quot;-File E:\scripts\pruebatarea.ps1&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nv">$Trigger</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-Once</span> <span class="n">-At</span> <span class="p">((</span><span class="nb">Get-Date</span><span class="p">).</span><span class="n">AddMinutes</span><span class="p">(</span><span class="n">5</span><span class="p">))[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># Paso 2: Forzar el contexto de seguridad desatendido mediante un Principal</span>
+<span class="nv">$Principal</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskPrincipal</span> <span class="n">-UserId</span> <span class="s2">&quot;MIEMPRESA\joseramon&quot;</span> <span class="n">-LogonType</span> <span class="n">Password</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># Paso 3: Ensamblar la estructura completa del objeto Tarea</span>
+<span class="nv">$ObjectTarea</span> <span class="p">=</span> <span class="nb">New-ScheduledTask</span> <span class="n">-Action</span> <span class="nv">$Action</span> <span class="n">-Trigger</span> <span class="nv">$Trigger</span> <span class="n">-Principal</span> <span class="nv">$Principal</span> <span class="n">-Description</span> <span class="s2">&quot;Tarea desatendida&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># Paso 4: Registrar en el sistema inyectando de forma segura las credenciales de ejecución</span>
+<span class="nb">Register-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;PruebaTareaDesatendida&quot;</span> <span class="n">-InputObject</span> <span class="nv">$ObjectTarea</span> <span class="n">-User</span> <span class="s2">&quot;MIEMPRESA\joseramon&quot;</span> <span class="n">-Password</span> <span class="p">(</span><span class="nb">Read-Host</span> <span class="s2">&quot;Introduce contraseña de red&quot;</span><span class="p">)[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<ol>
+<li>Programación con Configuración de Parámetros Adicionales (Settings)
+Para entornos de movilidad o servidores de tolerancia a fallos, las propiedades avanzadas o Settings regulan contingencias de hardware críticas mediante el cmdlet New-ScheduledTaskSettingsSet[cite: 11]:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c"># Definir parámetros avanzados de tolerancia a fallos energéticos y reintentos</span>
+<span class="nv">$Settings</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskSettingsSet</span> <span class="n">-AllowStartIfOnBatteries</span> <span class="n">-DontStopIfGoingOnBatteries</span> <span class="n">-StartWhenAvailable</span> <span class="n">-MultipleInstances</span> <span class="n">Parallel</span> <span class="n">-RestartCount</span> <span class="n">3</span> <span class="n">-RestartInterval</span> <span class="p">(</span><span class="nb">New-TimeSpan</span> <span class="n">-Minutes</span> <span class="n">5</span><span class="p">)[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="c"># El objeto settings se acopla directamente al instanciar el objeto de la tarea</span>
+<span class="nv">$ObjectTareaCompleta</span> <span class="p">=</span> <span class="nb">New-ScheduledTask</span> <span class="n">-Action</span> <span class="nv">$Action</span> <span class="n">-Trigger</span> <span class="nv">$Trigger</span> <span class="n">-Principal</span> <span class="nv">$Principal</span> <span class="n">-Settings</span> <span class="nv">$Settings</span> <span class="n">-Description</span> <span class="s2">&quot;Tarea con políticas de resiliencia&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<p>⏱️ Escenarios Comunes de Despliegue en el Proyecto
+A. Repetición a Intervalos Regulares (Telemetría de Sprints)
+Para flujos de monitorización continua automatizada, se programan disparadores basados en intervalos recurrentes combinando los parámetros -RepetitionInterval y -RepetitionDuration[cite: 11]:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Definir lapsos temporales de repetición continuados</span>
+<span class="nv">$Repite</span> <span class="p">=</span> <span class="nb">New-TimeSpan</span> <span class="n">-Minutes</span> <span class="n">1</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nv">$Dura</span>   <span class="p">=</span> <span class="nb">New-TimeSpan</span> <span class="n">-Minutes</span> <span class="n">5</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="nv">$Action</span>  <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;powershell.exe&quot;</span> <span class="n">-Argument</span> <span class="s2">&quot;-File E:\scripts\pruebatarea.ps1&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nv">$Trigger</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-Once</span> <span class="n">-At</span> <span class="n">11</span><span class="p">:</span><span class="n">01</span> <span class="n">-RepetitionInterval</span> <span class="nv">$Repite</span> <span class="n">-RepetitionDuration</span> <span class="nv">$Dura</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="nb">Register-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;MétricasRecurrentes&quot;</span> <span class="n">-Action</span> <span class="nv">$Action</span> <span class="n">-Trigger</span> <span class="nv">$Trigger</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<p>B. Ejecución Automatizada al Inicio del Servidor (-AtStartup)
+Ideal para el script progTareaInicio.ps1, garantizando que los demonios de captura se inicialicen inmediatamente al arrancar el nodo de Proxmox, sin depender de accesos remotos WinRM manuales posteriores:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$Action</span>    <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;powershell.exe&quot;</span> <span class="n">-Argument</span> <span class="s2">&quot;-File E:\scripts\pruebatarea.ps1&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nv">$Trigger</span>   <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-AtStartup</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nv">$Principal</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskPrincipal</span> <span class="n">-UserId</span> <span class="s2">&quot;MIEMPRESA\Administrador&quot;</span> <span class="n">-LogonType</span> <span class="n">Password</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+
+<span class="nv">$ObjectTareaInicio</span> <span class="p">=</span> <span class="nb">New-ScheduledTask</span> <span class="n">-Action</span> <span class="nv">$Action</span> <span class="n">-Trigger</span> <span class="nv">$Trigger</span> <span class="n">-Principal</span> <span class="nv">$Principal</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+<span class="nb">Register-ScheduledTask</span> <span class="s2">&quot;TareaServicioInicio&quot;</span> <span class="n">-InputObject</span> <span class="nv">$ObjectTareaInicio</span> <span class="n">-User</span> <span class="s2">&quot;MIEMPRESA\Administrador&quot;</span> <span class="n">-Password</span> <span class="s2">&quot;ContraseñaAdmin&quot;</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<p>🔍 Validación Operativa e Inspección del Historial
+Para certificar que el planificador de tareas ha coordinado correctamente las llamadas desatendidas y extraer los metadatos de las marcas de tiempo, auditamos el registro de seguridad mediante comandos lógicos de filtrado[cite: 11]:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Consultar de forma analítica los eventos generados por nuestra tarea en el log</span>
+<span class="nb">Get-WinEvent</span> <span class="n">-LogName</span> <span class="n">Application</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span>
+    <span class="nv">$_</span><span class="p">.</span><span class="n">Id</span> <span class="o">-eq</span> <span class="n">1000</span> <span class="o">-and</span> 
+    <span class="nv">$_</span><span class="p">.</span><span class="n">ProviderName</span> <span class="o">-eq</span> <span class="s2">&quot;MiTareaProgramada&quot;</span>
+<span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TimeCreated</span><span class="p">,</span> <span class="n">Message</span> <span class="p">|</span> <span class="nb">Format-List</span><span class="p">[</span><span class="n">cite</span><span class="p">:</span> <span class="n">11</span><span class="p">]</span>
+</code></pre></div>
+<p>🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
+💥 Caso Práctico: Detención de scripts de monitorización por límites de tiempo de CPU
+Síntoma: Tras implementar el script de automatización del Sprint 3 destinado a capturar datos de rendimiento de forma indefinida, la tarea programada pasa repentinamente de estado Running a Ready transcurridas exactamente 72 horas, deteniendo por completo el volcado de métricas en la base de datos de SQL Server.</p>
+<p>Causa Raíz: Configuración de directivas de seguridad implícitas en el sistema operativo. Por defecto, al instanciar una tarea programada sin especificar configuraciones avanzadas de entorno (Settings), Windows Server le asigna una propiedad oculta de limitación de tiempo de ejecución de seguridad (ExecutionTimeLimit) equivalente a 3 días (72 horas), procediendo a matar de forma imperativa los procesos hijos vinculados a PowerShell al expirar dicho temporizador.</p>
+<p>Solución Operativa en Clase: El alumno debe modificar los metadatos de la tarea forzando la anulación del límite de tiempo. Para ello, debe generar un conjunto de parámetros avanzados deshabilitando la directiva de parada mediante una variable de tiempo en valor cero ([TimeSpan]::Zero) y actualizar el registro de la tarea:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Forzar la anulación estricta del límite de tiempo de ejecución en caliente</span>
+<span class="nv">$SettingsModificados</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskSettingsSet</span> <span class="n">-ExecutionTimeLimit</span> <span class="no">[TimeSpan]</span><span class="p">::</span><span class="n">Zero</span>
+
+<span class="c"># Aplicar la reconfiguración sobre la tarea existente en el controlador de dominio</span>
+<span class="nb">Set-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;PruebaTareaDesatendida&quot;</span> <span class="n">-Settings</span> <span class="nv">$SettingsModificados</span>
+</code></pre></div>
+<p>📚 Referencias y Fuentes Consultadas</p>
+<div class="admonition info">
+<p class="admonition-title">Documentación Oficial y Autoría</p>
+</div>
+<ul>
+<li>Material Base: Basado en la unidad temática empresarial "UD3. Fundamentos de administración de Windows Server - Programación de tareas" desarrollada por el Departamento de Informática del IES Marcos Zaragoza[cite: 11].</li>
+<li>Diseño Curricular y Cátedra: José Ramón Soria Nieto[cite: 11].</li>
+<li>Entorno Formativo: Módulo de Administración de Sistemas Operativos (ASO), correspondiente al Segundo Curso del Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR/ASIX)[cite: 11].</li>
+</ul>
+<div class="admonition abstract">
+<p class="admonition-title">Soporte Institucional y Fondos Europeos</p>
+</div>
+<ul>
+<li>Entidad Reguladora: Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport[cite: 11].</li>
+<li>Financiación Institucional: Proyecto cofinanciado por la Unión Europea a través del Fondo Social Europeo (FSE)[cite: 11].</li>
+<li>«El FSE invierte en tu futuro» — Acciones enfocadas en la optimización tecnológica, la formación técnica avanzada y el desarrollo de habilidades de automatización digital para infraestructuras informáticas en red[cite: 11].</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        ﻿<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+          Administración de Sistemas Operativos — IES Marcos Zaragoza
+        </div>
+        <div style="margin-left: auto; text-align: right; font-weight: bold;">
+          Profesor: José Ramón Soria Nieto
+        </div>
+      </div>
+    </div>
+  </footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy", "search.highlight", "navigation.sticky", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

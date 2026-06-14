@@ -1,0 +1,1731 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://joseramonIESMZ.github.io/ASO/apuntes/linux/fundamentos-core/">
+      
+      
+        <link rel="prev" href="../../windows-server/programacion-tareas/">
+      
+      
+        <link rel="next" href="../administracion-remota-ssh/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Fundamentos de Administración de Linux - ASO Administración de Sistemas Operativos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#fundamentos-de-administracion-de-linux-server" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-header__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ASO Administración de Sistemas Operativos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Fundamentos de Administración de Linux
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../windows-server/fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Windows Server
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Linux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../active-directory/fundamentos-ad-core/" class="md-tabs__link">
+          
+  
+  
+  Active Directory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../powershell/fundamentos-powershell-core/" class="md-tabs__link">
+          
+  
+  
+  PowerShell
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../samba/fundamentos-samba-core/" class="md-tabs__link">
+          
+  
+  
+  Samba
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-nav__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ASO Administración de Sistemas Operativos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows Server
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows-server/fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows-server/instalacion-windows-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalación de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows-server/administracion-remota/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (WinRM)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows-server/supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows-server/programacion-tareas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Linux
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Linux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-y-fundamentos-del-ecosistema-gnulinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Arquitectura y Fundamentos del Ecosistema GNU/Linux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-i-estructura-del-sistema-shell-e-identidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📑 Bloque I: Estructura del Sistema, Shell e Identidades
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📑 Bloque I: Estructura del Sistema, Shell e Identidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-el-arbol-de-directorios-estandar-fhs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. El Árbol de Directorios Estándar (FHS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gestion-de-usuarios-y-permisos-posix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Gestión de Usuarios y Permisos POSIX
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-ii-control-de-servicios-y-red-de-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Bloque II: Control de Servicios y Red de Infraestructura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Bloque II: Control de Servicios y Red de Infraestructura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-orquestacion-del-sistema-con-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Orquestación del Sistema con systemd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-configuracion-de-red-e-interfaces-logicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Configuración de Red e Interfaces Lógicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-iii-almacenamiento-resiliencia-y-virtualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💾 Bloque III: Almacenamiento, Resiliencia y Virtualización
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💾 Bloque III: Almacenamiento, Resiliencia y Virtualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5-gestion-de-discos-y-sistemas-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Gestión de Discos y Sistemas de Archivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#laboratorio-de-desafios-y-troubleshooting-entorno-proxmox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caso-practico-perdida-de-conectividad-winrmssh-por-desconfiguracion-del-cortafuegos-local-ufw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💥 Caso Práctico: Pérdida de conectividad WinRM/SSH por desconfiguración del cortafuegos local (UFW)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administracion-remota-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (SSH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../programacion-tareas.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Active Directory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/fundamentos-ad-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/implementacion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/administracion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/filtros-busquedas-avanzadas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Filtros y búsquedas avanzadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/politicas-gpo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Políticas de Grupo (GPO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PowerShell
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PowerShell
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../powershell/fundamentos-powershell-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de PowerShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Samba
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Samba
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/fundamentos-samba-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/implementacion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/administracion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-y-fundamentos-del-ecosistema-gnulinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Arquitectura y Fundamentos del Ecosistema GNU/Linux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-i-estructura-del-sistema-shell-e-identidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📑 Bloque I: Estructura del Sistema, Shell e Identidades
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📑 Bloque I: Estructura del Sistema, Shell e Identidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-el-arbol-de-directorios-estandar-fhs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. El Árbol de Directorios Estándar (FHS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gestion-de-usuarios-y-permisos-posix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Gestión de Usuarios y Permisos POSIX
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-ii-control-de-servicios-y-red-de-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Bloque II: Control de Servicios y Red de Infraestructura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Bloque II: Control de Servicios y Red de Infraestructura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-orquestacion-del-sistema-con-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Orquestación del Sistema con systemd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-configuracion-de-red-e-interfaces-logicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Configuración de Red e Interfaces Lógicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bloque-iii-almacenamiento-resiliencia-y-virtualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💾 Bloque III: Almacenamiento, Resiliencia y Virtualización
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💾 Bloque III: Almacenamiento, Resiliencia y Virtualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5-gestion-de-discos-y-sistemas-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Gestión de Discos y Sistemas de Archivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#laboratorio-de-desafios-y-troubleshooting-entorno-proxmox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caso-practico-perdida-de-conectividad-winrmssh-por-desconfiguracion-del-cortafuegos-local-ufw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💥 Caso Práctico: Pérdida de conectividad WinRM/SSH por desconfiguración del cortafuegos local (UFW)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="fundamentos-de-administracion-de-linux-server">Fundamentos de Administración de Linux Server</h1>
+<h2 id="relacion-con-el-curriculo-ra-y-ce">🎯 Relación con el Currículo (RA y CE)</h2>
+<ul>
+<li><strong>Resultado de Aprendizaje 2 (RA2):</strong> Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.</li>
+<li><strong>Resultado de Aprendizaje 3 (RA3):</strong> Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.</li>
+</ul>
+<hr />
+<h2 id="arquitectura-y-fundamentos-del-ecosistema-gnulinux">🏢 Arquitectura y Fundamentos del Ecosistema GNU/Linux</h2>
+<p>La administración de entornos Linux en servidores corporativos difiere de los entornos Windows al priorizar el uso radical de la interfaz de línea de comandos (<strong>CLI</strong>) sobre la interfaz gráfica (<strong>GUI</strong>). Esto optimiza el consumo de memoria RAM y CPU en los nodos de virtualización y mitiga vectores de ataque.</p>
+<p>Estructuramos los pilares operativos de Linux en tres grandes bloques didácticos para la gestión de servidores en producción.</p>
+<hr />
+<h2 id="bloque-i-estructura-del-sistema-shell-e-identidades">📑 Bloque I: Estructura del Sistema, Shell e Identidades</h2>
+<h3 id="1-el-arbol-de-directorios-estandar-fhs">1. El Árbol de Directorios Estándar (FHS)</h3>
+<p>A diferencia de Windows y sus unidades físicas (<code>C:\</code>, <code>D:\</code>), Linux organiza todo su almacenamiento de forma lógica partiendo de un único directorio raíz unificado (<code>/</code>) siguiendo el estándar <strong>FHS (Filesystem Hierarchy Standard)</strong>:</p>
+<ul>
+<li><code>/etc</code>: Directorio crítico que alberga los archivos de configuración estáticos de todos los servicios del sistema (ej: sshd, interfaces de red).</li>
+<li><code>/var</code>: Almacena información de datos variables y persistentes, como las colas de correo, bases de datos y, principalmente, los registros del sistema (<code>/var/log</code>).</li>
+<li><code>/home</code>: Contenedor de las carpetas personales de los usuarios del sistema.</li>
+<li><code>/root</code>: Directorio home exclusivo para el superusuario administrador del sistema.</li>
+</ul>
+<h3 id="2-gestion-de-usuarios-y-permisos-posix">2. Gestión de Usuarios y Permisos POSIX</h3>
+<p>La seguridad local descansa sobre el control estricto de identidades y el sistema tradicional de permisos de archivos:</p>
+<ul>
+<li><strong>Estructura de Identidades:</strong> Los usuarios y grupos se definen y validan localmente analizando los archivos de texto plano <code>/etc/passwd</code> y <code>/etc/group</code>.</li>
+<li><strong>Criptografía de Credenciales:</strong> Las contraseñas de red se almacenan de forma segura e ilegible mediante hashes dentro de <code>/etc/shadow</code>.</li>
+<li><strong>Tríada de Permisos:</strong> Cada fichero y directorio cuenta con una máscara de permisos segmentada para el Propietario (<strong>User</strong>), el Grupo (<strong>Group</strong>) y el Resto (<strong>Others</strong>), gobernada por las directivas de Lectura (<code>r</code>), Escritura (<code>w</code>) y Ejecución (<code>x</code>).</li>
+</ul>
+<hr />
+<h2 id="bloque-ii-control-de-servicios-y-red-de-infraestructura">⚙️ Bloque II: Control de Servicios y Red de Infraestructura</h2>
+<h3 id="3-orquestacion-del-sistema-con-systemd">3. Orquestación del Sistema con systemd</h3>
+<p>La supervisión de demonios y servicios en las distribuciones de producción modernas (como Ubuntu Server o Debian) se centraliza mediante el gestor de sistema y servicios <strong>systemd</strong>.</p>
+<p>A través del binario <code>systemctl</code>, el administrador controla el ciclo de vida de los roles del servidor:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Inicializar y habilitar en el arranque el servicio SSH</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>sshd
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>sshd
+
+<span class="c1"># Auditar el estado de salud y telemetría de un demonio</span>
+systemctl<span class="w"> </span>status<span class="w"> </span>sshd
+</code></pre></div>
+<h3 id="4-configuracion-de-red-e-interfaces-logicas">4. Configuración de Red e Interfaces Lógicas</h3>
+<p>El direccionamiento IP permanente y el enrutamiento se configuran alterando archivos de configuración específicos según la distribución (ej: Netplan mediante archivos YAML en Ubuntu o ifcfg en entornos RedHat), interactuando con la CLI para su diagnóstico:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Inspeccionar las direcciones IP de las interfaces del servidor</span>
+ip<span class="w"> </span>a
+
+<span class="c1"># Auditar la tabla de enrutamiento de la infraestructura del aula</span>
+ip<span class="w"> </span>route
+</code></pre></div>
+<h2 id="bloque-iii-almacenamiento-resiliencia-y-virtualizacion">💾 Bloque III: Almacenamiento, Resiliencia y Virtualización</h2>
+<h3 id="5-gestion-de-discos-y-sistemas-de-archivos">5. Gestión de Discos y Sistemas de Archivos</h3>
+<p>Linux implementa capas avanzadas de abstracción de almacenamiento físico para dotar de tolerancia a fallos y flexibilidad a los servidores compartidos:</p>
+<p>Sistemas de Archivos: Uso de formatos empresariales de alta resiliencia y registro diario como EXT4 o XFS.</p>
+<p>LVM (Logical Volume Manager): Capa intermedia de software que permite agrupar discos físicos (Physical Volumes) en pools virtuales para redimensionar particiones en caliente sin necesidad de apagar la máquina virtual en Proxmox.</p>
+<ol>
+<li>Integración en Entornos Híbridos (Samba)
+Para entornos mixtos de aula, el servidor Linux puede integrarse con el Active Directory de Windows actuando como miembro del dominio. El servicio Samba expone recursos compartidos a la red aplicando las ACLs directamente desde el árbol LDAP del dominio corporativo.</li>
+</ol>
+<h2 id="laboratorio-de-desafios-y-troubleshooting-entorno-proxmox">🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)</h2>
+<h3 id="caso-practico-perdida-de-conectividad-winrmssh-por-desconfiguracion-del-cortafuegos-local-ufw">💥 Caso Práctico: Pérdida de conectividad WinRM/SSH por desconfiguración del cortafuegos local (UFW)</h3>
+<p>Síntoma: Tras aplicar directivas de endurecimiento de seguridad en un contenedor LXC con Ubuntu Server que actúa como File Server, los alumnos pierden instantáneamente la sesión SSH remota. Las conexiones de red son rechazadas de forma sistemática y el servicio deja de responder a los scripts de automatización.</p>
+<p>Causa Raíz: Aplicación incorrecta de políticas de filtrado perimetral. Al inicializar el cortafuegos local mediante el comando ufw enable sin haber registrado previamente una regla de excepción explícita para habilitar el tráfico entrante de administración, el kernel bloquea de forma predeterminada todo el tráfico en el puerto TCP 22 (SSH), aislando el nodo.</p>
+<p>Solución Operativa en Clase: Al haber perdido el acceso por red, el alumno debe abrir de forma imperativa la Consola Virtualizada directamente desde la interfaz web del hipervisor Proxmox VE para saltarse el bloqueo de red interactuando de forma local como root:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Acceder vía consola de Proxmox y habilitar la excepción de gestión</span>
+ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">22</span>/tcp
+
+<span class="c1"># 2. Recargar las tablas de filtrado del cortafuegos para aplicar los cambios</span>
+ufw<span class="w"> </span>reload
+
+<span class="c1"># 3. Validar las reglas activas de la infraestructura</span>
+ufw<span class="w"> </span>status<span class="w"> </span>verbose
+</code></pre></div>
+<p>📚 Referencias y Fuentes Consultadas</p>
+<div class="admonition info">
+<p class="admonition-title">Documentación Oficial y Autoría</p>
+</div>
+<ul>
+<li>Material Base: Basado en las guías técnicas y unidades de formación del Departamento de Informática del IES Marcos Zaragoza.</li>
+<li>Diseño y Adaptación de Contenidos: José Ramón Soria Nieto.</li>
+<li>Contexto de Aplicación: Módulo profesional de Administración de Sistemas Operativos (ASO), correspondiente al bloque práctico del Segundo Curso de Administración de Sistemas Informáticos en Red (ASIR/ASIX).</li>
+</ul>
+<div class="admonition abstract">
+<p class="admonition-title">Soporte Institucional y Fondos Europeos</p>
+</div>
+<ul>
+<li>Entidad Reguladora: Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.</li>
+<li>Financiación de Infraestructura: Proyecto cofinanciado por la Unión Europea a través del Fondo Social Europeo (FSE).</li>
+<li>«El FSE invierte en tu futuro» — Acciones destinadas a impulsar la educación digital avanzada, el despliegue de laboratorios de virtualización de alto rendimiento y la capacitación técnica cualificada.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        ﻿<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+          Administración de Sistemas Operativos — IES Marcos Zaragoza
+        </div>
+        <div style="margin-left: auto; text-align: right; font-weight: bold;">
+          Profesor: José Ramón Soria Nieto
+        </div>
+      </div>
+    </div>
+  </footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy", "search.highlight", "navigation.sticky", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

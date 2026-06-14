@@ -1,0 +1,1947 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://joseramonIESMZ.github.io/ASO/apuntes/windows-server/instalacion-windows-server/">
+      
+      
+        <link rel="prev" href="../fundamentos-core/">
+      
+      
+        <link rel="next" href="../administracion-remota/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Instalación de Windows Server - ASO Administración de Sistemas Operativos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#instalacion-de-windows-server-2025-en-proxmox-ve" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-header__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ASO Administración de Sistemas Operativos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Instalación de Windows Server
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Windows Server
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../linux/fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Linux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../active-directory/fundamentos-ad-core/" class="md-tabs__link">
+          
+  
+  
+  Active Directory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../powershell/fundamentos-powershell-core/" class="md-tabs__link">
+          
+  
+  
+  PowerShell
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../samba/fundamentos-samba-core/" class="md-tabs__link">
+          
+  
+  
+  Samba
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-nav__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ASO Administración de Sistemas Operativos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows Server
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalación de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalación de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contexto-despliegue-virtualizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Contexto: Despliegue virtualizado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-i-preparacion-de-la-maquina-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Fase I: Preparación de la máquina virtual
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Fase I: Preparación de la máquina virtual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-creacion-de-la-vm-y-sistema-huesped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Creación de la VM y sistema huésped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configuracion-del-sistema-pestana-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configuración del sistema (pestaña System)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-configuracion-del-disco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configuración del disco
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-procesador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Procesador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Memoria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-confirmacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Confirmación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-ii-instalacion-del-sistema-operativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💿 Fase II: Instalación del sistema operativo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💿 Fase II: Instalación del sistema operativo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arranque-del-instalador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arranque del instalador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opciones-iniciales-del-instalador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opciones iniciales del instalador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carga-de-drivers-virtio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carga de drivers VirtIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finalización
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-de-parametros-de-la-mv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Resumen de parámetros de la MV
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proximos-pasos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Próximos pasos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias-y-fuentes-consultadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Referencias y Fuentes Consultadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administracion-remota/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (WinRM)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../programacion-tareas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Linux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/administracion-remota-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (SSH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/programacion-tareas.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Active Directory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/fundamentos-ad-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/implementacion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/administracion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/filtros-busquedas-avanzadas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Filtros y búsquedas avanzadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/politicas-gpo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Políticas de Grupo (GPO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PowerShell
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PowerShell
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../powershell/fundamentos-powershell-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de PowerShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Samba
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Samba
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/fundamentos-samba-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/implementacion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/administracion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contexto-despliegue-virtualizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 Contexto: Despliegue virtualizado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-i-preparacion-de-la-maquina-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Fase I: Preparación de la máquina virtual
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Fase I: Preparación de la máquina virtual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-creacion-de-la-vm-y-sistema-huesped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Creación de la VM y sistema huésped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configuracion-del-sistema-pestana-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configuración del sistema (pestaña System)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-configuracion-del-disco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configuración del disco
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-procesador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Procesador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Memoria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-confirmacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Confirmación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-ii-instalacion-del-sistema-operativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💿 Fase II: Instalación del sistema operativo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💿 Fase II: Instalación del sistema operativo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arranque-del-instalador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arranque del instalador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opciones-iniciales-del-instalador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opciones iniciales del instalador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carga-de-drivers-virtio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Carga de drivers VirtIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finalización
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-de-parametros-de-la-mv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Resumen de parámetros de la MV
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proximos-pasos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Próximos pasos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias-y-fuentes-consultadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Referencias y Fuentes Consultadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="instalacion-de-windows-server-2025-en-proxmox-ve">Instalación de Windows Server 2025 en Proxmox VE</h1>
+<h2 id="relacion-con-el-curriculo-ra-y-ce">🎯 Relación con el Currículo (RA y CE)</h2>
+<p>El despliegue e instalación del sistema operativo base en un entorno de virtualización corporativa da soporte técnico y sirve de base operativa para la consecución de los siguientes elementos del currículo oficial:</p>
+<ul>
+<li><strong>Resultado de Aprendizaje 1 (RA1):</strong> Administra el servicio de directorio interpretando especificaciones e integrándolo en una red.<ul>
+<li><strong>CE3-RA1:</strong> Se ha realizado la instalación del servicio de directorio en el servidor (fase de despliegue e instalación del S.O. huésped en modo Server Core).</li>
+<li><strong>CE8-RA1:</strong> Se ha realizado la configuración del cliente para su integración en el servicio de directorio (preparación del entorno de red virtualizada).</li>
+</ul>
+</li>
+<li><strong>Resultado de Aprendizaje 2 (RA2):</strong> Administra procesos del sistema describiéndolos y aplicando criterios de seguridad y eficiencia.<ul>
+<li><strong>CE7-RA2:</strong> Se ha comprobado la secuencia de arranque del sistema, los procesos implicados y la relación entre ellos (interacción del núcleo con los drivers paravirtualizados VirtIO).</li>
+</ul>
+</li>
+<li><strong>Resultado de Aprendizaje 9 (RA9):</strong> Cumple con las exigencias laborales transversales relativas a autonomía, trabajo en equipo, organización y seguridad.<ul>
+<li><strong>CE4-RA9:</strong> Ha entregado y estructurado el trabajo con una temporalización y organización adecuada (respeto a las cuotas de hardware asignadas al equipo en el host Proxmox).</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="contexto-despliegue-virtualizado">🏢 Contexto: Despliegue virtualizado</h2>
+<p>En nuestro laboratorio, Windows Server 2025 no se instala sobre hardware físico, sino como <strong>máquina virtual (MV)</strong> dentro del hipervisor <strong>Proxmox VE</strong>. Este enfoque permite replicar entornos de producción, aislar servicios y recuperar rápidamente el sistema ante fallos.</p>
+<p>Para obtener un rendimiento adecuado en entorno virtualizado, es imprescindible instalar los <strong>drivers VirtIO</strong> durante el despliegue. Estos drivers permiten que Windows reconozca el disco, la tarjeta de red y otros dispositivos paravirtualizados que Proxmox expone a la MV.</p>
+<div class="admonition info">
+<p class="admonition-title">Referencias oficiales</p>
+<ul>
+<li><a href="https://pve.proxmox.com/wiki/Windows2025Guest">Windows 2025 guest best practices — Proxmox VE</a></li>
+<li><a href="https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers">Windows VirtIO Drivers — Proxmox VE</a></li>
+</ul>
+</div>
+<hr />
+<h2 id="fase-i-preparacion-de-la-maquina-virtual">🛠️ Fase I: Preparación de la máquina virtual</h2>
+<p>Antes de arrancar el instalador de Windows, configuramos la MV en Proxmox con los parámetros recomendados para Windows Server 2025.</p>
+<h3 id="1-creacion-de-la-vm-y-sistema-huesped">1. Creación de la VM y sistema huésped</h3>
+<ol>
+<li>Creamos una <strong>nueva VM</strong> en Proxmox.</li>
+<li>Seleccionamos <strong>Microsoft Windows 11/2022/2025</strong> como sistema huésped (<em>Guest OS</em>).</li>
+<li>Montamos en el <strong>CD/DVD</strong> la ISO de los <strong>drivers VirtIO</strong> correspondientes.</li>
+</ol>
+<h3 id="2-configuracion-del-sistema-pestana-system">2. Configuración del sistema (pestaña <em>System</em>)</h3>
+<ul>
+<li>Habilitamos el <strong>QEMU Guest Agent</strong>.</li>
+<li>Almacenamos <strong>EFI</strong> y <strong>TPM</strong> en <code>local-lvm</code>.</li>
+<li>Elegimos el controlador de disco <strong>VirtIO SCSI</strong>.</li>
+</ul>
+<h3 id="3-configuracion-del-disco">3. Configuración del disco</h3>
+<ul>
+<li><strong>Cache:</strong> <code>Write back</code> (mejor rendimiento de E/S).</li>
+<li><strong>Discard:</strong> activado (optimiza el espacio en disco mediante <strong>TRIM</strong>).</li>
+<li><strong>Bus:</strong> SCSI.</li>
+<li><strong>Tamaño:</strong> 32 GB.</li>
+</ul>
+<h3 id="4-procesador">4. Procesador</h3>
+<ul>
+<li><strong>Tipo de CPU:</strong> <code>x86-64-v2-AES</code>.</li>
+<li><strong>Cores:</strong> 2.</li>
+</ul>
+<h3 id="5-memoria">5. Memoria</h3>
+<ul>
+<li>Asignamos <strong>4 GB</strong> de RAM.</li>
+</ul>
+<h3 id="6-red">6. Red</h3>
+<ul>
+<li>Conectamos la MV al bridge <strong><code>vmbr1</code></strong> (LAN interna del laboratorio).</li>
+<li>Seleccionamos <strong>VirtIO (paravirtualized)</strong> como dispositivo de red.</li>
+</ul>
+<h3 id="7-confirmacion">7. Confirmación</h3>
+<p>Revisamos el resumen de opciones y finalizamos la creación de la MV.</p>
+<hr />
+<h2 id="fase-ii-instalacion-del-sistema-operativo">💿 Fase II: Instalación del sistema operativo</h2>
+<h3 id="arranque-del-instalador">Arranque del instalador</h3>
+<ol>
+<li>Iniciamos la MV recién creada.</li>
+<li>Abrimos la consola <strong>noVNC</strong> desde la interfaz web de Proxmox.</li>
+<li>Pulsamos una tecla cuando el instalador lo solicite para iniciar la instalación de <strong>Windows Server 2025</strong>.</li>
+</ol>
+<h3 id="opciones-iniciales-del-instalador">Opciones iniciales del instalador</h3>
+<ul>
+<li>Elegimos <strong>Instalar</strong> y la opción para <strong>borrar todo lo anterior</strong> en el disco.</li>
+<li>Continuamos <strong>sin clave de producto</strong> (evaluación o activación posterior).</li>
+<li>Seleccionamos la edición <strong>Windows Server Standard</strong> en modo <strong>Server Core</strong> (sin escritorio gráfico).</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Elección de edición</p>
+<p>En entornos de producción y en nuestro laboratorio se prioriza <strong>Server Core</strong> por su menor superficie de ataque, menor consumo de recursos y mayor estabilidad. Ver <a href="../fundamentos-core/">Fundamentos de Administración de Windows Server</a>.</p>
+</div>
+<h3 id="carga-de-drivers-virtio">Carga de drivers VirtIO</h3>
+<p>En la pantalla <strong>Seleccionar ubicación para instalar Windows Server</strong>, Windows no reconocerá el disco hasta que carguemos los drivers paravirtualizados. Pulsamos <strong>Load Drivers</strong> (<em>Cargar controladores</em>) y accedemos a la unidad de CD-ROM donde está montada la ISO de VirtIO.</p>
+<p>Debemos instalar <strong>tres drivers</strong> antes de continuar con la partición del disco:</p>
+<table>
+<thead>
+<tr>
+<th>Dispositivo</th>
+<th>Carpeta del driver</th>
+<th>Controlador a seleccionar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Disco duro (SCSI)</td>
+<td><code>vioscsi\w2k25\amd64</code></td>
+<td>Red Hat VirtIO SCSI pass-through controller</td>
+</tr>
+<tr>
+<td>Tarjeta de red</td>
+<td><code>NetKVM\w2k25\amd64</code></td>
+<td>Red Hat VirtIO Ethernet Adapter</td>
+</tr>
+<tr>
+<td>Memory Ballooning</td>
+<td><code>Balloon\w2k25\amd64</code></td>
+<td>VirtIO Balloon Driver</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Orden de carga</p>
+<p>Tras instalar el driver del disco y ver el volumen disponible, <strong>volvemos a la pantalla de selección de ubicación</strong> y cargamos el resto de drivers (red y balloon) <strong>antes</strong> de iniciar la instalación en la partición principal.</p>
+</div>
+<h3 id="finalizacion">Finalización</h3>
+<ol>
+<li>Seleccionamos la partición principal del disco detectado.</li>
+<li>Continuamos con la instalación estándar de Windows Server 2025.</li>
+<li>Al finalizar, el sistema arrancará en modo <strong>Server Core</strong>, listo para la configuración posterior (red, hostname, unión al dominio, roles, etc.).</li>
+</ol>
+<hr />
+<h2 id="resumen-de-parametros-de-la-mv">📋 Resumen de parámetros de la MV</h2>
+<table>
+<thead>
+<tr>
+<th>Recurso</th>
+<th>Valor configurado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guest OS</td>
+<td>Microsoft Windows 11/2022/2025</td>
+</tr>
+<tr>
+<td>Guest Agent</td>
+<td>Habilitado</td>
+</tr>
+<tr>
+<td>EFI / TPM</td>
+<td><code>local-lvm</code></td>
+</tr>
+<tr>
+<td>Disco</td>
+<td>VirtIO SCSI, 32 GB, Write back, Discard</td>
+</tr>
+<tr>
+<td>CPU</td>
+<td>x86-64-v2-AES, 2 cores</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>4 GB</td>
+</tr>
+<tr>
+<td>Red</td>
+<td><code>vmbr1</code>, VirtIO</td>
+</tr>
+<tr>
+<td>Edición instalada</td>
+<td>Windows Server Standard (Server Core)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="proximos-pasos">🔗 Próximos pasos</h2>
+<p>Una vez completada la instalación, el ciclo de vida del servidor continúa con:</p>
+<ul>
+<li>Configuración de red e identificación del host.</li>
+<li>Instalación de actualizaciones y hardening inicial.</li>
+<li>Promoción a controlador de dominio o instalación de roles (AD DS, DNS, DHCP…).</li>
+</ul>
+<p>Consulta <a href="../fundamentos-core/">Fundamentos de Administración de Windows Server</a> para el marco conceptual del despliegue y la administración posterior.</p>
+<h2 id="referencias-y-fuentes-consultadas">📚 Referencias y Fuentes Consultadas</h2>
+<div class="admonition info">
+<p class="admonition-title">Documentación Oficial y Autoría</p>
+<ul>
+<li><strong>Material Base:</strong> <a href="https://gvaedu-my.sharepoint.com/:b:/r/personal/jr_soria_edu_gva_es/Documents/MIS-APUNTES/ASO/GITHUB-AUX/Windows%20Server/instalacion-windows-server/Instalar-WServer2025-en-MV-Proxmox.pdf?csf=1&amp;web=1&amp;e=YCoWne">Instalar Windows Server 2025 en MV de Proxmox (PDF)</a></li>
+<li><strong>Autoría del Temario:</strong> José Ramón Soria Nieto.</li>
+<li><strong>Marco Curricular:</strong> Programación didáctica para el módulo de <em>Administración de Sistemas Operativos (ASO)</em> del Ciclo Formativo de Grado Superior en <em>Administración de Sistemas Informáticos en Red (ASIR/ASIX)</em>.</li>
+<li><strong>Material adicional:</strong> https://learn.microsoft.com/es-es/windows-server/</li>
+</ul>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Cofinanciación y Soporte Institucional</p>
+<ul>
+<li><strong>Entidad Educativa:</strong> Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.</li>
+<li><strong>Fondo de Financiación:</strong> Proyecto cofinanciado por la <strong>Unión Europea</strong> a través del <strong>Fondo Social Europeo (FSE)</strong>. </li>
+<li><em>«El FSE invierte en tu futuro»</em> — Acciones orientadas al impulso de la educación, formación avanzada y preparación para el mercado laboral técnico.</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        ﻿<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+          Administración de Sistemas Operativos — IES Marcos Zaragoza
+        </div>
+        <div style="margin-left: auto; text-align: right; font-weight: bold;">
+          Profesor: José Ramón Soria Nieto
+        </div>
+      </div>
+    </div>
+  </footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy", "search.highlight", "navigation.sticky", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

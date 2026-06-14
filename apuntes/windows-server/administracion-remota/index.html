@@ -1,0 +1,1920 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://joseramonIESMZ.github.io/ASO/apuntes/windows-server/administracion-remota/">
+      
+      
+        <link rel="prev" href="../instalacion-windows-server/">
+      
+      
+        <link rel="next" href="../supervision-mantenimiento/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Administración Remota (WinRM) - ASO Administración de Sistemas Operativos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#administracion-remota-winrm" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-header__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ASO Administración de Sistemas Operativos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Administración Remota (WinRM)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Windows Server
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../linux/fundamentos-core/" class="md-tabs__link">
+          
+  
+  
+  Linux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../active-directory/fundamentos-ad-core/" class="md-tabs__link">
+          
+  
+  
+  Active Directory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../powershell/fundamentos-powershell-core/" class="md-tabs__link">
+          
+  
+  
+  PowerShell
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../samba/fundamentos-samba-core/" class="md-tabs__link">
+          
+  
+  
+  Samba
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ASO Administración de Sistemas Operativos" class="md-nav__button md-logo" aria-label="ASO Administración de Sistemas Operativos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ASO Administración de Sistemas Operativos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows Server
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion-windows-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalación de Windows Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (WinRM)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (WinRM)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-accedemos-al-shell-de-los-servidores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 ¿Cómo accedemos al Shell de los Servidores?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏢 ¿Cómo accedemos al Shell de los Servidores?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-acceso-por-consola-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Acceso por Consola Local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acceso-por-consola-virtualizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Acceso por Consola Virtualizada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-acceso-remoto-por-servicios-de-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Acceso Remoto por Servicios de Red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-acceso-mediante-servidor-intermedio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Acceso mediante Servidor Intermedio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recomendaciones-y-buenas-practicas-del-administrador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Recomendaciones y Buenas Prácticas del Administrador
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#powershell-remoting-y-el-protocolo-winrm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ PowerShell Remoting y el Protocolo WinRM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ PowerShell Remoting y el Protocolo WinRM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-y-flujo-de-red-de-powershell-remoting-winrm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esquema-logico-de-comunicacion-cliente-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esquema Lógico de Comunicación Cliente-Servidor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracion-operativa-en-el-aula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Configuración Operativa en el Aula
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Configuración Operativa en el Aula">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-activacion-en-el-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Activación en el Servidor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-carga-de-credenciales-en-el-cliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Carga de Credenciales en el Cliente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-apertura-de-una-sesion-interactiva-enter-pssession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Apertura de una Sesión Interactiva (Enter-PSSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ejecucion-en-bloque-desatendida-invoke-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ejecución en Bloque Desatendida (Invoke-Command)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laboratorio-de-desafios-y-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Laboratorio de Desafíos y Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-practico-error-de-resolucion-de-kerberos-en-conexiones-fuera-de-dominio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💥 Caso Práctico: Error de resolución de Kerberos en conexiones fuera de dominio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#referencias-y-fuentes-consultadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Referencias y Fuentes Consultadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../programacion-tareas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/fundamentos-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Administración de Linux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/administracion-remota-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración Remota (SSH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/supervision-mantenimiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supervisión y mantenimiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/programacion-tareas.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programación de tareas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Active Directory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/fundamentos-ad-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/implementacion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/administracion-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/filtros-busquedas-avanzadas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Filtros y búsquedas avanzadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../active-directory/politicas-gpo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Políticas de Grupo (GPO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PowerShell
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PowerShell
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../powershell/fundamentos-powershell-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de PowerShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Samba
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Samba
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/fundamentos-samba-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fundamentos de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/implementacion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementación de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samba/administracion-samba/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administración de Samba
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-con-el-curriculo-ra-y-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Relación con el Currículo (RA y CE)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-accedemos-al-shell-de-los-servidores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏢 ¿Cómo accedemos al Shell de los Servidores?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏢 ¿Cómo accedemos al Shell de los Servidores?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-acceso-por-consola-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Acceso por Consola Local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acceso-por-consola-virtualizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Acceso por Consola Virtualizada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-acceso-remoto-por-servicios-de-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Acceso Remoto por Servicios de Red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-acceso-mediante-servidor-intermedio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Acceso mediante Servidor Intermedio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recomendaciones-y-buenas-practicas-del-administrador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Recomendaciones y Buenas Prácticas del Administrador
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#powershell-remoting-y-el-protocolo-winrm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ PowerShell Remoting y el Protocolo WinRM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ PowerShell Remoting y el Protocolo WinRM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-y-flujo-de-red-de-powershell-remoting-winrm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esquema-logico-de-comunicacion-cliente-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esquema Lógico de Comunicación Cliente-Servidor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracion-operativa-en-el-aula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Configuración Operativa en el Aula
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Configuración Operativa en el Aula">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-activacion-en-el-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Activación en el Servidor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-carga-de-credenciales-en-el-cliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Carga de Credenciales en el Cliente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-apertura-de-una-sesion-interactiva-enter-pssession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Apertura de una Sesión Interactiva (Enter-PSSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ejecucion-en-bloque-desatendida-invoke-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ejecución en Bloque Desatendida (Invoke-Command)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laboratorio-de-desafios-y-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Laboratorio de Desafíos y Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-practico-error-de-resolucion-de-kerberos-en-conexiones-fuera-de-dominio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💥 Caso Práctico: Error de resolución de Kerberos en conexiones fuera de dominio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#referencias-y-fuentes-consultadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Referencias y Fuentes Consultadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="administracion-remota-winrm">Administración Remota (WinRM)</h1>
+<h2 id="relacion-con-el-curriculo-ra-y-ce">🎯 Relación con el Currículo (RA y CE)</h2>
+<p>La operación remota de servidores y el uso de shells seguros a través de la red constituyen el núcleo procedimental para la consecución de los siguientes objetivos del currículo oficial:</p>
+<ul>
+<li><strong>Resultado de Aprendizaje 4 (RA4):</strong> Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.<ul>
+<li><strong>CE1-RA4:</strong> Se han descrito métodos de acceso y administración remota de sistemas (análisis de consolas locales, virtuales y servicios de red).</li>
+<li><strong>CE3-RA4:</strong> Se han utilizado herramientas de administración remota suministradas por el propio sistema operativo (uso nativo de <code>New-PSSession</code> y <code>Enter-PSSession</code>).</li>
+<li><strong>CE5-RA4:</strong> Se han utilizado comandos y herramientas gráficas para gestionar los servicios de acceso y administración remota (habilitación y control del servicio WinRM).</li>
+</ul>
+</li>
+<li><strong>Resultado de Aprendizaje 7 (RA7) [Soporte Procedimental]:</strong> Utiliza lenguajes de guiones en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.<ul>
+<li><strong>CE5-RA7:</strong> Se han creado y probado guiones de administración de servicios (uso de bloques de comandos remotos desatendidos).</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="como-accedemos-al-shell-de-los-servidores">🏢 <strong>¿Cómo accedemos al Shell de los Servidores?</strong></h2>
+<p>Cuando necesitamos conectarnos a un equipo servidor para proceder a su administración operativa, disponemos de cuatro opciones principales:</p>
+<h3 id="1-acceso-por-consola-local">1. Acceso por Consola Local</h3>
+<ul>
+<li>Conexión directa en el equipo físico (Teclado, monitor y ratón).</li>
+<li>Utilizado cuando no se dispone de acceso por red o durante instalaciones desde cero del sistema directamente sobre el hardware (sin entorno virtualizado).</li>
+<li>Permite supervisar todo el proceso de arranque del equipo, la información de la UEFI-BIOS y los gestores de inicio.</li>
+</ul>
+<h3 id="2-acceso-por-consola-virtualizada">2. Acceso por Consola Virtualizada</h3>
+<ul>
+<li>Conexión a través del terminal que ofrece el entorno de virtualización corporativo (<strong>Proxmox VE</strong> o Hyper-V).</li>
+<li>Muestra la misma información de inicio y acceso al equipo que la consola local, pero trabajando sobre hardware virtualizado.</li>
+<li>Requiere acceso previo por red a la interfaz web del virtualizador para poder abrir la consola de la máquina virtual.</li>
+</ul>
+<h3 id="3-acceso-remoto-por-servicios-de-red">3. Acceso Remoto por Servicios de Red</h3>
+<ul>
+<li>Arquitectura Cliente/Servidor basada en protocolos de comunicación estándar a través de la red.</li>
+<li>Permite interactuar directamente con el Shell del sistema operativo destino (ej: <strong>PowerShell Remoting</strong> en Windows o <strong>SSH</strong> en Linux).</li>
+<li>Ofrece dos modalidades de trabajo: abrir un terminal remoto interactivo o lanzar comandos de forma desatendida a distancia (ej: mediante <code>Invoke-Command</code>).</li>
+</ul>
+<h3 id="4-acceso-mediante-servidor-intermedio">4. Acceso mediante Servidor Intermedio</h3>
+<ul>
+<li>Solución avanzada de seguridad para entornosempresariales (Servidor Bastión o <em>Jump Server</em>).</li>
+<li>El administrador realiza primero la conexión remota (SSH o PowerShell Remoting) hacia un servidor intermedio expuesto.</li>
+<li>Desde este equipo intermedio se realiza un "salto" interno hacia el servidor final que se encuentra aislado de la red externa.</li>
+</ul>
+<hr />
+<h2 id="recomendaciones-y-buenas-practicas-del-administrador">📋 <strong>Recomendaciones y Buenas Prácticas del Administrador</strong></h2>
+<ul>
+<li><strong>Evitar consolas físicas/virtuales:</strong> La conexión a la consola local o a la interfaz de Proxmox solo debe realizarse para instalaciones iniciales o mantenimientos concretos que requieran cortar el acceso a la red o modificar parámetros de la UEFI-BIOS.</li>
+<li><strong>Inseguridad del entorno gráfico remoto:</strong> Las conexiones remotas mediante Escritorio Remoto (RDP) tradicional o VNC no se consideran eficientes ni completamente seguras en todos los escenarios de infraestructura, ya que saturan la red y la CPU de tráfico de vídeo innecesario. Para la administración corporativa se deben priorizar herramientas como la CLI de PowerShell o consolas de gestión web centralizadas como <strong>Windows Admin Center</strong>.</li>
+<li><strong>Securización perimetral:</strong> El uso de servidores intermedios es aconsejable pero complejo. En su lugar, el uso de <strong>PowerShell Remoting (WinRM)</strong> o SSH es suficiente para la mayoría de escenarios, siempre que se complemente con conexiones encapsuladas y securizadas (como redes <strong>VPN + IPSec</strong>) cuando el acceso se realice desde fuera de la empresa (Internet).</li>
+</ul>
+<hr />
+<h2 id="powershell-remoting-y-el-protocolo-winrm">⚙️ <strong>PowerShell Remoting y el Protocolo WinRM</strong></h2>
+<p>Inyectando la filosofía de producción de un Centro de Procesamiento de Datos (CPD), los servidores suelen estar instalados en racks aislados dentro de salas frías. El personal técnico especializado interactúa con ellos a distancia desde sus puestos de trabajo a través del ecosistema de comunicaciones WinRM.</p>
+<h3 id="arquitectura-y-flujo-de-red-de-powershell-remoting-winrm">🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)</h3>
+<h4 id="esquema-logico-de-comunicacion-cliente-servidor">Esquema Lógico de Comunicación Cliente-Servidor</h4>
+<pre class="mermaid"><code>graph LR
+    subgraph Cliente ["EQUIPO CLIENTE (Administrador)"]
+        A["💻 Inicio de Sesión&lt;br&gt;&lt;b&gt;(New-PSSession)&lt;/b&gt;"] --&gt; B["🔒 Carga de Credenciales&lt;br&gt;&lt;i&gt;(Autenticación)&lt;/i&gt;"]
+        B --&gt; C["📦 Encapsulado WS-Management&lt;br&gt;&lt;b&gt;(WS-MAN)&lt;/b&gt;"]
+    end
+
+    subgraph Servidor ["SERVIDOR DESTINO (Server Core)"]
+        E["📟 Recepción de Sesión&lt;br&gt;&lt;i&gt;(Servicio WinRM)&lt;/i&gt;"] --&gt; F["🔑 Validación de Credenciales&lt;br&gt;&lt;b&gt;(Kerberos / NTLM)&lt;/b&gt;"]
+        F --&gt; G["🔓 Decodificado WS-Management"]
+    end
+
+    C == "&lt;b&gt;FLUJO DE RED (TCP/IP)&lt;/b&gt;&lt;br&gt;Puerto 5985 (HTTP - Cifrado Kerberos)&lt;br&gt;o Puerto 5986 (HTTPS - SSL/TLS)" ==&gt; E
+
+    style Cliente fill:#f5f5f5,stroke:#999,stroke-width:1px
+    style Servidor fill:#f5f5f5,stroke:#999,stroke-width:1px
+    style C fill:#fff,stroke:#333,stroke-width:1px
+    style E fill:#fff,stroke:#333,stroke-width:1px</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Nota sobre Seguridad</p>
+<p>Esta arquitectura separa estrictamente las responsabilidades del sistema. El proceso de autenticación ocurre de forma segura en el servidor, y solo los resultados planos de salida se transmiten de vuelta por la red. La ejecución del comando o script en el host remoto permanece completamente aislada dentro de la sesión de usuario remota abierta.</p>
+</div>
+<p>WinRM es la implementación nativa de Microsoft del protocolo estándar <strong>WS-Management (WS-MAN)</strong>. Funciona encapsulando las instrucciones de automatización sobre paquetes estándar HTTP o HTTPS para su transmisión por la red bajo la pila TCP/IP.</p>
+<ul>
+<li><strong>Puerto WinRM HTTP (Por defecto):</strong> Puerto <code>TCP 5985</code> (Autenticación cifrada nativa por Kerberos/NTLM).</li>
+<li><strong>Puerto WinRM HTTPS:</strong> Puerto <code>TCP 5986</code> (Tráfico e identidades completamente cifrados mediante certificados SSL/TLS).</li>
+</ul>
+<hr />
+<h2 id="configuracion-operativa-en-el-aula">🛠️ Configuración Operativa en el Aula</h2>
+<p>Para implementar y validar el acceso remoto, supondremos que el equipo cliente (Windows 11 del alumno) y el servidor destino (Windows Server Core) se encuentran en la misma red, con IPs del mismo rango y dentro del mismo dominio.</p>
+<h3 id="1-activacion-en-el-servidor">1. Activación en el Servidor</h3>
+<p>Desde la consola local de Windows Server, se inicializa el motor de escucha remoto:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Enable-PSRemoting</span> <span class="n">-Force</span>
+</code></pre></div>
+<h3 id="2-carga-de-credenciales-en-el-cliente">2. Carga de Credenciales en el Cliente</h3>
+<p>Desde el Windows 11 del alumno, se capturan de forma segura las credenciales de administración para el viaje por la red:
+<div class="highlight"><pre><span></span><code><span class="nv">$credencial</span> <span class="p">=</span> <span class="nb">Get-Credential</span>
+</code></pre></div></p>
+<p>Nota: Este comando abrirá una ventana gráfica flotante en el cliente solicitando el usuario, por ejemplo, MIEMPRESA\Administrador y su contraseña correspondiente.</p>
+<h3 id="3-apertura-de-una-sesion-interactiva-enter-pssession">3. Apertura de una Sesión Interactiva (Enter-PSSession)</h3>
+<p>Establece un canal interactivo uno a uno persistente. El prompt de la terminal muta para indicar que estamos operando sobre el hardware del servidor Core:
+<div class="highlight"><pre><span></span><code><span class="c"># Crear el túnel de sesión contra el servidor del laboratorio</span>
+<span class="nv">$sesion</span> <span class="p">=</span> <span class="nb">New-PSSession</span> <span class="n">-ComputerName</span> <span class="s2">&quot;192.168.10.10&quot;</span> <span class="n">-Credential</span> <span class="nv">$credencial</span>
+
+<span class="c"># Entrar en la sesión interactiva del servidor Core</span>
+<span class="nb">Enter-PSSession</span> <span class="n">-Session</span> <span class="nv">$sesion</span>
+</code></pre></div></p>
+<p>Simulación de la respuesta esperada en la terminal del alumno:
+<div class="highlight"><pre><span></span><code><span class="nb">PS </span><span class="n">C</span><span class="p">:\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span> <span class="nb">Enter-PSSession</span> <span class="n">-Session</span> <span class="nv">$sesion</span>
+<span class="p">[</span><span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">10</span><span class="p">.</span><span class="n">10</span><span class="p">]:</span> <span class="nb">PS </span><span class="n">C</span><span class="p">:\</span><span class="n">Users</span><span class="p">\</span><span class="n">administrador</span><span class="p">\</span><span class="n">Documents</span><span class="p">&gt;</span> <span class="nb">Get-Process</span>
+<span class="p">[</span><span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">10</span><span class="p">.</span><span class="n">10</span><span class="p">]:</span> <span class="nb">PS </span><span class="n">C</span><span class="p">:\</span><span class="n">Users</span><span class="p">\</span><span class="n">administrador</span><span class="p">\</span><span class="n">Documents</span><span class="p">&gt;</span> <span class="n">exit</span>
+<span class="nb">PS </span><span class="n">C</span><span class="p">:\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span>
+</code></pre></div>
+Para cerrar el canal interactivo y regresar al shell del equipo físico local, ejecuta:
+<div class="highlight"><pre><span></span><code><span class="n">exit</span>
+</code></pre></div></p>
+<h3 id="4-ejecucion-en-bloque-desatendida-invoke-command">4. Ejecución en Bloque Desatendida (Invoke-Command)</h3>
+<p>Es la herramienta idónea para la automatización paralela. Envía un bloque de código (-ScriptBlock), extrae el resultado hacia la terminal del alumno y destruye la conexión inmediatamente.</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Obtener de forma remota las unidades de disco asignadas en el Server Core</span>
+<span class="nb">Invoke-Command</span> <span class="n">-ComputerName</span> <span class="s2">&quot;192.168.10.10&quot;</span> <span class="n">-Credential</span> <span class="nv">$credencial</span> <span class="n">-ScriptBlock</span> <span class="p">{</span> <span class="nb">Get-PSDrive</span> <span class="p">}</span>
+</code></pre></div>
+<h3 id="laboratorio-de-desafios-y-troubleshooting">🔍 Laboratorio de Desafíos y Troubleshooting</h3>
+<h3 id="caso-practico-error-de-resolucion-de-kerberos-en-conexiones-fuera-de-dominio">💥 Caso Práctico: Error de resolución de Kerberos en conexiones fuera de dominio</h3>
+<p>Síntoma: Al intentar ejecutar New-PSSession o Invoke-Command utilizando el nombre del servidor (-ComputerName DC01), la terminal bloquea la conexión devolviendo un error crítico de WinRM que indica que el cliente no puede verificar la autenticidad del destino o que el SPN de Kerberos no se puede resolver.</p>
+<p>Causa Raíz: Incumplimiento del requerimiento de pertenencia a dominio. WinRM utiliza por defecto el protocolo Kerberos para el mutuo acuerdo de autenticación segura. Si el ordenador Windows 11 físico del alumno se encuentra todavía en modo Workgroup (Grupo de trabajo) y el servidor Server Core ya ha sido promovido a Controlador de Dominio (DC), el protocolo Kerberos fallará al no poder validar el ticket de seguridad.</p>
+<p>Solución Operativa en Clase: El alumno debe forzar el uso del mecanismo alternativo NTLM indicando la dirección IP explícita del servidor Core en lugar de su nombre DNS (ej: -ComputerName 192.168.10.10). Adicionalmente, para permitir que el sistema acepte credenciales de un entorno en el que no confía plenamente, se debe añadir dicha dirección IP al almacén de hosts seguros local del cliente ejecutando el siguiente comando con privilegios elevados:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Ejecutar en el Windows 11 cliente como ADMINISTRADOR LOCAL</span>
+<span class="nb">Set-Item</span> <span class="n">WSMan</span><span class="p">:\</span><span class="n">localhost</span><span class="p">\</span><span class="n">Client</span><span class="p">\</span><span class="n">TrustedHosts</span> <span class="n">-Value</span> <span class="s2">&quot;192.168.10.10&quot;</span> <span class="n">-Force</span>
+
+<span class="c"># Reiniciar el servicio local para aplicar la nueva política de confianza remota</span>
+<span class="nb">Restart-Service</span> <span class="n">WinRM</span>
+</code></pre></div>
+<h3 id="referencias-y-fuentes-consultadas">📚 Referencias y Fuentes Consultadas</h3>
+<div class="admonition info">
+<p class="admonition-title">Documentación Oficial y Autoría</p>
+<ul>
+<li><strong>Material Base:</strong> <a href="https://gvaedu-my.sharepoint.com/:b:/r/personal/jr_soria_edu_gva_es/Documents/MIS-APUNTES/ASO/GITHUB-AUX/Windows%20Server/Administracion-remota/UD3.%20Fundamentos%20de%20administraci%C3%B3n%20de%20Windows%20Server%20-%20Administracion%20remota.pdf?csf=1&amp;web=1&amp;e=RE3UE9">Basado en la presentación académica y apuntes <em>UD3. Fundamentos de administración de Windows Server - Administración remota</em> desarrollados por el Departamento de Informática del IES Marcos Zaragoza</a>.</li>
+</ul>
+</div>
+<ul>
+<li>Docente Especialista / Autor: José Ramón Soria Nieto.</li>
+<li>Marco Modular: Contenidos curriculares oficiales vinculados al módulo de Administración de Sistemas Operativos (ASO) dentro del Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR/ASIX).</li>
+</ul>
+<div class="admonition abstract">
+<p class="admonition-title">Soporte Institucional y Fondos Europeos</p>
+</div>
+<ul>
+<li>Órgano Regulador: Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.</li>
+<li>Acreditación de Cofinanciación: Proyecto educativo y tecnológico cofinanciado por la Unión Europea a través del Fondo Social Europeo (FSE).</li>
+<li>«El FSE invierte en tu futuro» — Acciones destinadas al desarrollo de competencias técnicas avanzadas, fomento del empleo cualificado y digitalización de las aulas de Formación Profesional.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        ﻿<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+          Administración de Sistemas Operativos — IES Marcos Zaragoza
+        </div>
+        <div style="margin-left: auto; text-align: right; font-weight: bold;">
+          Profesor: José Ramón Soria Nieto
+        </div>
+      </div>
+    </div>
+  </footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy", "search.highlight", "navigation.sticky", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
