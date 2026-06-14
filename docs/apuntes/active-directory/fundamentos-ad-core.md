@@ -123,11 +123,14 @@ El Controlador de Dominio es el servidor encargado de hospedar físicamente la b
 * **Funciones Clave:** Se encarga de autenticar de forma imperativa las identidades de los usuarios y autorizar sus accesos a los recursos compartidos de la infraestructura corporativa.  
 * **Políticas de Resiliencia:** Aunque técnicamente un dominio puede operar con un único servidor activo, **es una buena práctica y recomendación estricta de producción desplegar un mínimo de dos Controladores de Dominio**. Esto garantiza alta disponibilidad y persistencia mediante réplicas exactas de *backup* ante fallos físicos del hardware o cortes de suministro.
 
+```mermaid
 graph TD
-    User[👤 Puesto Alumno] -->|Solicitud de Acceso| DC_Principal[🖥️ DC Principal <br><i>Base datos ntds.dit activa</i>]
-    DC_Principal <=>|Replicación de objetos multi-maestro| DC_Backup[🖥️ DC Secundario <br><i>Backup en caliente de réplica</i>]
-    
+    User["👤 Puesto Alumno"] -->|"Solicitud de Acceso"| DC_Principal["🖥️ DC Principal<br/><i>Base datos ntds.dit activa</i>"]
+
+    DC_Principal <-->|"Replicación de objetos multi-maestro"| DC_Backup["🖥️ DC Secundario<br/><i>Backup en caliente de réplica</i>"]
+
     style DC_Backup fill:#f9f,stroke:#333,stroke-width:2px
+```
 
 ---
 

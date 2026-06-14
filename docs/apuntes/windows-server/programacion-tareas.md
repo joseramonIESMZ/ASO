@@ -38,97 +38,97 @@ $Fuente  = "MiTareaProgramada"
 # Validar la existencia de la fuente de eventos en el registro del sistema operativo
 if (-not [System.Diagnostics.EventLog]::SourceExists($Fuente)) {
     # Requiere privilegios elevados de Administrador para su inicialización
-    New-EventLog -LogName Application -Source $Fuente[cite: 11]
+    New-EventLog -LogName Application -Source $Fuente
 }
 
 # Inyectar la entrada informativa en el log de Aplicación
-Write-EventLog -LogName Application -Source $Fuente -EntryType Information -EventId 1000 -Message $Mensaje[cite: 11]
+Write-EventLog -LogName Application -Source $Fuente -EntryType Information -EventId 1000 -Message $Mensaje
 ```
 
 💻 Gestión Operativa mediante PowerShell Core
 El aprovisionamiento de tareas programadas en entornos Server Core se realiza utilizando el módulo nativo de administración de tareas.
 
 1. Programación Básica (Contexto de Sesión Interactiva)
-Por defecto, si registramos una tarea de forma simplificada, el sistema asume de manera automática que la acción se ejecutará bajo el contexto del usuario actual y únicamente si dicho usuario mantiene una sesión interactiva abierta en el equipo[cite: 11].
+Por defecto, si registramos una tarea de forma simplificada, el sistema asume de manera automática que la acción se ejecutará bajo el contexto del usuario actual y únicamente si dicho usuario mantiene una sesión interactiva abierta en el equipo.
 
 ```powershell
 # Paso 1: Definir la acción (Lanzar el motor de PowerShell pasando el script por parámetro)
-$Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"[cite: 11]
+$Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"
 
 # Paso 2: Definir el disparador cronológico (Ejecución diaria a las 16:30)
-$Trigger = New-ScheduledTaskTrigger -Daily -At 4:30pm[cite: 11]
+$Trigger = New-ScheduledTaskTrigger -Daily -At 4:30pm
 
 # Paso 3: Registrar de forma persistente la tarea lista para ejecución
-Register-ScheduledTask -TaskName "PruebaTarea" -Action $Action -Trigger $Trigger -Description "Tarea de prueba básica"[cite: 11]
+Register-ScheduledTask -TaskName "PruebaTarea" -Action $Action -Trigger $Trigger -Description "Tarea de prueba básica"
 ```
 
 2. Programación Avanzada (Sin Sesión Iniciada y Usuario Específico)
-Para scripts de infraestructura críticos (como las tareas de monitorización centralizada contra SQL Server), las acciones deben ejecutarse independientemente de si el administrador tiene la sesión abierta en el servidor[cite: 11].
+Para scripts de infraestructura críticos (como las tareas de monitorización centralizada contra SQL Server), las acciones deben ejecutarse independientemente de si el administrador tiene la sesión abierta en el servidor.
 
-Para independizar la tarea del inicio de sesión, debemos instanciar un objeto de seguridad tipo Principal (New-ScheduledTaskPrincipal), asignando el tipo de logon mediante contraseña persistente (-LogonType Password)[cite: 11].
+Para independizar la tarea del inicio de sesión, debemos instanciar un objeto de seguridad tipo Principal (New-ScheduledTaskPrincipal), asignando el tipo de logon mediante contraseña persistente (-LogonType Password).
 
 ```powershell
 # Paso 1: Configurar la acción y el trigger (En este caso, ejecución única en 5 minutos)
-$Action  = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"[cite: 11]
-$Trigger = New-ScheduledTaskTrigger -Once -At ((Get-Date).AddMinutes(5))[cite: 11]
+$Action  = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"
+$Trigger = New-ScheduledTaskTrigger -Once -At ((Get-Date).AddMinutes(5))
 
 # Paso 2: Forzar el contexto de seguridad desatendido mediante un Principal
-$Principal = New-ScheduledTaskPrincipal -UserId "MIEMPRESA\joseramon" -LogonType Password[cite: 11]
+$Principal = New-ScheduledTaskPrincipal -UserId "MIEMPRESA\joseramon" -LogonType Password
 
 # Paso 3: Ensamblar la estructura completa del objeto Tarea
-$ObjectTarea = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -Description "Tarea desatendida"[cite: 11]
+$ObjectTarea = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -Description "Tarea desatendida"
 
 # Paso 4: Registrar en el sistema inyectando de forma segura las credenciales de ejecución
-Register-ScheduledTask -TaskName "PruebaTareaDesatendida" -InputObject $ObjectTarea -User "MIEMPRESA\joseramon" -Password (Read-Host "Introduce contraseña de red")[cite: 11]
+Register-ScheduledTask -TaskName "PruebaTareaDesatendida" -InputObject $ObjectTarea -User "MIEMPRESA\joseramon" -Password (Read-Host "Introduce contraseña de red")
 ```
 
 3. Programación con Configuración de Parámetros Adicionales (Settings)
-Para entornos de movilidad o servidores de tolerancia a fallos, las propiedades avanzadas o Settings regulan contingencias de hardware críticas mediante el cmdlet New-ScheduledTaskSettingsSet[cite: 11]:
+Para entornos de movilidad o servidores de tolerancia a fallos, las propiedades avanzadas o Settings regulan contingencias de hardware críticas mediante el cmdlet New-ScheduledTaskSettingsSet:
 
 ```powershell
 # Definir parámetros avanzados de tolerancia a fallos energéticos y reintentos
-$Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances Parallel -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 5)[cite: 11]
+$Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances Parallel -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 5)
 
 # El objeto settings se acopla directamente al instanciar el objeto de la tarea
-$ObjectTareaCompleta = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings -Description "Tarea con políticas de resiliencia"[cite: 11]
+$ObjectTareaCompleta = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings -Description "Tarea con políticas de resiliencia"
 ```
 
 ⏱️ Escenarios Comunes de Despliegue en el Proyecto
 A. Repetición a Intervalos Regulares (Telemetría de Sprints)
-Para flujos de monitorización continua automatizada, se programan disparadores basados en intervalos recurrentes combinando los parámetros -RepetitionInterval y -RepetitionDuration[cite: 11]:
+Para flujos de monitorización continua automatizada, se programan disparadores basados en intervalos recurrentes combinando los parámetros -RepetitionInterval y -RepetitionDuration:
 
 ```powershell
 # Definir lapsos temporales de repetición continuados
-$Repite = New-TimeSpan -Minutes 1[cite: 11]
-$Dura   = New-TimeSpan -Minutes 5[cite: 11]
+$Repite = New-TimeSpan -Minutes 1
+$Dura   = New-TimeSpan -Minutes 5
 
-$Action  = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"[cite: 11]
-$Trigger = New-ScheduledTaskTrigger -Once -At 11:01 -RepetitionInterval $Repite -RepetitionDuration $Dura[cite: 11]
+$Action  = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"
+$Trigger = New-ScheduledTaskTrigger -Once -At 11:01 -RepetitionInterval $Repite -RepetitionDuration $Dura
 
-Register-ScheduledTask -TaskName "MétricasRecurrentes" -Action $Action -Trigger $Trigger[cite: 11]
+Register-ScheduledTask -TaskName "MétricasRecurrentes" -Action $Action -Trigger $Trigger
 ```
 
 B. Ejecución Automatizada al Inicio del Servidor (-AtStartup)
 Ideal para el script progTareaInicio.ps1, garantizando que los demonios de captura se inicialicen inmediatamente al arrancar el nodo de Proxmox, sin depender de accesos remotos WinRM manuales posteriores:
 
 ```powershell
-$Action    = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"[cite: 11]
-$Trigger   = New-ScheduledTaskTrigger -AtStartup[cite: 11]
-$Principal = New-ScheduledTaskPrincipal -UserId "MIEMPRESA\Administrador" -LogonType Password[cite: 11]
+$Action    = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File E:\scripts\pruebatarea.ps1"
+$Trigger   = New-ScheduledTaskTrigger -AtStartup
+$Principal = New-ScheduledTaskPrincipal -UserId "MIEMPRESA\Administrador" -LogonType Password
 
-$ObjectTareaInicio = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal[cite: 11]
-Register-ScheduledTask "TareaServicioInicio" -InputObject $ObjectTareaInicio -User "MIEMPRESA\Administrador" -Password "ContraseñaAdmin"[cite: 11]
+$ObjectTareaInicio = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal
+Register-ScheduledTask "TareaServicioInicio" -InputObject $ObjectTareaInicio -User "MIEMPRESA\Administrador" -Password "ContraseñaAdmin"
 ```
 
 🔍 Validación Operativa e Inspección del Historial
-Para certificar que el planificador de tareas ha coordinado correctamente las llamadas desatendidas y extraer los metadatos de las marcas de tiempo, auditamos el registro de seguridad mediante comandos lógicos de filtrado[cite: 11]:
+Para certificar que el planificador de tareas ha coordinado correctamente las llamadas desatendidas y extraer los metadatos de las marcas de tiempo, auditamos el registro de seguridad mediante comandos lógicos de filtrado:
 
 ```powershell
 # Consultar de forma analítica los eventos generados por nuestra tarea en el log
 Get-WinEvent -LogName Application | Where-Object {
     $_.Id -eq 1000 -and 
     $_.ProviderName -eq "MiTareaProgramada"
-} | Select-Object TimeCreated, Message | Format-List[cite: 11]
+} | Select-Object TimeCreated, Message | Format-List
 ```
 
 🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
@@ -137,7 +137,7 @@ Síntoma: Tras implementar el script de automatización del Sprint 3 destinado a
 
 Causa Raíz: Configuración de directivas de seguridad implícitas en el sistema operativo. Por defecto, al instanciar una tarea programada sin especificar configuraciones avanzadas de entorno (Settings), Windows Server le asigna una propiedad oculta de limitación de tiempo de ejecución de seguridad (ExecutionTimeLimit) equivalente a 3 días (72 horas), procediendo a matar de forma imperativa los procesos hijos vinculados a PowerShell al expirar dicho temporizador.
 
-Solución Operativa en Clase: El alumno debe modificar los metadatos de la tarea forzando la anulación del límite de tiempo. Para ello, debe generar un conjunto de parámetros avanzados deshabilitando la directiva de parada mediante una variable de tiempo en valor cero ([TimeSpan]::Zero) y actualizar el registro de la tarea:
+Solución Operativa en Clase: El alumno debe modificar los metadatos de la tarea forzando la anulación del límite de tiempo. Para ello, debe generar un conjunto de parámetros avanzados deshabilitando la directiva de parada mediante una variable de tiempo en valor cero (`[TimeSpan]::Zero`) y actualizar el registro de la tarea:
 
 ```powershell
 # Forzar la anulación estricta del límite de tiempo de ejecución en caliente
@@ -149,12 +149,12 @@ Set-ScheduledTask -TaskName "PruebaTareaDesatendida" -Settings $SettingsModifica
 
 📚 Referencias y Fuentes Consultadas
 !!! info "Documentación Oficial y Autoría"
-* Material Base: Basado en la unidad temática empresarial "UD3. Fundamentos de administración de Windows Server - Programación de tareas" desarrollada por el Departamento de Informática del IES Marcos Zaragoza[cite: 11].
-* Diseño Curricular y Cátedra: José Ramón Soria Nieto[cite: 11].
-* Entorno Formativo: Módulo de Administración de Sistemas Operativos (ASO), correspondiente al Segundo Curso del Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR/ASIX)[cite: 11].
+* Material Base: Basado en la unidad temática empresarial "UD3. Fundamentos de administración de Windows Server - Programación de tareas" desarrollada por el Departamento de Informática del IES Marcos Zaragoza.
+* Diseño Curricular y Cátedra: José Ramón Soria Nieto.
+* Entorno Formativo: Módulo de Administración de Sistemas Operativos (ASO), correspondiente al Segundo Curso del Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR/ASIX).
 
 !!! abstract "Soporte Institucional y Fondos Europeos"
-* Entidad Reguladora: Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport[cite: 11].
-* Financiación Institucional: Proyecto cofinanciado por la Unión Europea a través del Fondo Social Europeo (FSE)[cite: 11].
-* «El FSE invierte en tu futuro» — Acciones enfocadas en la optimización tecnológica, la formación técnica avanzada y el desarrollo de habilidades de automatización digital para infraestructuras informáticas en red[cite: 11].
+* Entidad Reguladora: Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.
+* Financiación Institucional: Proyecto cofinanciado por la Unión Europea a través del Fondo Social Europeo (FSE).
+* «El FSE invierte en tu futuro» — Acciones enfocadas en la optimización tecnológica, la formación técnica avanzada y el desarrollo de habilidades de automatización digital para infraestructuras informáticas en red.
 

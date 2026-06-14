@@ -15,7 +15,7 @@ A diferencia de Windows, que expone su telemetría mediante una API abstracta de
 
 * **/proc/stat:** Registra estadísticas acumuladas del sistema desde el arranque, desglosando los tiempos de CPU en contexto de usuario, sistema, nice e inactividad.
 * **/proc/meminfo:** Expone de forma detallada el estado de la memoria RAM física, la memoria disponible, buffers y la memoria caché.
-* **/proc/[PID]:** Cada programa en ejecución (proceso) genera una carpeta temporal identificada con su Número de Identificador (*Process ID*), aislando sus hilos, sockets de red y consumo exacto de RAM.
+* **`/proc/[PID]`** Cada programa en ejecución (proceso) genera una carpeta temporal identificada con su Número de Identificador (*Process ID*), aislando sus hilos, sockets de red y consumo exacto de RAM.
 
 ```mermaid
 graph TD

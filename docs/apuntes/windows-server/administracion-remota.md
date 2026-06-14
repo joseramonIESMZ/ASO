@@ -7,7 +7,7 @@ La operación remota de servidores y el uso de shells seguros a través de la re
     * **CE1-RA4:** Se han descrito métodos de acceso y administración remota de sistemas (análisis de consolas locales, virtuales y servicios de red).
     * **CE3-RA4:** Se han utilizado herramientas de administración remota suministradas por el propio sistema operativo (uso nativo de `New-PSSession` y `Enter-PSSession`).
     * **CE5-RA4:** Se han utilizado comandos y herramientas gráficas para gestionar los servicios de acceso y administración remota (habilitación y control del servicio WinRM).
-* **Resultado de Aprendizaje 7 (RA7) [Soporte Procedimental]:** Utiliza lenguajes de guiones en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.
+* **Resultado de Aprendizaje 7 (RA7) (Soporte Procedimental):** Utiliza lenguajes de guiones en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.
     * **CE5-RA7:** Se han creado y probado guiones de administración de servicios (uso de bloques de comandos remotos desatendidos).
 ---
 

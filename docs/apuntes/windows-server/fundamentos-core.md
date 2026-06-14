@@ -7,7 +7,7 @@ La asimilación de los conceptos integrados en este bloque teórico-práctico pe
     * *Criterios de evaluación vinculados:* CE1-RA3, CE2-RA3 y CE3-RA3.
 * **Resultado de Aprendizaje 4 (RA4):** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
     * *Criterios de evaluación vinculados:* CE1-RA4, CE3-RA4 y CE5-RA4.
-* **Resultado de Aprendizaje 1 (RA1) [Soporte Transversal]:** Administra el servicio de directorio integrándolo en una red.
+* **Resultado de Aprendizaje 1 (RA1) (Soporte Transversal):** Administra el servicio de directorio integrándolo en una red.
     * *Criterios de evaluación vinculados:* CE1-RA1 (Identificación de estructuras lógicas y funciones base).
 
 ## 🏢 Aspectos Clave en la Administración de Servidores

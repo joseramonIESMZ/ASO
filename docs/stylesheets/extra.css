@@ -50,6 +50,28 @@
     align-items: center;
     height: 20px;
   }
+
+  /* Menú superior de navegación: azul claro + texto blanco */
+.md-tabs {
+  background-color: #3949ab !important;
+}
+
+.md-tabs__link {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-weight: 600;
+}
+
+.md-tabs__link:hover {
+  color: #ffffff !important;
+  opacity: 0.85 !important;
+}
+
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link--active {
+  color: #ffffff !important;
+  border-bottom: 2px solid #ffffff;
+}
   
   /* ==========================================================================
      3. SEPARACIÓN VISUAL Y AJUSTE DE ANCHURA MAXIMA (Layout Nativo)
@@ -67,7 +89,7 @@
   
   /* Columna central: Añade un margen de 2rem para dar "aire" al texto de los apuntes */
   .md-content {
-    margin: 2rem !important;
+    margin: 1.5rem !important;
   }
   
   /* Columna izquierda: Añade espacio arriba para que el menú de secciones no toque la cabecera */
