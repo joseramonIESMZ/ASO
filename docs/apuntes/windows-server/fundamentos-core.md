@@ -1,12 +1,16 @@
 ﻿# Fundamentos de Administración de Windows Server
 
 ## 🎯 Relación con el Currículo (RA y CE)
-* **Resultado de Aprendizaje 2 (RA2):** Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.
-* **Resultado de Aprendizaje 3 (RA3):** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
+La asimilación de los conceptos integrados en este bloque teórico-práctico permite verificar y evaluar el grado de consecución de los siguientes objetivos curriculares:
 
----
+* **Resultado de Aprendizaje 3 (RA3):** Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.
+    * *Criterios de evaluación vinculados:* CE1-RA3, CE2-RA3 y CE3-RA3.
+* **Resultado de Aprendizaje 4 (RA4):** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
+    * *Criterios de evaluación vinculados:* CE1-RA4, CE3-RA4 y CE5-RA4.
+* **Resultado de Aprendizaje 1 (RA1) [Soporte Transversal]:** Administra el servicio de directorio integrándolo en una red.
+    * *Criterios de evaluación vinculados:* CE1-RA1 (Identificación de estructuras lógicas y funciones base).
 
-## 🏢 Fundamentos Clave en la Administración de Servidores
+## 🏢 Aspectos Clave en la Administración de Servidores
 
 La administración de cualquier sistema operativo de servidor, y especialmente de Windows Server, implica una serie de ámbitos de actuación clave que permiten mantener un entorno seguro, eficiente y bien organizado dentro de la infraestructura de red corporativa.
 
@@ -114,6 +118,7 @@ iostat -xz 1
     * **Material Base:** Basado en los contenidos de la unidad didáctica *"UD3. Fundamentos de administración de Windows Server"* del Departamento de Informática del **IES Marcos Zaragoza**.
     * **Autoría del Temario:** José Ramón Soria Nieto.
     * **Marco Curricular:** Programación didáctica para el módulo de *Administración de Sistemas Operativos (ASO)* del Ciclo Formativo de Grado Superior en *Administración de Sistemas Informáticos en Red (ASIR/ASIX)*.
+    * **Material adicional:** https://learn.microsoft.com/es-es/windows-server/
 
 !!! abstract "Cofinanciación y Soporte Institucional"
     * **Entidad Educativa:** Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.

@@ -1,15 +1,17 @@
 ﻿# Administración Remota (WinRM)
 
 ## 🎯 Relación con el Currículo (RA y CE)
+La operación remota de servidores y el uso de shells seguros a través de la red constituyen el núcleo procedimental para la consecución de los siguientes objetivos del currículo oficial:
 
-* **Resultado de Aprendizaje 3 (RA3):** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
-    * **CE 3.a:** Se ha valorado la importancia de la administración remota.
-    * **CE 3.b:** Se ha configurado el acceso remoto al servidor de forma segura.
-    * **CE 3.c:** Se han utilizado herramientas de administración remota de terminal para interactuar con el sistema.
-
+* **Resultado de Aprendizaje 4 (RA4):** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
+    * **CE1-RA4:** Se han descrito métodos de acceso y administración remota de sistemas (análisis de consolas locales, virtuales y servicios de red).
+    * **CE3-RA4:** Se han utilizado herramientas de administración remota suministradas por el propio sistema operativo (uso nativo de `New-PSSession` y `Enter-PSSession`).
+    * **CE5-RA4:** Se han utilizado comandos y herramientas gráficas para gestionar los servicios de acceso y administración remota (habilitación y control del servicio WinRM).
+* **Resultado de Aprendizaje 7 (RA7) [Soporte Procedimental]:** Utiliza lenguajes de guiones en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.
+    * **CE5-RA7:** Se han creado y probado guiones de administración de servicios (uso de bloques de comandos remotos desatendidos).
 ---
 
-## 🏢 ¿Cómo accedemos al Shell de los Servidores?
+## 🏢 **¿Cómo accedemos al Shell de los Servidores?**
 
 Cuando necesitamos conectarnos a un equipo servidor para proceder a su administración operativa, disponemos de cuatro opciones principales:
 
@@ -35,7 +37,7 @@ Cuando necesitamos conectarnos a un equipo servidor para proceder a su administr
 
 ---
 
-## 📋 Recomendaciones y Buenas Prácticas del Administrador
+## 📋 **Recomendaciones y Buenas Prácticas del Administrador**
 
 * **Evitar consolas físicas/virtuales:** La conexión a la consola local o a la interfaz de Proxmox solo debe realizarse para instalaciones iniciales o mantenimientos concretos que requieran cortar el acceso a la red o modificar parámetros de la UEFI-BIOS.
 * **Inseguridad del entorno gráfico remoto:** Las conexiones remotas mediante Escritorio Remoto (RDP) tradicional o VNC no se consideran eficientes ni completamente seguras en todos los escenarios de infraestructura, ya que saturan la red y la CPU de tráfico de vídeo innecesario. Para la administración corporativa se deben priorizar herramientas como la CLI de PowerShell o consolas de gestión web centralizadas como **Windows Admin Center**.
@@ -43,11 +45,37 @@ Cuando necesitamos conectarnos a un equipo servidor para proceder a su administr
 
 ---
 
-## ⚙️ PowerShell Remoting y el Protocolo WinRM
+## ⚙️ **PowerShell Remoting y el Protocolo WinRM**
 
 Inyectando la filosofía de producción de un Centro de Procesamiento de Datos (CPD), los servidores suelen estar instalados en racks aislados dentro de salas frías. El personal técnico especializado interactúa con ellos a distancia desde sus puestos de trabajo a través del ecosistema de comunicaciones WinRM.
 
-![Esquema de arquitectura y flujo de red de PowerShell Remoting](../../img/esquema-winrm.png)
+### 🧬 Arquitectura y Flujo de Red de PowerShell Remoting (WinRM)
+
+#### Esquema Lógico de Comunicación Cliente-Servidor
+
+```mermaid
+graph LR
+    subgraph Cliente ["EQUIPO CLIENTE (Administrador)"]
+        A["💻 Inicio de Sesión<br><b>(New-PSSession)</b>"] --> B["🔒 Carga de Credenciales<br><i>(Autenticación)</i>"]
+        B --> C["📦 Encapsulado WS-Management<br><b>(WS-MAN)</b>"]
+    end
+
+    subgraph Servidor ["SERVIDOR DESTINO (Server Core)"]
+        E["📟 Recepción de Sesión<br><i>(Servicio WinRM)</i>"] --> F["🔑 Validación de Credenciales<br><b>(Kerberos / NTLM)</b>"]
+        F --> G["🔓 Decodificado WS-Management"]
+    end
+
+    C == "<b>FLUJO DE RED (TCP/IP)</b><br>Puerto 5985 (HTTP - Cifrado Kerberos)<br>o Puerto 5986 (HTTPS - SSL/TLS)" ==> E
+
+    style Cliente fill:#f5f5f5,stroke:#999,stroke-width:1px
+    style Servidor fill:#f5f5f5,stroke:#999,stroke-width:1px
+    style C fill:#fff,stroke:#333,stroke-width:1px
+    style E fill:#fff,stroke:#333,stroke-width:1px
+```
+
+!!! info "Nota sobre Seguridad"
+    Esta arquitectura separa estrictamente las responsabilidades del sistema. El proceso de autenticación ocurre de forma segura en el servidor, y solo los resultados planos de salida se transmiten de vuelta por la red. La ejecución del comando o script en el host remoto permanece completamente aislada dentro de la sesión de usuario remota abierta.
+
 
 WinRM es la implementación nativa de Microsoft del protocolo estándar **WS-Management (WS-MAN)**. Funciona encapsulando las instrucciones de automatización sobre paquetes estándar HTTP o HTTPS para su transmisión por la red bajo la pila TCP/IP.
 
@@ -123,7 +151,7 @@ Restart-Service WinRM
 
 ### 📚 Referencias y Fuentes Consultadas
 !!! info "Documentación Oficial y Autoría"
-* Material Base: Basado en la presentación académica y apuntes "UD3. Fundamentos de administración de Windows Server - Administracion remota" desarrollados por el Departamento de Informática del IES Marcos Zaragoza.
+    * **Material Base:** [Basado en la presentación académica y apuntes *UD3. Fundamentos de administración de Windows Server - Administración remota* desarrollados por el Departamento de Informática del IES Marcos Zaragoza](https://gvaedu-my.sharepoint.com/:b:/r/personal/jr_soria_edu_gva_es/Documents/MIS-APUNTES/ASO/GITHUB-AUX/Windows%20Server/Administracion-remota/UD3.%20Fundamentos%20de%20administraci%C3%B3n%20de%20Windows%20Server%20-%20Administracion%20remota.pdf?csf=1&web=1&e=RE3UE9).
 * Docente Especialista / Autor: José Ramón Soria Nieto.
 * Marco Modular: Contenidos curriculares oficiales vinculados al módulo de Administración de Sistemas Operativos (ASO) dentro del Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR/ASIX).
 

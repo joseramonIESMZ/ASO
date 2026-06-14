@@ -172,7 +172,57 @@ lodctr /s:descripcionPerfMon.txt
 Get-Content -Path "descripcionPerfMon.txt" -Encoding Unicode | Select-String -Pattern ".*=.*" | Out-File -FilePath ".\descripContadoresLlimpias.txt"
 ```
 
+---
+
+## 💾 Supervisión Avanzada mediante Clases CIM (Common Information Model)
+
+Aunque los contadores de rendimiento (`Get-Counter`) son ideales para métricas en tiempo real que varían segundo a segundo (como el % de uso de CPU), la infraestructura de administración **CIM/WMI** es la herramienta idónea para supervisar el **estado de salud estático y estructural** del servidor (hardware, almacenamiento permanente, procesos y servicios del sistema).
+
+En entornos modernos de producción y arquitecturas *Server Core*, se prioriza el uso de los cmdlets `*-CimInstance` sobre los antiguos cmdlets de WMI, ya que CIM opera de forma nativa sobre el protocolo estándar **WS-Man (WinRM)** de administración remota, garantizando conexiones seguras, rápidas y eficientes a través del cortafuegos corporativo.
+
+### 1. Supervisión del Almacenamiento Lógico (`CIM_LogicalDisk`)
+Es fundamental supervisar de forma automatizada el espacio disponible en los volúmenes del sistema para evitar caídas críticas del controlador de dominio por falta de almacenamiento.
+
+Mediante la clase `CIM_LogicalDisk`, podemos filtrar los discos lógicos del servidor. Para entornos reales, debemos discriminar y analizar únicamente aquellas unidades que correspondan a discos duros reales o arreglos RAID del hipervisor (las cuales devuelven un identificador de tipo de medio o `MediaType` igual a `12`), ignorando unidades ópticas o pendrives extraíbles.
+
+```powershell
+# Obtener el estado, tamaño total y espacio libre de los discos lógicos persistentes
+Get-CimInstance -ClassName CIM_LogicalDisk | Where-Object { $_.MediaType -eq 12 } | Select-Object DeviceID, 
+    @{Name="Tamaño_GB";Expression={[Math]::Round($_.Size / 1GB, 2)}}, 
+    @{Name="Libre_GB";Expression={[Math]::Round($_.FreeSpace / 1GB, 2)}},
+    @{Name="Ocupación_%";Expression={[Math]::Round((($_.Size - $_.FreeSpace) / $_.Size) * 100, 2)}}
+```
+
+### 2. Supervisión de Procesos Críticos en Ejecución (CIM_Process)
+El administrador debe auditar de forma desatendida qué hilos o procesos están consumiendo los recursos de memoria y computación del servidor en un momento dado. La clase CIM_Process permite mapear el identificador del proceso (ProcessId), su consumo de memoria RAM física en el Working Set (WorkingSetSize) y la ruta del binario ejecutable:
+
+```powershell
+# Listar los 5 procesos que más memoria RAM física están consumiendo en el servidor
+Get-CimInstance -ClassName CIM_Process | 
+    Sort-Object WorkingSetSize -Descending | 
+    Select-Object ProcessId, Name, @{Name="RAM_Consumida_MB";Expression={[Math]::Round($_.WorkingSetSize / 1MB, 2)}} -First 5
+```
+
+### 3. Supervisión del Estado de los Servicios del Sistema (Win32_Service)
+Para certificar la disponibilidad de la infraestructura del aula, es necesario monitorizar que los servicios vitales de Active Directory (como el DNS o el servicio de replicación DFSR) se encuentren en estado de ejecución (Running) y configurados en inicio automático:
+
+```powershell
+# Auditar el estado de salud de los servicios de red esenciales del Controlador de Dominio
+$ServiciosCríticos = "DNS", "NTDS", "DFSR", "Kdc"
+Get-CimInstance -ClassName Win32_Service | 
+    Where-Object { $_.Name -in $ServiciosCríticos } | 
+    Select-Object Name, DisplayName, StartMode, State
+```
+
+📈 Integración en la Base de Datos del Proyecto (Métricas Mixtas)
+La combinación de ambas herramientas dota a la organización de un sistema de monitorización centralizado profesional:
+
+Los scripts programados en PowerShell recolectan las métricas dinámicas con Get-Counter y los estados estructurales con Get-CimInstance.
+
+Los datos limpios recopilados se procesan y se inyectan en la base de datos centralizada monitoriza de SQL Server mediante el comando Invoke-Sqlcmd, consolidando el cuadro de mando de salud de toda la red corporativa.
+
 🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
+
 💥 Caso Práctico: Desbordamiento de la Cola de la CPU por sobreasignación de vCPUs en Proxmox
 Síntoma: Al levantar de forma simultánea los servidores virtuales de bases de datos de los 4 equipos de alumnos sobre el hardware físico del host de aula, la latencia en las terminales PowerShell Remoting (WinRM) se eleva a niveles inaceptables. Al intentar capturar datos, el contador \System\Longitud de la cola de la CPU arroja valores de forma sostenida superiores a 15.
 

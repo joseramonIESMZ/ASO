@@ -1,15 +1,4 @@
-# 💻 ASO Infrastructure Lab
-
-!!! info inline end "🚀 Ejercicios Rápidos"
-    Acceso directo a los laboratorios prácticos conceptuales de este bloque:
-    
-    * [📄 Ejercicio Windows](ejercicios/solucion-windows-server/){ target="_blank" }
-    * [📄 Ejercicio Linux](ejercicios/solucion-linux/){ target="_blank" }
-    * [📄 Ejercicio Active Directory](ejercicios/solucion-ad/){ target="_blank" }
-    * [📄 Ejercicio PowerShell](ejercicios/solucion-powershell/){ target="_blank" }
-    
-    ---
-    *Recuerda validar tus scripts antes de subirlos al repositorio de tu equipo.*
+# 💻 ASO Infraestructura de laboratorio
 
 ## 🚀 Presentación
 
