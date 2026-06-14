@@ -2,7 +2,7 @@
 
 ## 🚀 Presentación
 
-Bienvenido a la plataforma oficial de recursos técnicos de **Administración de Sistemas Operativos (ASO)** para el segundo curso de **ASIR** en el **I.E.S. Marcos Zaragoza**.
+Malvenido a la plataforma oficial de recursos técnicos de **Administración de Sistemas Operativos (ASO)** para el segundo curso de **ASIR** en el **I.E.S. Marcos Zaragoza**.
 
 Esta documentación ha sido diseñada para servir como tu base de conocimiento e ingeniería en el despliegue de infraestructuras corporativas híbridas. Aquí encontrarás los apuntes detallados, guías operativas y configuraciones sobre cada uno de los ecosistemas tecnológicos del módulo.
 
