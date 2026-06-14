@@ -9,7 +9,40 @@ extra_css = [
 ]
 
 nav = [
-  { "Inicio" = "index.md" }
+  { "Inicio" = "index.md" },
+
+  { "Windows Server" = [
+    { "Fundamentos de Administración de Windows Server" = "apuntes/windows-server/fundamentos-core.md" },
+    { "Instalación de Windows Server" = "apuntes/windows-server/instalacion-windows-server.md" },
+    { "Administración Remota (WinRM)" = "apuntes/windows-server/administracion-remota.md" },
+    { "Supervisión y mantenimiento" = "apuntes/windows-server/supervision-mantenimiento.md" },
+    { "Programación de tareas" = "apuntes/windows-server/programacion-tareas.md" }
+  ] },
+
+  { "Linux" = [
+  { "Fundamentos de Administración de Linux" = "apuntes/linux/fundamentos-core.md" },
+  { "Administración Remota (SSH)" = "apuntes/linux/administracion-remota-ssh.md" },
+  { "Supervisión y mantenimiento" = "apuntes/linux/supervision-mantenimiento.md" },
+  { "Programación de tareas" = "apuntes/linux/programacion-tareas.md" }
+] },
+
+{ "Active Directory" = [
+  { "Fundamentos de Active Directory" = "apuntes/active-directory/fundamentos-ad-core.md" },
+  { "Implementación de Active Directory" = "apuntes/active-directory/implementacion-ad.md" },
+  { "Administración de Active Directory" = "apuntes/active-directory/administracion-ad.md" },
+  { "Filtros y búsquedas avanzadas" = "apuntes/active-directory/filtros-busquedas-avanzadas.md" },
+  { "Políticas de Grupo (GPO)" = "apuntes/active-directory/politicas-gpo.md" }
+] },
+
+{ "PowerShell" = [
+  { "Fundamentos de PowerShell" = "apuntes/powershell/fundamentos-powershell-core.md" }
+] },
+
+{ "Samba" = [
+  { "Fundamentos de Samba" = "apuntes/samba/fundamentos-samba-core.md" },
+  { "Implementación de Samba" = "apuntes/samba/implementacion-samba.md" },
+  { "Administración de Samba" = "apuntes/samba/administracion-samba.md" }
+] }
 ]
 
 [project.theme]
