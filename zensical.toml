@@ -7,3 +7,23 @@ use_directory_urls = true
 extra_css = [
   "stylesheets/extra.css"
 ]
+
+nav = [
+  { "Inicio" = "index.md" }
+]
+
+[project.theme]
+variant = "classic"
+language = "es"
+custom_dir = "overrides"
+
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "content.code.copy",
+  "search.highlight",
+  "navigation.sticky",
+  "navigation.top"
+]
