@@ -38,11 +38,27 @@ nav = [
   { "Fundamentos de PowerShell" = "apuntes/powershell/fundamentos-powershell-core.md" }
 ] },
 
+{ "Bash Scripting" = [
+  { "Fundamentos y Variables" = "apuntes/bash/bash-fundamentos.md" },
+  { "Parámetros Posicionales" = "apuntes/bash/bash-parametros.md" },
+  { "Condicionales (if/case)" = "apuntes/bash/bash-condicionales.md" },
+  { "Bucles y Repetición" = "apuntes/bash/bash-bucles.md" },
+  { "Funciones en Bash" = "apuntes/bash/bash-funciones.md" },
+  { "Laboratorio de Desafíos" = "apuntes/bash/bash-troubleshooting.md" }
+] },
+
 { "Samba" = [
   { "Fundamentos de Samba" = "apuntes/samba/fundamentos-samba-core.md" },
   { "Implementación de Samba" = "apuntes/samba/implementacion-samba.md" },
   { "Administración de Samba" = "apuntes/samba/administracion-samba.md" }
+] },
+
+{ "Proxmox" = [
+  { "Fundamentos de Proxmox" = "apuntes/proxmox/fundamentos-proxmox.md" },
+  { "Implementación de Proxmox" = "apuntes/proxmox/implementacion-proxmox.md" },
+  { "Administración de Proxmox" = "apuntes/proxmox/administracion-proxmox.md" }
 ] }
+
 ]
 
 [project.theme]
@@ -63,6 +79,7 @@ features = [
 
 [project.markdown_extensions]
 admonition = {}
+"markdown.extensions.md_in_html" = {}
 "pymdownx.details" = {}
 "pymdownx.inlinehilite" = {}
 

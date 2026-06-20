@@ -133,3 +133,28 @@
 .md-sidebar {
   height: calc(100vh - 160px) !important;
 }
+
+/* ==========================================================================
+   6. VÍDEO EMBEBIDO RESPONSIVO (16:9)
+   ========================================================================== */
+.video-embed {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  margin: 1.5rem auto;
+  height: 0;
+  padding-bottom: 56.25%;
+  overflow: hidden;
+  border-radius: 0.2rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.15);
+}
+
+.video-embed > iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

@@ -19,7 +19,7 @@ En nuestro laboratorio, Windows Server 2025 no se instala sobre hardware físico
 Para obtener un rendimiento adecuado en entorno virtualizado, es imprescindible instalar los **drivers VirtIO** durante el despliegue. Estos drivers permiten que Windows reconozca el disco, la tarjeta de red y otros dispositivos paravirtualizados que Proxmox expone a la MV.
 
 !!! info "Referencias oficiales"
-    * [Windows 2025 guest best practices — Proxmox VE](https://pve.proxmox.com/wiki/Windows2025Guest)
+    * [Windows 2025 guest best practices — Proxmox VE](https://pve.proxmox.com/wiki/Windows_2025_guest_best_practices)
     * [Windows VirtIO Drivers — Proxmox VE](https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers)
 
 ---
@@ -38,12 +38,13 @@ Antes de arrancar el instalador de Windows, configuramos la MV en Proxmox con lo
 
 * Habilitamos el **QEMU Guest Agent**.
 * Almacenamos **EFI** y **TPM** en `local-lvm`.
-* Elegimos el controlador de disco **VirtIO SCSI**.
+* Seleccionamos **SCSI** como disco duro virtual y el controlador de disco **VirtIO SCSI single**.
 
 ### 3. Configuración del disco
 
 * **Cache:** `Write back` (mejor rendimiento de E/S).
 * **Discard:** activado (optimiza el espacio en disco mediante **TRIM**).
+* **IO Thread** debe estar habilitado.
 * **Bus:** SCSI.
 * **Tamaño:** 32 GB.
 
@@ -58,7 +59,7 @@ Antes de arrancar el instalador de Windows, configuramos la MV en Proxmox con lo
 
 ### 6. Red
 
-* Conectamos la MV al bridge **`vmbr1`** (LAN interna del laboratorio).
+* Conectamos la MV al bridge **`vmbr0`** (LAN interna del laboratorio).
 * Seleccionamos **VirtIO (paravirtualized)** como dispositivo de red.
 
 ### 7. Confirmación
@@ -66,6 +67,24 @@ Antes de arrancar el instalador de Windows, configuramos la MV en Proxmox con lo
 Revisamos el resumen de opciones y finalizamos la creación de la MV.
 
 ---
+
+## 🎬 Vídeo demostración: creación de la MV en Proxmox
+
+Vídeo complementario con todo el proceso paso a paso para configurar e instalar la máquina virtual destinada a Windows Server 2025.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/Em1CgkHPx4g" 
+    title="Instalación de Windows Server 2025 en MV de Proxmox" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/Em1CgkHPx4g)**
+
 
 ## 💿 Fase II: Instalación del sistema operativo
 
@@ -88,7 +107,7 @@ Revisamos el resumen de opciones y finalizamos la creación de la MV.
 
 En la pantalla **Seleccionar ubicación para instalar Windows Server**, Windows no reconocerá el disco hasta que carguemos los drivers paravirtualizados. Pulsamos **Load Drivers** (*Cargar controladores*) y accedemos a la unidad de CD-ROM donde está montada la ISO de VirtIO.
 
-Debemos instalar **tres drivers** antes de continuar con la partición del disco:
+Aunque podríamos instalar todos los drivers de Virtio para Windows Server, en este momento, únicamente instalaremos los **tres drivers** imprescindibles para un funcionamiento correcto, antes de continuar con la partición del disco:
 
 | Dispositivo | Carpeta del driver | Controlador a seleccionar |
 |-------------|-------------------|---------------------------|
@@ -122,6 +141,24 @@ Debemos instalar **tres drivers** antes de continuar con la partición del disco
 
 ---
 
+## 🎬 Vídeo demostración: Instalación de Windows Server 2025 en MV en Proxmox
+
+Vídeo complementario con todo el proceso paso a paso para instalar Windows Server 2025 en la MV de Proxmox.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/pwgOY9BaH5c" 
+    title="Instalación de Windows Server 2025 en MV de Proxmox" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/pwgOY9BaH5c)**
+
+
 ## 🔗 Próximos pasos
 
 Una vez completada la instalación, el ciclo de vida del servidor continúa con:
@@ -139,7 +176,7 @@ Consulta [Fundamentos de Administración de Windows Server](fundamentos-core.md)
     * **Material Base:** [Instalar Windows Server 2025 en MV de Proxmox (PDF)](https://gvaedu-my.sharepoint.com/:b:/r/personal/jr_soria_edu_gva_es/Documents/MIS-APUNTES/ASO/GITHUB-AUX/Windows%20Server/instalacion-windows-server/Instalar-WServer2025-en-MV-Proxmox.pdf?csf=1&web=1&e=YCoWne)
     * **Autoría del Temario:** José Ramón Soria Nieto.
     * **Marco Curricular:** Programación didáctica para el módulo de *Administración de Sistemas Operativos (ASO)* del Ciclo Formativo de Grado Superior en *Administración de Sistemas Informáticos en Red (ASIR/ASIX)*.
-    * **Material adicional:** https://learn.microsoft.com/es-es/windows-server/
+    * **Material adicional:** [Windows Server learn oficial](https://learn.microsoft.com/es-es/windows-server/)
 
 !!! abstract "Cofinanciación y Soporte Institucional"
     * **Entidad Educativa:** Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.

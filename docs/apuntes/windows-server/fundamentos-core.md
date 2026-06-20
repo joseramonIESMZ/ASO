@@ -115,10 +115,10 @@ iostat -xz 1
 ## 📚 Referencias y Fuentes Consultadas
 
 !!! info "Documentación Oficial y Autoría"
-    * **Material Base:** Basado en los contenidos de la unidad didáctica *"UD3. Fundamentos de administración de Windows Server"* del Departamento de Informática del **IES Marcos Zaragoza**.
+    * **Material Base:** Basado en los contenidos de la unidad didáctica *[UD3. Fundamentos de administración de Windows Server](https://gvaedu-my.sharepoint.com/:b:/r/personal/jr_soria_edu_gva_es/Documents/MIS-APUNTES/ASO/GITHUB-AUX/Windows%20Server/Fundamentos-administracion/UD3.%20Fundamentos%20de%20administraci%C3%B3n%20de%20Windows%20Server.pdf?csf=1&web=1&e=xmL7aE)* del Departamento de Informática del **IES Marcos Zaragoza**.
     * **Autoría del Temario:** José Ramón Soria Nieto.
     * **Marco Curricular:** Programación didáctica para el módulo de *Administración de Sistemas Operativos (ASO)* del Ciclo Formativo de Grado Superior en *Administración de Sistemas Informáticos en Red (ASIR/ASIX)*.
-    * **Material adicional:** https://learn.microsoft.com/es-es/windows-server/
+    * **Material adicional:** [Windows Server learn oficial](https://learn.microsoft.com/es-es/windows-server/)
 
 !!! abstract "Cofinanciación y Soporte Institucional"
     * **Entidad Educativa:** Generalitat Valenciana — Conselleria d'Educació, Cultura i Esport.
