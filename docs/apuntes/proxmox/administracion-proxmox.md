@@ -29,6 +29,35 @@ No todos los backups son iguales. Al configurar un respaldo, debemos elegir el *
 - **Suspend (Pausa):** La máquina se congela momentáneamente mientras se copia la memoria y el estado actual.
 - **Stop (Apagado):** La máquina se apaga de forma limpia, se hace el respaldo y vuelve a arrancar de forma automática. Proporciona la **máxima consistencia** de datos (obligatorio para respaldar grandes instancias como `SQLSERVER01` antes de un Sprint importante).
 
+#### Procedimiento para realizar un Backup en modo Stop
+
+Para realizar una copia de seguridad manual garantizando la máxima consistencia, seguiremos estos pasos en la interfaz de Proxmox:
+
+1. Seleccionar la **Máquina Virtual (MV)** o Contenedor desde el panel izquierdo.
+2. Navegar hasta la pestaña **Backup** en el menú de opciones de la máquina.
+3. Hacer clic en el botón superior **Backup now**.
+4. En la ventana de configuración del respaldo que aparecerá:
+   - **Storage:** Seleccionar el almacenamiento de destino donde se guardará la copia.
+   - **Mode:** Desplegar el menú y elegir explícitamente **Stop**.
+   - **Compression:** Es recomendable dejar `ZSTD (fast and good)`.
+5. Pulsar en el botón **Backup** y esperar a que el visor de tareas (`Task viewer`) confirme que el estado (`Status`) es `OK`. La máquina se detendrá de forma segura, se realizará la copia y se encenderá automáticamente al finalizar.
+
+> **Ejemplo de realización:**
+## 🎬 Vídeo demostración: Copia de respaldo de VM en Proxmox
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/M8KpOW7RSP0" 
+    title="Copia de respaldo de VM en Proxmox" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/M8KpOW7RSP0)**
+
 ### 2. Programación (*Backup Jobs*) y Políticas de Retención
 El administrador de sistemas no debe depender de hacer backups manuales. Estos se deben automatizar en la pestaña *Datacenter -> Backup*.
 - **Planificación (Schedule):** Ejecutar respaldos en ventanas de mantenimiento (ej. viernes a las 23:00h).

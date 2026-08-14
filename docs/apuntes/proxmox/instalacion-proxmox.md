@@ -41,18 +41,21 @@ La instalación se realiza en la unidad **NVMe de 1TB**. Las decisiones tomadas 
 Una vez completada la instalación y accediendo vía SSH (o Consola Web local), debemos realizar el mantenimiento inicial. Proxmox, al ser de entorno empresarial, viene con repositorios de pago activados por defecto que darán error si no tenemos licencia.
 
 ### 3. Modificación de Repositorios (No-Subscription)
-Para entornos académicos, usamos el repositorio comunitario. Lo haremos directamente automatizando desde la terminal de Bash del host:
+Para entornos académicos, usamos el repositorio comunitario. Aunque se podría añadir desde la terminal, mostramos en el siguiente vídeo cómo deshabilitar los repositorios de pago desde la interfaz web de Proxmox, agregando el repositorio comunitario a continuación, y cómo debería quedar finalmente:
 
-```bash
-# 1. Desactivamos el repositorio Enterprise (comentando la línea)
-sed -i 's/^deb/#deb/' /etc/apt/sources.list.d/pve-enterprise.list
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/Kyq-8E5Otv4" 
+    title="Configuración de repositorios sin suscripción en Proxmox" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
 
-# 2. Añadimos el repositorio No-Subscription oficial
-echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" >> /etc/apt/sources.list
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/Kyq-8E5Otv4)**
 
-# 3. Desactivamos el repositorio de Ceph Enterprise (si no lo usamos en clase)
-sed -i 's/^deb/#deb/' /etc/apt/sources.list.d/ceph.list
-```
 
 ### 4. Actualización del Core
 A continuación, sincronizamos repositorios y actualizamos el kernel y los paquetes base:

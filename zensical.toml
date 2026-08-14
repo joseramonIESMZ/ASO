@@ -19,6 +19,15 @@ nav = [
     { "Programación de tareas" = "apuntes/windows-server/programacion-tareas.md" }
   ] },
 
+{ "Active Directory" = [
+  { "Fundamentos de Active Directory" = "apuntes/active-directory/fundamentos-ad-core.md" },
+  { "Implementación de Active Directory" = "apuntes/active-directory/implementacion-ad.md" },
+  { "Estructura Organizativa" = "apuntes/active-directory/estructura-ad.md" },
+  { "Administración de Active Directory" = "apuntes/active-directory/administracion-ad.md" },
+  { "Filtros y búsquedas avanzadas" = "apuntes/active-directory/filtros-busquedas-avanzadas.md" },
+  { "Políticas de Grupo (GPO)" = "apuntes/active-directory/politicas-gpo.md" }
+] },  
+
   { "Linux" = [
   { "Fundamentos de Administración de Linux" = "apuntes/linux/fundamentos-core.md" },
   { "Administración Remota (SSH)" = "apuntes/linux/administracion-remota-ssh.md" },
@@ -26,16 +35,18 @@ nav = [
   { "Programación de tareas" = "apuntes/linux/programacion-tareas.md" }
 ] },
 
-{ "Active Directory" = [
-  { "Fundamentos de Active Directory" = "apuntes/active-directory/fundamentos-ad-core.md" },
-  { "Implementación de Active Directory" = "apuntes/active-directory/implementacion-ad.md" },
-  { "Administración de Active Directory" = "apuntes/active-directory/administracion-ad.md" },
-  { "Filtros y búsquedas avanzadas" = "apuntes/active-directory/filtros-busquedas-avanzadas.md" },
-  { "Políticas de Grupo (GPO)" = "apuntes/active-directory/politicas-gpo.md" }
-] },
-
 { "PowerShell" = [
-  { "Fundamentos de PowerShell" = "apuntes/powershell/fundamentos-powershell-core.md" }
+  { "Fundamentos de PowerShell" = "apuntes/powershell/fundamentos-powershell-core.md" },
+  { "Introducción al Pipeline en PowerShell" = "apuntes/powershell/pipeline-powershell.md" },
+  { "Casos de Uso de PowerShell" = "apuntes/powershell/casos-uso-powershell.md" },
+  { "Variables en PowerShell" = "apuntes/powershell/variables-powershell.md" },
+  { "Arrays en PowerShell" = "apuntes/powershell/variables-array.md" },
+  { "Introducción a Scripts" = "apuntes/powershell/intro-scripts.md" },
+  { "Parámetros en Scripts" = "apuntes/powershell/parametros-scripts.md" },
+  { "Estructuras If y Switch" = "apuntes/powershell/estructuras-if-switch.md" },
+  { "Bucles For y While" = "apuntes/powershell/bucles-for-while.md" },
+  { "Estructura Foreach" = "apuntes/powershell/estructura-foreach.md" },
+  { "Funciones en PowerShell" = "apuntes/powershell/funciones-pwsh.md" }
 ] },
 
 { "Bash Scripting" = [
@@ -48,15 +59,15 @@ nav = [
 ] },
 
 { "Samba" = [
-  { "Fundamentos de Samba" = "apuntes/samba/fundamentos-samba-core.md" },
-  { "Implementación de Samba" = "apuntes/samba/implementacion-samba.md" },
-  { "Administración de Samba" = "apuntes/samba/administracion-samba.md" }
+  { "Fundamentos" = "apuntes/samba/fundamentos-samba-core.md" },
+  { "Instalación" = "apuntes/samba/instalacion-samba.md" },
+  { "Administración básica" = "apuntes/samba/administracion-samba.md" }
 ] },
 
 { "Proxmox" = [
-  { "Fundamentos de Proxmox" = "apuntes/proxmox/fundamentos-proxmox.md" },
-  { "Implementación de Proxmox" = "apuntes/proxmox/implementacion-proxmox.md" },
-  { "Administración de Proxmox" = "apuntes/proxmox/administracion-proxmox.md" }
+  { "Fundamentos" = "apuntes/proxmox/fundamentos-proxmox.md" },
+  { "Instalación" = "apuntes/proxmox/instalacion-proxmox.md" },
+  { "Administración básica" = "apuntes/proxmox/administracion-proxmox.md" }
 ] }
 
 ]
