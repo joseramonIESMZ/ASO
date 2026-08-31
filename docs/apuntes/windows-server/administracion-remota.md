@@ -1,4 +1,4 @@
-﻿# Administración Remota (WinRM)
+# Administración Remota (WinRM)
 
 ## 🎯 Relación con el Currículo (RA y CE)
 La operación remota de servidores y el uso de shells seguros a través de la red constituyen el núcleo procedimental para la consecución de los siguientes objetivos del currículo oficial:
@@ -31,7 +31,7 @@ Cuando necesitamos conectarnos a un equipo servidor para proceder a su administr
 * Ofrece dos modalidades de trabajo: abrir un terminal remoto interactivo o lanzar comandos de forma desatendida a distancia (ej: mediante `Invoke-Command`).
 
 ### 4. Acceso mediante Servidor Intermedio
-* Solución avanzada de seguridad para entornosempresariales (Servidor Bastión o *Jump Server*).
+* Solución avanzada de seguridad para entornos empresariales (Servidor Bastión o *Jump Server*).
 * El administrador realiza primero la conexión remota (SSH o PowerShell Remoting) hacia un servidor intermedio expuesto.
 * Desde este equipo intermedio se realiza un "salto" interno hacia el servidor final que se encuentra aislado de la red externa.
 
@@ -132,6 +132,75 @@ Es la herramienta idónea para la automatización paralela. Envía un bloque de 
 # Obtener de forma remota las unidades de disco asignadas en el Server Core
 Invoke-Command -ComputerName "192.168.10.10" -Credential $credencial -ScriptBlock { Get-PSDrive }
 ```
+
+---
+
+## 🌐 Windows Admin Center (WAC)
+
+Aunque WinRM y PowerShell Remoting son la base de la administración remota moderna, Microsoft ofrece **Windows Admin Center** como la evolución gráfica centralizada del tradicional "Administrador del servidor" (Server Manager) y las consolas MMC.
+
+* **¿Qué es?** Es una aplicación basada en navegador web implementada de forma local para administrar servidores, clústeres, infraestructura hiperconvergente y equipos con Windows 10/11.
+* **El complemento perfecto para Server Core:** Es la solución visual ideal para administrar servidores sin entorno gráfico (Server Core). Permite al administrador gestionar el servidor cómodamente desde su navegador, manteniendo el servidor destino ligero y seguro sin cargar el pesado escritorio de Windows.
+* **¿Cómo funciona?** No requiere instalar "agentes" en los servidores que se van a administrar. WAC utiliza un servicio de puerta de enlace (Gateway) que **traduce las acciones de la interfaz web a comandos de PowerShell y WinRM** de forma subyacente hacia los nodos de destino.
+* **Ventajas operativas:** Es gratuito y consolida herramientas clásicas (Visor de eventos, Administrador de dispositivos, Gestión de certificados, Roles y características, Firewall, etc.) en un portal web único, facilitando enormemente la administración frente al uso exclusivo de la línea de comandos.
+
+### 📥 Instalación y Despliegue en el Aula
+
+Para administrar nuestro servidor Server Core desde el equipo cliente (Windows 11), podemos instalar WAC directamente en nuestro Windows 11 (modo de despliegue local o de cliente):
+
+1. **Descarga:** Obtén el instalador oficial (`.msi`) desde la página web de Microsoft [Windows Admin Center](https://www.microsoft.com/es-es/windows-server/windows-admin-center).
+2. **Instalación:** Ejecuta el instalador en tu Windows 11. Durante el asistente, puedes dejar las opciones por defecto. Utilizará el puerto 6600 de forma predeterminada para el acceso web local.
+3. **Acceso Inicial:** Una vez instalado, abre tu navegador web (Edge o Chrome son los recomendados) y accede a `https://localhost:6600` o abre el acceso directo creado en el menú inicio.
+4. **Certificado de Seguridad:** Al acceder por primera vez, el navegador advertirá de que la conexión no es privada (por el certificado autofirmado que genera WAC). Debes aceptar el riesgo y continuar.
+5. **Credenciales:** Se te solicitarán credenciales para acceder a WAC. Si estás en un dominio de AD y quieres administrar controladores de dominio, tendrás que logarte con cuentas administradoras del dominio.
+
+### 🎮 Operación Básica: Gobernando el Servidor
+
+Una vez dentro de la interfaz web de WAC, el proceso para tomar el control del Server Core es muy intuitivo:
+
+1. **Añadir el Servidor:** En la página principal, haz clic en el botón **"+ Agregar"** y selecciona "Servidores".
+2. **Datos de Conexión:** Introduce la dirección IP o el nombre DNS del servidor Server Core. Si el equipo cliente está en un dominio y buscar añadir el controlador de dominio en el que está, lo más fácil es buscar a partir de la opción de AD. WAC intentará detectar el equipo a través de la red usando WinRM subyacente.
+3. **Credenciales:** Se te solicitarán las credenciales de administrador del servidor destino o usará directamente las proporcionadas para acceder a WAC.
+4. **Administración Visual:** Haz clic sobre la conexión del servidor recién añadida. Se cargará el **Panel General**. A la izquierda tendrás un menú con todas las herramientas de gestión (Visor de eventos, Red, Archivos, Servicios, etc.), y a la derecha la interfaz visual de administración. 
+5. **El poder de la CLI en la web:** Si prefieres ejecutar comandos, WAC incluye una herramienta llamada **"PowerShell"** en la parte superior derecha que abre una consola interactiva web directamente contra el servidor, todo sin salir del navegador.
+6. **Cerrar sesión:** Una vez que hayas terminado de administrar el servidor, cierra sesión en WAC haciendo clic en el icono de perfil y seleccionando "Cerrar sesión".
+
+#### 🎬 Vídeo demostración: Instalación y primeros pasos en WAC
+
+Vídeo complementario con la instalación y primer uso de la herramienta Windows Admin Center desde un equipo cliente.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/6w2F0RmmUDQ"
+    title="Instalación y primer uso de Windows Admin Center"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/6w2F0RmmUDQ)**
+
+---
+
+#### 🎬 Vídeo demostración: Acceso a terminal Powershell remoto desde WAC
+
+Vídeo complementario con el acceso a terminal Powershell remoto desde WAC instalado en pc cliente.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/BPB3ew7zeCM"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/BPB3ew7zeCM)**
+
+---
 
 ### 🔍 Laboratorio de Desafíos y Troubleshooting
 ### 💥 Caso Práctico: Error de resolución de Kerberos en conexiones fuera de dominio

@@ -264,6 +264,198 @@ Get-Vegetable | ForEach-Object { Write-Host "Tenemos $($_.Count) unidades de $($
 Get-Vegetable | ForEach-Object { $_.Name = $_.Name.ToUpper(); $_ }
 ```
 
+## 📝 Ejercicios Prácticos
+
+A continuación se plantean una serie de ejercicios para poner en práctica el uso del pipeline y los cmdlets de manipulación de objetos.
+
+### Agrupación (`Group-Object`)
+
+1. **Agrupa y cuenta los objetos procesos existentes según el nombre del proceso. Elimina la columna Group.**
+??? success "Ver solución"
+    ```powershell
+    Get-Process | Get-Member -Type Property
+    Get-Process | Group-Object -Property Name -NoElement
+    ```
+
+2. **Agrupa y cuenta según su extensión los objetos ficheros dentro del directorio en el que te encuentres.**
+??? success "Ver solución"
+    ```powershell
+    Get-ChildItem | Get-Member -Type Property
+    Get-ChildItem -Recurse -File . | Group-Object -Property Extension
+    ```
+
+3. **Agrupa y cuenta los objetos servicios existentes según su estado (ejecución, parados, etc).**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Get-Member -Type Property
+    Get-Service | Group-Object -Property Status
+    ```
+
+4. **Agrupa y cuenta los objetos servicios existentes según su tipo de inicio (automático, manual, etc) y en orden descendente.**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Get-Member -Type Property
+    Get-Service | Group-Object -Property StartType
+    ```
+
+5. **Agrupa y cuenta los objetos servicios existentes según dos propiedades, estado y tipo de inicio.**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Group-Object -Property Status,StartType
+    ```
+
+### Mediciones (`Measure-Object`)
+
+1. **Cuenta los comandos de los módulos Microsoft.PowerShell.Security y Microsoft.PowerShell.Utility.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Module Microsoft.PowerShell.Security | Measure-Object
+    Get-Command -Module Microsoft.PowerShell.Security,Microsoft.PowerShell.Utility | Measure-Object
+    ```
+
+2. **Muestra todas las estadísticas del tamaño de los archivos .pdf dentro de la carpeta `C:\Users\tu usuario`.**
+??? success "Ver solución"
+    ```powershell
+    Get-ChildItem -File -Recurse -Include "*.pdf" C:\Users\joseramon | Measure-Object -Property Length -Sum -Average -Maximum -Minimum
+    ```
+
+3. **Arranca varias ventanas del navegador firefox (serán varios procesos). Muestra la suma y media de las propiedades WorkingSet y PeakWorkingSet de dichos procesos.**
+??? success "Ver solución"
+    ```powershell
+    Get-Process -Name firefox | Measure-Object -Property WorkingSet,PeakWorkingSet -Sum -Average
+    ```
+
+4. **Cuenta los servicios en estado RUNNING.**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Where Status -eq "Running" | Measure-Object
+    ```
+
+5. **Muestra la suma de CPU de los 5 primeros procesos que más usan CPU.**
+??? success "Ver solución"
+    ```powershell
+    Get-Process | Sort-Object -Property CPU -Descending | Select -First 5 | Measure-Object -Property CPU -Sum
+    ```
+
+### Selección (`Select-Object`) y Cmdlets Básicos
+
+1. **Con el cmdlet `Get-Process`:**
+    * **Muestra la ayuda y explica en qué consiste.**
+    * **Muestra las propiedades y métodos de los objetos que devuelve.**
+    * **Muestra los objetos con las propiedades ProcessName, Id y Ws.**
+??? success "Ver solución"
+    ```powershell
+    Get-Help Get-Process -Full
+    # Get-Process muestra los procesos del sistema (programas en ejecución).
+    
+    Get-Process | Get-Member
+    
+    Get-Process | Select-Object ProcessName,Id,Ws
+    ```
+
+2. **Muestra los procesos del sistema pero donde únicamente aparezca su nombre y no repetido.**
+??? success "Ver solución"
+    ```powershell
+    Get-Process | Select-Object -Unique Name
+    ```
+
+3. **El cmdlet `Get-ChildItem` permite ver el contenido de un directorio, similar al comando dir.exe. Busca en su ayuda los parámetros necesarios para lanzar este cmdlet y que muestre:**
+    * **a) todos los ficheros y directorios dentro de `C:\Users\`**
+    * **b) sólo los directorios y subdirectorios, no los archivos, de `C:\Users`**
+??? success "Ver solución"
+    ```powershell
+    Get-Help Get-ChildItem # Encontramos las opciones -Recurse y -Directory
+    
+    # a)
+    Get-ChildItem -Recurse C:\Users
+    
+    # b)
+    Get-ChildItem -Recurse -Directory C:\Users 
+    ```
+
+4. **Para el comando anterior (sólo directorios), muestra únicamente:**
+    * **a. los dos primeros directorios.**
+    * **b. los dos últimos directorios.**
+??? success "Ver solución"
+    ```powershell
+    # a)
+    Get-ChildItem -Recurse -Directory C:\Users | Select-Object -First 2
+    
+    # b)
+    Get-ChildItem -Recurse -Directory C:\Users | Select-Object -Last 2
+    ```
+
+### Ordenación (`Sort-Object`)
+
+1. **Ordena por nombre los objetos archivos y carpetas contenidos en la carpeta `C:\Windows` (no subcarpetas).**
+??? success "Ver solución"
+    ```powershell
+    Get-ChildItem C:\Windows | Get-Member -Type Property # -> Identificamos la propiedad Name
+    Get-ChildItem C:\Windows | Sort-Object -Property Name
+    ```
+
+2. **Ordena por tamaños los objetos archivos y carpetas contenidos en la carpeta `C:\Users`, incluido subcarpetas y muestra únicamente los 3 últimos.**
+??? success "Ver solución"
+    ```powershell
+    Get-ChildItem -Recurse C:\Users | Sort-Object -Property Length | Select-Object -Last 3
+    
+    # También de mayor a menor tamaño pero sólo muestra los 3 primeros.
+    Get-ChildItem -Recurse C:\Users | Sort-Object -Property Length -Descending | Select-Object -First 3
+    ```
+
+3. **Mostrar los objetos comandos lanzados en el historial de comandos de forma que los más recientes aparezcan en primer lugar. Cmdlet es `Get-History`.**
+??? success "Ver solución"
+    ```powershell
+    Get-History | Sort-Object -Property Id -Descending
+    ```
+
+4. **Muestra los objetos procesos ordenados de mayor a menor por el uso de memoria física (propiedad WS).**
+??? success "Ver solución"
+    ```powershell
+    Get-Process | Sort-Object -Property WS -Descending
+    ```
+
+### Filtrado (`Where-Object`)
+
+1. **Ver los archivos dentro de la carpeta `C:\Users` y subcarpetas cuya extensión es .png. Debes mostrar dos soluciones, una con `Get-ChildItem` y `Where-Object` y otra con el parámetro `-Include` de `Get-ChildItem` (revisa la ayuda).**
+??? success "Ver solución"
+    ```powershell
+    Get-ChildItem | Get-Member
+    
+    # Con -Include
+    Get-ChildItem -Recurse -Include "*.png" C:\Users
+    
+    # Con Where-Object
+    Get-ChildItem -Recurse C:\Users | Where-Object Extension -eq ".png"
+    ```
+
+2. **Ver los servicios en estado de ejecución.**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Get-Member
+    Get-Service | Where-Object status -eq "Running"
+    ```
+
+3. **Ver los servicios cuyo tipo de inicio sea automático.**
+??? success "Ver solución"
+    ```powershell
+    Get-Service | Where-Object StartType -eq "Automatic"
+    ```
+
+4. **Ver los procesos cuyo uso de CPU en ese instante sea mayor que 10.**
+??? success "Ver solución"
+    ```powershell
+    Get-Process | Get-Member # -> Identificamos CPU
+    Get-Process | Where-Object CPU -gt 10
+    ```
+
+5. **El comando `Get-CimInstance CIM_LogicalDisk` muestra las unidades lógicas del equipo. Utiliza `Where-Object` para filtrar únicamente las unidades lógicas con tamaño mayor de 500GB.**
+??? success "Ver solución"
+    ```powershell
+    Get-CimInstance CIM_LogicalDisk | Get-Member # -> Identificamos Size
+    Get-CimInstance CIM_LogicalDisk | Where-Object Size -gt 500GB
+    ```
+
 ---
 
 ## 📚 Referencias y Fuentes Consultadas

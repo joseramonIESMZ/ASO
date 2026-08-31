@@ -288,6 +288,126 @@ $archivo.CreationTime
 $archivo.Delete()
 ```
 
+## 📝 Ejercicios Prácticos
+
+A continuación se plantean una serie de ejercicios para afianzar los conceptos de comandos, ayuda y manejo de objetos en PowerShell.
+
+### Descubrimiento de comandos (`Get-Command`)
+
+1. **Muestra los comandos que comienzan por el verbo obtener.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Verb Get
+    ```
+
+2. **Muestra los comandos de los módulos Microsoft.PowerShell.Security y Microsoft.PowerShell.Utility.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Module Microsoft.PowerShell.Security, Microsoft.PowerShell.Utility
+    ```
+
+3. **Muestra los comandos que contienen la palabra *drive*.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command *drive*
+    ```
+
+4. **Muestra los comandos que contienen el verbo Set y pertenecen al módulo DISM.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Verb Set -Module DISM
+    ```
+
+5. **Busca en la web https://docs.microsoft.com/es-es/powershell/ los comandos que forman parte del módulo NetSecurity. ¿Cuál de ellos sirve para ver las reglas del firewall? Pruébalo.**
+??? success "Ver solución"
+    Vamos al explorador de módulos y buscamos NetSecurity. Observamos que `Get-NetFirewallRule` es el comando que sirve para ver las reglas del firewall.
+    ```powershell
+    Get-NetFirewallRule
+    ```
+
+### Sistema de Ayuda y Módulos (`Get-Help` y `Get-Module`)
+
+1. **Muestra la ayuda de `Get-Command` y lee su descripción.**
+??? success "Ver solución"
+    ```powershell
+    Get-Help Get-Command
+    ```
+
+2. **Actualiza la ayuda de PowerShell Core.**
+??? success "Ver solución"
+    ```powershell
+    # Lanza pwsh.exe si es necesario
+    Update-Help
+    ```
+
+3. **Busca en la ayuda del comando `Get-Module` la opción para ver todos los módulos instalados en el equipo. Lanza dicho comando con dicha opción.**
+??? success "Ver solución"
+    ```powershell
+    Get-Help Get-Module -Full
+    Get-Module -ListAvailable
+    ```
+
+4. **Busca los cmdlets disponibles en el módulo Storage. ¿Y de tipo function?**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Module Storage -Type cmdlet
+    Get-Command -Module Storage -Type function
+    ```
+
+5. **Prueba algún ejemplo de uso de alguno de los cmdlets con verbo Get de dicho módulo.**
+??? success "Ver solución"
+    ```powershell
+    Get-Command -Module Storage -Verb Get
+    # Por ejemplo, Get-Disk muestra los discos que tiene el equipo.
+    Get-Disk
+    ```
+
+6. **Lee la ayuda `about_Core_commands`. ¿Para qué son los cmdlets que aparecen? Prueba alguno. ¿Qué entiendes por PowerShell Provider?**
+??? success "Ver solución"
+    ```powershell
+    Get-Help about_Core_commands
+    Get-ChildItem C:\Users\joseramon
+    ```
+    Un *provider* es una capa de .NET que proporciona acceso a datos de cualquier fuente, por ejemplo, un disco. Con `Get-PSProvider` observamos los proveedores a los que tenemos acceso.
+
+### Descubrimiento de objetos (`Get-Member`) y Propiedades
+
+1. **Muestra la ayuda del comando `Get-Member`. ¿Qué comando lanzarías para ver únicamente las propiedades, Property y AliasProperty, de los objetos devueltos por el comando `Get-Service`?**
+??? success "Ver solución"
+    ```powershell
+    Get-Help Get-Member
+    Get-Service | Get-Member -Type Property,AliasProperty
+    ```
+
+2. **Muestra la propiedad Name de los objetos devueltos por `Get-Service`.**
+??? success "Ver solución"
+    ```powershell
+    $(Get-Service).Name
+    ```
+
+3. **Muestra las propiedades y métodos del comando `Get-PSDrive -PSProvider FileSystem`. A continuación, muestra: la propiedad nombre del dispositivo y la propiedad espacio libre.**
+??? success "Ver solución"
+    ```powershell
+    Get-PSDrive -PSProvider FileSystem | Get-Member
+    $(Get-PSDrive -PSProvider FileSystem).Name
+    $(Get-PSDrive -PSProvider FileSystem).Free
+    ```
+
+4. **Muestra las propiedades y métodos de los objetos devueltos por el comando `Get-NetIPAddress`. A continuación, muestra únicamente la propiedad de ip versión 4. También lanza el método `GetHashCode()`.**
+??? success "Ver solución"
+    ```powershell
+    Get-NetIPAddress | Get-Member
+    $(Get-NetIPAddress).IPv4Address
+    $(Get-NetIPAddress).GetHashCode()
+    ```
+
+5. **Mediante las propiedades y métodos adecuados del cmdlet `Get-Date`, muestra únicamente la hora del sistema y el tipo de dato.**
+??? success "Ver solución"
+    ```powershell
+    $(Get-Date).Hour
+    $(Get-Date).GetType()
+    ```
+
 ---
 
 ## 📚 Referencias y Fuentes Consultadas
