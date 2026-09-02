@@ -170,6 +170,25 @@ Este comando te devolverá un listado con las Unidades Organizativas, Grupos, Us
 
 ---
 
+## 🎬 Vídeo demostración: Creación estructura organizativa
+
+Vídeo complementario con el proceso paso a paso para crear la estructura organizativa del dominio de ejemplo.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/W8RpWSTDaCA" 
+    title="Creación estructura organizativa del dominio de ejemplo" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/W8RpWSTDaCA)**
+
+---
+
 ## 📚 Referencias y Fuentes Consultadas
 
 !!! info "Documentación Oficial y Autoría"

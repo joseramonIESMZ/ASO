@@ -12,24 +12,33 @@
 
 ## 🏢 Fundamentos de la Supervisión y el Mantenimiento
 
-Garantizar la estabilidad, disponibilidad y rendimiento de una infraestructura híbrida requiere la implementación de procesos de supervisión activa y mantenimiento planificado. En el ámbito empresarial, estas tareas diferencian un entorno reactivo (operar solo cuando hay fallos) de un entorno proactivo (prevenir incidentes).
+La supervisión y mantenimiento en sistemas operativos son procesos esenciales para garantizar el funcionamiento estable, seguro y eficiente de los equipos y servicios informáticos. Ambos conceptos abarcan tareas técnicas y organizativas, y forman parte del trabajo continuo de administración de sistemas. En el ámbito empresarial, estas tareas diferencian un entorno reactivo (operar solo cuando hay fallos) de un entorno proactivo (prevenir incidentes).
 
 ### 📊 Funciones de la Supervisión
 
-La supervisión consiste en la vigilancia continua y analítica de los componentes del sistema operativo y sus servicios asociados:
+La supervisión consiste en vigilar y controlar el estado de los sistemas, con el objetivo de detectar, prevenir y resolver problemas antes de que afecten al rendimiento o a la disponibilidad.
 
-* **Monitoreo de recursos de hardware:** Control analítico sobre la carga del procesador, consumo de memoria RAM, operaciones de entrada/salida de disco y saturación de las interfaces de red.
-* **Detección de anomalías y auditoría:** Identificación temprana de caídas de servicios, desbordamiento de almacenamiento y alertas de seguridad por intentos de acceso no autorizados.
-* **Centralización de métricas:** Recolección de registros operacionales (*Logs*) y eventos de sistema para auditoría histórica.
+Las principales funciones de supervisión incluyen:
+
+* **Monitoreo de recursos de hardware:** CPU, memoria, disco, red, procesos y uso de aplicaciones.
+* **Detección de anomalías y auditoría:** Fallos de hardware, saturación de recursos, intentos de acceso no autorizados o interrupciones de servicio.
+* **Registrar y analizar métricas:** Logs/eventos del sistema y herramientas de monitorización.
+* **Generar alertas y reportes:** Cuando se supera un umbral de uso o se produce un fallo, el sistema informa al operador para que actúe rápidamente.
+
+En resumen, supervisar un sistema operativo equivale a ejercer una vigilancia sobre su rendimiento, seguridad y disponibilidad, permitiendo tomar decisiones informadas para mantener su correcto funcionamiento.
 
 ### ⚙️ Áreas de Mantenimiento Preventivo y Evolutivo
 
-El mantenimiento preventivo minimiza el impacto del desgaste lógico y las vulnerabilidades de seguridad a lo largo del tiempo:
+El mantenimiento complementa la supervisión, y se centra en conservar el buen estado del sistema a lo largo del tiempo. Implica aplicar acciones correctivas, preventivas y evolutivas.
 
-* **Hardening y parches:** Despliegue automatizado de actualizaciones del sistema para mitigar brechas de seguridad.
+Entre las tareas más comunes destacan:
+
+* **Hardening y parches:** Despliegue automatizado de actualizaciones del sistema con parches de seguridad y mejoras del sistema operativo.
 * **Resiliencia de datos:** Ejecución de copias de seguridad (*Backups*) automatizadas y verificación estricta de la integridad de los datos replicados.
-* **Optimización de recursos:** Depuración de procesos zombies, control de cuotas de almacenamiento y mantenimiento de arreglos RAID.
-
+* **Optimización de recursos:** Liberación de espacio, limpieza de procesos inactivos y configuración de recursos.
+* **Gestión de usuarios y permisos:** Control de accesos y auditoría de privilegios.
+* **Revisión de hardware asociado:** Detección temprana de fallas en discos, memoria o componentes físicos.
+* **Documentación técnica:** Registro de incidencias, configuraciones y cambios realizados.
 ---
 
 ## 🛠️ Herramientas de Supervisión en Windows Server
@@ -38,10 +47,12 @@ Windows Server provee un conjunto de consolas nativas optimizadas para analizar 
 
 | Herramienta | Binario / Comando | Ámbito de Aplicación |
 | :--- | :--- | :--- |
-| **Monitor de Rendimiento** | `perfmon.msc` | Análisis profundo mediante contadores históricos y recolección de métricas. |
-| **Monitor de Recursos** | `resmon.exe` | Diagnóstico interactivo en tiempo real de hilos, procesos y bloqueos de archivos. |
+| **Monitor de Rendimiento** | `perfmon.msc` | Recolecta métricas de CPU, memoria, disco, red, etc, y las muestra mediante gráficas. |
+| **Monitor de Recursos** | `resmon.exe` | Muestra actividad por proceso, hilos, y uso de recursos en tiempo real. |
 | **Visor de Eventos** | `eventvwr.msc` | Auditoría de registros de sistema, seguridad, aplicaciones y servicios del directorio. |
-| **Windows Admin Center** | Servicios Web | Consola centralizada web idónea para la gestión de servidores en modo *Server Core*. |
+| **Administrador de Tareas** | `taskmgr` | Supervisión de procesos en ejecución, rendimiento y usuarios conectados. |
+| **PowerShell Core** | `powershell.exe` | Herramienta de línea de comandos para la gestión y automatización de tareas.  |
+| **Windows Admin Center** | Servicios Web | Consola centralizada web idónea para la supervisión y administración para entornos híbridos o múltiples servidores. |
 
 ---
 
@@ -49,13 +60,153 @@ Windows Server provee un conjunto de consolas nativas optimizadas para analizar 
 
 El **Monitor de Rendimiento (PerfMon)** funciona extrayendo datos de objetos del sistema a través de métricas específicas denominadas **Contadores de Rendimiento**. Estas métricas se exponen directamente a la capa de administración y automatización de PowerShell Core mediante el cmdlet `Get-Counter`.
 
+Por ejemplo,
+
+```powershell
+Get-Counter -Counter "\Memoria\Bytes disponibles"
+```
+
+**CounterSamples** nos proporciona el valor actual del contador. 
+
+```powershell
+(Get-Counter -Counter "\Memoria\Bytes disponibles" | Select-Object -ExpandProperty CounterSamples).CookedValue
+```
+
 ### ⚠️ El Factor del Idioma en Producción (Localización)
 
 Un error crítico habitual en la automatización de la monitorización es obviar que **los contadores de rendimiento se escriben en el idioma nativo de la instalación de Windows Server**. Si intentas ejecutar un script configurado con contadores en inglés sobre un servidor instalado en español, la ejecución fallará inmediatamente al no resolverse la ruta del objeto.
 
 ---
 
+### 🧩 Estructura de los Contadores de Rendimiento: Objeto, Instancia y Contador
 
+En Windows, los contadores de rendimiento se organizan de forma jerárquica. Cada métrica pertenece a un **objeto de rendimiento**, puede hacer referencia a una **instancia concreta** de ese objeto y finalmente mide un **contador específico**.
+
+La estructura habitual de una ruta de contador es:
+
+```text
+\Objeto(Instancia)\Contador
+```
+
+Los tres elementos principales son:
+
+* **Objeto:** representa el componente o subsistema del sistema que queremos supervisar. Por ejemplo, el procesador, la memoria, un disco físico, una interfaz de red o un proceso.
+* **Instancia:** identifica un elemento concreto cuando existen varias unidades del mismo objeto. Por ejemplo, un servidor puede tener varios procesadores lógicos, discos, interfaces de red o procesos.
+* **Contador:** representa la métrica concreta que queremos medir sobre ese objeto, como el porcentaje de uso de CPU, los MBytes de memoria disponibles o los bytes transmitidos por segundo.
+
+Por ejemplo, la siguiente ruta:
+
+```text
+\Procesador(_Total)\% de tiempo de procesador
+```
+
+se interpreta de la siguiente forma:
+
+```text
+Objeto:     Procesador
+Instancia:  _Total
+Contador:   % de tiempo de procesador
+```
+
+La instancia `_Total` indica que el contador debe calcularse considerando el conjunto de todas las instancias disponibles.
+
+Otro ejemplo es:
+
+```text
+\Network Interface(Ethernet)\Bytes Total/sec
+```
+
+que corresponde a:
+
+```text
+Objeto:     Network Interface
+Instancia:  Ethernet
+Contador:   Bytes Total/sec
+```
+
+En este caso, únicamente se está supervisando la interfaz de red denominada `Ethernet`.
+
+También es posible utilizar el carácter comodín `*` para seleccionar todas las instancias disponibles de un objeto:
+
+```text
+\Network Interface(*)\Bytes Total/sec
+```
+
+De esta forma, Windows recopilará la métrica `Bytes Total/sec` para cada una de las interfaces de red existentes en el sistema.
+
+Comprender esta estructura facilita tanto la utilización gráfica del **Monitor de Rendimiento (PerfMon)** como la automatización de la supervisión mediante PowerShell y el cmdlet `Get-Counter`.
+
+### 📈 Línea Base de Rendimiento (*Performance Baseline*)
+
+La supervisión de un servidor no debe limitarse a comprobar si determinados contadores superan unos valores predefinidos. Para determinar si el comportamiento de un sistema es anómalo es necesario conocer previamente **cómo se comporta cuando funciona correctamente**.
+
+Una **línea base de rendimiento (*performance baseline*)** es un conjunto de mediciones recopiladas durante un periodo de tiempo que permite establecer el **comportamiento habitual de un sistema en condiciones normales de funcionamiento**.
+
+Para construir una línea base se recopilan periódicamente métricas representativas de los principales subsistemas del servidor, como:
+
+* Utilización del procesador.
+* Memoria disponible y actividad de paginación.
+* Latencia y actividad de los dispositivos de almacenamiento.
+* Utilización de las interfaces de red.
+* Estado y consumo de recursos de procesos y servicios relevantes.
+
+Por ejemplo, después de monitorizar durante varios días un servidor podemos observar que, durante su horario habitual de funcionamiento, presenta aproximadamente el siguiente comportamiento:
+
+| Métrica            | Comportamiento habitual                      |
+| :----------------- | :------------------------------------------- |
+| Uso de CPU         | 10-25 %                                      |
+| Memoria disponible | 3-4 GB                                       |
+| Latencia de disco  | 2-5 ms                                       |
+| Tráfico de red     | Estable durante la mayor parte de la jornada |
+
+Estos valores constituyen una referencia con la que comparar mediciones posteriores.
+
+Si posteriormente el servidor mantiene durante un periodo prolongado un uso de CPU del 65 %, una memoria disponible inferior a 1 GB y una latencia de disco de 35 ms, estos valores pueden indicar una anomalía aunque ninguno de ellos haya superado necesariamente un umbral de alerta previamente establecido.
+
+Por tanto, durante el análisis del rendimiento debemos considerar tres elementos:
+
+1. **Valor actual:** indica qué está ocurriendo en el sistema en un momento determinado.
+2. **Umbral:** establece un valor a partir del cual una determinada métrica requiere atención.
+3. **Línea base:** permite determinar si el comportamiento actual se desvía significativamente del comportamiento habitual del sistema.
+
+!!! warning "Los umbrales no son valores universales"
+Los valores utilizados como umbrales de CPU, memoria, almacenamiento o red deben considerarse **referencias orientativas**. Su interpretación depende del hardware, la carga de trabajo, los servicios ejecutados y el comportamiento habitual del servidor.
+
+```
+Un valor elevado de forma puntual no implica necesariamente un problema. Para realizar un diagnóstico adecuado deben analizarse su **duración**, su **evolución temporal** y su relación con otros contadores.
+```
+
+Por ejemplo, un servidor de bases de datos sometido a una operación intensiva puede alcanzar temporalmente valores elevados de CPU sin que exista ningún problema. Por el contrario, un controlador de dominio que habitualmente mantiene una utilización reducida de CPU y comienza a presentar valores significativamente superiores durante varias horas puede requerir investigación.
+
+La línea base permite, por tanto, pasar de una supervisión basada únicamente en valores absolutos a una **supervisión basada en el comportamiento del sistema y en la detección de desviaciones**.
+
+#### Recopilación de datos para establecer la línea base
+
+Una única medición representa únicamente una fotografía del estado del servidor. Para construir una línea base es necesario recopilar métricas durante un periodo suficientemente representativo de su funcionamiento normal.
+
+El **Monitor de Rendimiento (PerfMon)** permite realizar esta recopilación mediante los **Conjuntos de recopiladores de datos (*Data Collector Sets*)**, almacenando los valores de los contadores durante un periodo determinado para analizarlos posteriormente mediante gráficos e informes.
+
+PowerShell también permite automatizar la recopilación periódica de métricas mediante `Get-Counter`.
+
+De esta forma, el proceso de supervisión puede resumirse como:
+
+```text
+Recopilar métricas
+       ↓
+Establecer el comportamiento habitual
+       ↓
+Definir la línea base
+       ↓
+Continuar monitorizando
+       ↓
+Detectar desviaciones
+       ↓
+Correlacionar diferentes métricas
+       ↓
+Diagnosticar la posible causa
+```
+
+El objetivo de la supervisión no consiste únicamente en **obtener valores de los contadores**, sino en ser capaz de **interpretarlos dentro del contexto de funcionamiento del servidor**.
 
 
 ## 📋 Catálogo de Contadores Esenciales para Servidores de Producción
@@ -64,15 +215,15 @@ Para monitorizar de forma automatizada los controladores de dominio y servidores
 
 ### 1. Subsistema de Procesador (CPU)
 
-* **`\Procesador(_Total)\% de tiempo de procesador`:** Carga de computación total del sistema. Si se mantiene de forma sostenida por encima del **85%**, indica la necesidad de redimensionar los núcleos de la MV en Proxmox.
+* **`\Procesador(_Total)\% de tiempo de procesador`:** Carga de computación total del sistema. Si se mantiene de forma sostenida en torno al 100%, indica la necesidad de redimensionar los núcleos de la MV en Proxmox.
 * **`\Procesador(_Total)\% de tiempo privilegiado`:** Mide el esfuerzo dedicado al código del anillo 0 del kernel (controladores, llamadas de entrada/salida). Valores altos indican problemas de compatibilidad de hardware virtualizado.
 * **`\System\Longitud de la cola de la CPU`:** Número de hilos listos esperando ejecución. Si el valor supera de forma constante el doble de los núcleos físicos asignados, existe una saturación de CPU estructural.
 
 ### 2. Subsistema de Memoria RAM
 
 * **`\Memoria\Mbytes disponibles`:** Cantidad de memoria física libre para asignación inmediata.
-* **`\Memoria\% de bytes confirmados en uso`:** Relación entre la memoria virtual utilizada y el límite de confirmación total. Si se aproxima al **100%**, el servidor comenzará a escribir en disco de forma masiva (*Thrasher*).
-* **`\Memoria\Páginas/s`:** Frecuencia con la que se leen o escriben páginas en el archivo de paginación para solventar fallos de página duros. Valores altos degradan drásticamente el rendimiento de discos mecánicos.
+* **`\Memoria\% de bytes confirmados en uso`:** Muestra el porcentaje del límite de memoria comprometida que está siendo utilizado. Valores persistentemente elevados pueden indicar presión de memoria y deben analizarse junto con otros contadores, como MBytes disponibles y Páginas/s.
+* **`\Memoria\Páginas/s`:** Número de páginas de memoria por segundo que Windows lee del disco o escribe en él para resolver fallos de página duros (hard page faults). Un valor elevado y sostenido puede indicar presión de memoria, aunque debe analizarse junto con otros contadores, como MBytes disponibles, ya que por sí solo no demuestra que exista falta de memoria RAM.
 
 ### 3. Subsistema de Almacenamiento (Discos Físicos y Lógicos)
 
