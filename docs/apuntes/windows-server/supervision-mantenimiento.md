@@ -12,7 +12,7 @@
 
 ## 🏢 Fundamentos de la Supervisión y el Mantenimiento
 
-La supervisión y mantenimiento en sistemas operativos son procesos esenciales para garantizar el funcionamiento estable, seguro y eficiente de los equipos y servicios informáticos. Ambos conceptos abarcan tareas técnicas y organizativas, y forman parte del trabajo continuo de administración de sistemas. En el ámbito empresarial, estas tareas diferencian un entorno reactivo (operar solo cuando hay fallos) de un entorno proactivo (prevenir incidentes).
+La supervisión y el mantenimiento en sistemas operativos son procesos esenciales para garantizar el funcionamiento estable, seguro y eficiente de los equipos y servicios informáticos. Ambos conceptos abarcan tareas técnicas y organizativas, y forman parte del trabajo continuo de administración de sistemas. En el ámbito empresarial, estas tareas diferencian un entorno reactivo (operar solo cuando hay fallos) de un entorno proactivo (prevenir incidentes).
 
 ### 📊 Funciones de la Supervisión
 
@@ -22,7 +22,6 @@ Las principales funciones de supervisión incluyen:
 
 * **Monitoreo de recursos de hardware:** CPU, memoria, disco, red, procesos y uso de aplicaciones.
 * **Detección de anomalías y auditoría:** Fallos de hardware, saturación de recursos, intentos de acceso no autorizados o interrupciones de servicio.
-* **Registrar y analizar métricas:** Logs/eventos del sistema y herramientas de monitorización.
 * **Generar alertas y reportes:** Cuando se supera un umbral de uso o se produce un fallo, el sistema informa al operador para que actúe rápidamente.
 
 En resumen, supervisar un sistema operativo equivale a ejercer una vigilancia sobre su rendimiento, seguridad y disponibilidad, permitiendo tomar decisiones informadas para mantener su correcto funcionamiento.
@@ -47,29 +46,29 @@ Windows Server provee un conjunto de consolas nativas optimizadas para analizar 
 
 | Herramienta | Binario / Comando | Ámbito de Aplicación |
 | :--- | :--- | :--- |
-| **Monitor de Rendimiento** | `perfmon.msc` | Recolecta métricas de CPU, memoria, disco, red, etc, y las muestra mediante gráficas. |
+| **Monitor de Rendimiento** | `perfmon.msc` | Recolecta métricas de CPU, memoria, disco y red, entre otras, y las representa gráficamente. |
 | **Monitor de Recursos** | `resmon.exe` | Muestra actividad por proceso, hilos, y uso de recursos en tiempo real. |
 | **Visor de Eventos** | `eventvwr.msc` | Auditoría de registros de sistema, seguridad, aplicaciones y servicios del directorio. |
 | **Administrador de Tareas** | `taskmgr` | Supervisión de procesos en ejecución, rendimiento y usuarios conectados. |
-| **PowerShell Core** | `powershell.exe` | Herramienta de línea de comandos para la gestión y automatización de tareas.  |
+| **PowerShell** | `pwsh.exe` | Herramienta de línea de comandos para la gestión y automatización de tareas.  |
 | **Windows Admin Center** | Servicios Web | Consola centralizada web idónea para la supervisión y administración para entornos híbridos o múltiples servidores. |
 
 ---
 
 ## 💻 Telemetría Avanzada con Contadores de Rendimiento
 
-El **Monitor de Rendimiento (PerfMon)** funciona extrayendo datos de objetos del sistema a través de métricas específicas denominadas **Contadores de Rendimiento**. Estas métricas se exponen directamente a la capa de administración y automatización de PowerShell Core mediante el cmdlet `Get-Counter`.
+El **Monitor de Rendimiento (PerfMon)** funciona extrayendo datos de objetos del sistema a través de métricas específicas denominadas **Contadores de Rendimiento**. Estas métricas pueden consultarse desde PowerShell mediante el cmdlet `Get-Counter`.
 
 Por ejemplo,
 
 ```powershell
-Get-Counter -Counter "\Memoria\Bytes disponibles"
+Get-Counter -Counter "\Memoria\MBytes disponibles"
 ```
 
 **CounterSamples** nos proporciona el valor actual del contador. 
 
 ```powershell
-(Get-Counter -Counter "\Memoria\Bytes disponibles" | Select-Object -ExpandProperty CounterSamples).CookedValue
+(Get-Counter -Counter "\Memoria\MBytes disponibles" | Select-Object -ExpandProperty CounterSamples).CookedValue
 ```
 
 ### ⚠️ El Factor del Idioma en Producción (Localización)
@@ -113,7 +112,7 @@ La instancia `_Total` indica que el contador debe calcularse considerando el con
 Otro ejemplo es:
 
 ```text
-\Network Interface(Ethernet)\Bytes Total/sec
+\Network Interface(Ethernet)\Total Bytes/sec
 ```
 
 que corresponde a:
@@ -121,18 +120,18 @@ que corresponde a:
 ```text
 Objeto:     Network Interface
 Instancia:  Ethernet
-Contador:   Bytes Total/sec
+Contador:   Total Bytes/sec
 ```
 
-En este caso, únicamente se está supervisando la interfaz de red denominada `Ethernet`.
+En este caso, únicamente se está supervisando la interfaz de red denominada `Ethernet`. **Observa cómo el nombre de los objetos, instancias y contadores sigue estando en inglés.** En esta documentación, no obstante, indicaremos los contadores preferentemente en español.
 
 También es posible utilizar el carácter comodín `*` para seleccionar todas las instancias disponibles de un objeto:
 
 ```text
-\Network Interface(*)\Bytes Total/sec
+\Network Interface(*)\Total Bytes/sec
 ```
 
-De esta forma, Windows recopilará la métrica `Bytes Total/sec` para cada una de las interfaces de red existentes en el sistema.
+De esta forma, Windows recopilará la métrica `Total Bytes/sec` para cada una de las interfaces de red existentes en el sistema.
 
 Comprender esta estructura facilita tanto la utilización gráfica del **Monitor de Rendimiento (PerfMon)** como la automatización de la supervisión mediante PowerShell y el cmdlet `Get-Counter`.
 
@@ -170,11 +169,11 @@ Por tanto, durante el análisis del rendimiento debemos considerar tres elemento
 3. **Línea base:** permite determinar si el comportamiento actual se desvía significativamente del comportamiento habitual del sistema.
 
 !!! warning "Los umbrales no son valores universales"
-Los valores utilizados como umbrales de CPU, memoria, almacenamiento o red deben considerarse **referencias orientativas**. Su interpretación depende del hardware, la carga de trabajo, los servicios ejecutados y el comportamiento habitual del servidor.
+    Los valores utilizados como umbrales de CPU, memoria, almacenamiento o red deben considerarse **referencias orientativas**. Su interpretación depende del hardware, la carga de trabajo, los servicios ejecutados y el comportamiento habitual del servidor.
+    Un valor elevado de forma puntual no implica necesariamente un problema.
+    Para realizar un diagnóstico adecuado deben analizarse su **duración**,
+    su **evolución temporal** y su relación con otros contadores.
 
-```
-Un valor elevado de forma puntual no implica necesariamente un problema. Para realizar un diagnóstico adecuado deben analizarse su **duración**, su **evolución temporal** y su relación con otros contadores.
-```
 
 Por ejemplo, un servidor de bases de datos sometido a una operación intensiva puede alcanzar temporalmente valores elevados de CPU sin que exista ningún problema. Por el contrario, un controlador de dominio que habitualmente mantiene una utilización reducida de CPU y comienza a presentar valores significativamente superiores durante varias horas puede requerir investigación.
 
@@ -183,6 +182,18 @@ La línea base permite, por tanto, pasar de una supervisión basada únicamente 
 #### Recopilación de datos para establecer la línea base
 
 Una única medición representa únicamente una fotografía del estado del servidor. Para construir una línea base es necesario recopilar métricas durante un periodo suficientemente representativo de su funcionamiento normal.
+
+```powershell
+Get-Counter `
+    -Counter "\Procesador(_Total)\% de tiempo de procesador" `
+    -SampleInterval 2 `
+    -MaxSamples 5
+```
+
+```text
+-SampleInterval 2 → una muestra cada 2 segundos
+-MaxSamples 5     → obtener 5 muestras
+```
 
 El **Monitor de Rendimiento (PerfMon)** permite realizar esta recopilación mediante los **Conjuntos de recopiladores de datos (*Data Collector Sets*)**, almacenando los valores de los contadores durante un periodo determinado para analizarlos posteriormente mediante gráficos e informes.
 
@@ -215,26 +226,110 @@ Para monitorizar de forma automatizada los controladores de dominio y servidores
 
 ### 1. Subsistema de Procesador (CPU)
 
-* **`\Procesador(_Total)\% de tiempo de procesador`:** Carga de computación total del sistema. Si se mantiene de forma sostenida en torno al 100%, indica la necesidad de redimensionar los núcleos de la MV en Proxmox.
-* **`\Procesador(_Total)\% de tiempo privilegiado`:** Mide el esfuerzo dedicado al código del anillo 0 del kernel (controladores, llamadas de entrada/salida). Valores altos indican problemas de compatibilidad de hardware virtualizado.
-* **`\System\Longitud de la cola de la CPU`:** Número de hilos listos esperando ejecución. Si el valor supera de forma constante el doble de los núcleos físicos asignados, existe una saturación de CPU estructural.
+* **`\Procesador(_Total)\% de tiempo de procesador`:** porcentaje de tiempo durante el cual el conjunto de procesadores está ocupado ejecutando código. Una utilización elevada y sostenida puede indicar saturación de CPU y debe analizarse junto con la longitud de la cola de CPU, los procesos activos y la línea base del servidor.
+* **`\Proceso(*)\% de tiempo de procesador`:** permite identificar qué procesos están consumiendo tiempo de CPU. Resulta útil cuando el contador global de procesador muestra una utilización elevada y es necesario determinar qué proceso puede estar originándola.
+
+```text
+\Procesador(_Total)\% de tiempo de procesador
+             ↓
+      CPU global elevada
+             ↓
+\Proceso(*)\% de tiempo de procesador
+             ↓
+       ¿Quién consume CPU?
+```
+
+* **`\Procesador(_Total)\% de tiempo privilegiado`:** mide el esfuerzo dedicado al código del anillo 0 del kernel (controladores, llamadas de entrada/salida). Un valor elevado indica que una proporción importante del tiempo de CPU se está consumiendo en modo kernel. Debe correlacionarse con actividad de E/S, controladores, interrupciones y otros contadores para determinar la causa.
+* **`\Sistema\Longitud de la cola de la CPU`:** número de hilos preparados para ejecutarse que esperan tiempo de procesador. Una cola elevada y sostenida, especialmente cuando coincide con una utilización elevada de CPU, puede indicar contención de procesador. Debe interpretarse considerando el número de procesadores lógicos disponibles y la línea base del servidor.
 
 ### 2. Subsistema de Memoria RAM
 
-* **`\Memoria\Mbytes disponibles`:** Cantidad de memoria física libre para asignación inmediata.
-* **`\Memoria\% de bytes confirmados en uso`:** Muestra el porcentaje del límite de memoria comprometida que está siendo utilizado. Valores persistentemente elevados pueden indicar presión de memoria y deben analizarse junto con otros contadores, como MBytes disponibles y Páginas/s.
-* **`\Memoria\Páginas/s`:** Número de páginas de memoria por segundo que Windows lee del disco o escribe en él para resolver fallos de página duros (hard page faults). Un valor elevado y sostenido puede indicar presión de memoria, aunque debe analizarse junto con otros contadores, como MBytes disponibles, ya que por sí solo no demuestra que exista falta de memoria RAM.
+* **`\Memoria\Mbytes disponibles`:** cantidad de memoria física que Windows puede poner inmediatamente a disposición de procesos o del propio sistema. Incluye tanto memoria libre como memoria reutilizable rápidamente.
+* **`\Memoria\% de bytes confirmados en uso`:** muestra el porcentaje del límite de memoria comprometida que está siendo utilizado. Valores persistentemente elevados pueden indicar presión de memoria y deben analizarse junto con otros contadores, como MBytes disponibles y Páginas/s.
+* **`\Memoria\Páginas/s`:** número de páginas de memoria por segundo que Windows lee del disco o escribe en él para resolver fallos de página duros (hard page faults). Un valor elevado y sostenido puede indicar presión de memoria, aunque debe analizarse junto con otros contadores, como MBytes disponibles, ya que por sí solo no demuestra que exista falta de memoria RAM.
 
 ### 3. Subsistema de Almacenamiento (Discos Físicos y Lógicos)
 
-* **`\PhysicalDisk(_Total)\% de tiempo de disco`:** Porcentaje de tiempo que la unidad está procesando solicitudes de lectura o escritura.
-* **`\PhysicalDisk(_Total)\Longitud media de la cola de disco`:** Cantidad de operaciones pendientes en espera en el bus de almacenamiento. En discos de estado sólido (NVMe), valores superiores a **2 o 3** indican un cuello de botella en las controladoras lógicas de Proxmox.
-* **`\PhysicalDisk(_Total)\Promedio de disco s/lectura`:** Latencia física de lectura expresada en milisegundos. En entornos empresariales y bases de datos SQL Server, valores superiores a **0.020 segundos (20 ms)** se consideran críticos.
+* **`\Disco físico(_Total)\% de tiempo de disco`:** porcentaje de tiempo que la unidad está procesando solicitudes de lectura o escritura.
+
+* **`\Disco físico(_Total)\Promedio de disco s/lectura`:** tiempo medio que tarda el subsistema de almacenamiento en completar una operación de lectura. El valor se expresa en **segundos**, por lo que, por ejemplo, un valor de `0,015` equivale a **15 ms**. Una latencia elevada y sostenida puede indicar problemas de rendimiento en el almacenamiento, aunque debe interpretarse teniendo en cuenta el tipo de dispositivo, la carga de trabajo y la línea base del servidor.
+
+* **`\Disco físico(_Total)\Promedio de disco s/escritura`:** tiempo medio que tarda el subsistema de almacenamiento en completar una operación de escritura. Al igual que en las lecturas, el valor se expresa en segundos. Una latencia de escritura elevada y persistente puede indicar saturación del almacenamiento, problemas en la infraestructura subyacente o una carga de escritura superior a la capacidad habitual del sistema.
+
+* **`\Disco físico(_Total)\Longitud media de la cola de disco`:** indica el número medio de solicitudes de entrada/salida que se encuentran siendo atendidas o esperando ser procesadas por el subsistema de almacenamiento durante el intervalo de medición. Un valor elevado no implica necesariamente, por sí solo, que exista un problema de rendimiento, especialmente en dispositivos SSD o NVMe, capaces de procesar múltiples operaciones de E/S de forma concurrente. 
+Por este motivo, este contador debe interpretarse junto con otros indicadores, los anteriores de **latencia de lectura y escritura** (`Promedio de disco s/lectura` y `Promedio de disco s/escritura`) y el volumen de operaciones realizadas.
+
+De forma general:
+
+```text
+Cola elevada + latencia baja
+        ↓
+Puede corresponder a una carga elevada pero correctamente atendida.
+
+Cola elevada + latencia elevada y sostenida
+        ↓
+Puede indicar saturación o contención en el subsistema de almacenamiento.
+```
+
+La interpretación debe realizarse teniendo en cuenta el tipo de almacenamiento utilizado, la carga habitual del servidor y su línea base de rendimiento.
+
 
 ### 4. Subsistema de Interfaz de Red
 
-* **`\Network Interface(*)\Bytes totales/s`:** Ancho de banda consumido por las interfaces del servidor. Esencial para detectar ataques de denegación de servicio o saturación en las transferencias de copias de seguridad.
-* **`\Network Interface(*)\Errores de recepción de paquetes`:** Contingencias físicas o descartes en la recepción de tramas de red.
+* **`\Interfaz de red(*)\Total de Bytes/s`:** tasa de transferencia total de datos de la interfaz, sumando tráfico enviado y recibido por las interfaces del servidor. Permite analizar el grado de utilización de la interfaz y detectar situaciones de saturación o incrementos anómalos de tráfico.
+* **`\Interfaz de red(*)\Paquetes recibidos con errores`:** número de paquetes recibidos que contienen errores y no pueden procesarse correctamente. Un incremento sostenido puede indicar problemas en el adaptador, el enlace, controladores o la infraestructura de red.
+
+## 🔗 Correlación de Métricas durante el Diagnóstico
+
+Los contadores de rendimiento **no deben interpretarse de forma aislada**. Un valor elevado o anómalo en un único contador no permite determinar, por sí solo, la existencia ni la causa de un problema de rendimiento.
+
+Durante el diagnóstico es necesario **correlacionar varias métricas relacionadas**, observar su evolución temporal y compararlas con la **línea base de rendimiento** del servidor. De esta forma es posible distinguir entre variaciones normales de la carga y situaciones que pueden indicar un cuello de botella.
+
+| Posible problema                  | Métricas que conviene correlacionar                                                                     | Interpretación                                                                                                                                                                                                             |
+| :-------------------------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Saturación de CPU**             | `% de tiempo de procesador` + `Longitud de la cola de la CPU` + `% de tiempo de procesador` por proceso | Una utilización elevada de CPU acompañada de una cola elevada y sostenida puede indicar contención de procesador. El análisis por proceso permite identificar qué aplicaciones o servicios están consumiendo CPU.          |
+| **Presión de memoria**            | `MBytes disponibles` + `% de bytes confirmados en uso` + `Páginas/s`                                    | Una cantidad reducida de memoria disponible, un porcentaje elevado de memoria comprometida y una actividad sostenida de paginación pueden indicar presión de memoria.                                                      |
+| **Saturación del almacenamiento** | `Promedio de disco s/lectura` + `Promedio de disco s/escritura` + `Longitud media de la cola de disco`  | Una cola elevada no implica necesariamente un problema. Si además aumenta de forma sostenida la latencia de lectura o escritura, puede existir saturación o contención en el subsistema de almacenamiento.                 |
+| **Problemas de red**              | `Total de Bytes/s` + `Paquetes recibidos con errores` + capacidad nominal de la interfaz                | Un tráfico elevado próximo a la capacidad de la interfaz puede indicar saturación. La aparición sostenida de paquetes con errores puede señalar problemas en el adaptador, controladores, enlace o infraestructura de red. |
+
+Por ejemplo, si un servidor presenta una respuesta lenta y el contador de CPU muestra una utilización elevada, el administrador no debería concluir inmediatamente que existe falta de capacidad de procesamiento. El diagnóstico puede continuar analizando la longitud de la cola de CPU y posteriormente los contadores asociados a los diferentes procesos:
+
+```text
+CPU elevada
+    ↓
+¿La cola de CPU también es elevada de forma sostenida?
+    ↓
+Sí
+    ↓
+Analizar el consumo de CPU por proceso
+    ↓
+Identificar el proceso o servicio responsable
+    ↓
+Investigar la causa
+```
+
+Del mismo modo, una cola de disco elevada debe correlacionarse con la latencia de lectura y escritura antes de determinar que existe un cuello de botella de almacenamiento.
+
+Por tanto, el proceso de diagnóstico puede resumirse como:
+
+```text
+Detectar una desviación
+        ↓
+Consultar métricas relacionadas
+        ↓
+Correlacionar los valores
+        ↓
+Comparar con la línea base
+        ↓
+Formular una hipótesis
+        ↓
+Obtener nuevas evidencias
+        ↓
+Identificar la posible causa
+```
+
+!!! tip "Principio básico de diagnóstico"
+    **Un contador permite detectar un síntoma; la correlación de varios contadores permite aproximarse a su causa.**
 
 ---
 
@@ -255,7 +350,7 @@ $RAMLimpia = ($MétricaRAM.CounterSamples).CookedValue
 Write-Host "La memoria RAM disponible actual en el servidor es de: $RAMLimpia MB"
 ```
 
-Script de Auditoría de Contadores del Sistema (AuditarServidor.ps1)
+### Script de Auditoría de Contadores del Sistema (AuditarServidor.ps1)
 Este script automatiza la consulta masiva de los subsistemas del servidor Core, capturando las métricas críticas del sistema:
 
 
@@ -276,30 +371,44 @@ Write-Host "========================================================" -Foregroun
 # Definición de rutas de contadores en español de forma estricta
 $RutaCPU  = "\Procesador(_Total)\% de tiempo de procesador"
 $RutaRAM  = "\Memoria\Mbytes disponibles"
-$RutaDisco = "\PhysicalDisk(_Total)\Longitud media de la cola de disco"
+$RutaLatLectura   = "\Disco físico(_Total)\Promedio de disco s/lectura"
+$RutaLatEscritura = "\Disco físico(_Total)\Promedio de disco s/escritura"
+$RutaCola         = "\Disco físico(_Total)\Longitud media de la cola de disco"
 
 Write-Host "[*] Recolectando muestras de rendimiento en tiempo real..." -ForegroundColor Yellow
 
 # Captura de objetos
 $MuestraCPU   = Get-Counter -Counter $RutaCPU
 $MuestraRAM   = Get-Counter -Counter $RutaRAM
-$MuestraDisco = Get-Counter -Counter $RutaDisco
+$MuestraCola = Get-Counter -Counter $RutaCola
+$MuestraLatLectura   = Get-Counter -Counter $RutaLatLectura
+$MuestraLatEscritura = Get-Counter -Counter $RutaLatEscritura
 
 # Extracción de valores cocinados (Cooked Values)
 $ValorCPU   = [Math]::Round(($MuestraCPU.CounterSamples).CookedValue, 2)
-$ValorRAM   = ($MuestraRAM.CounterSamples).CookedValue
-$ValorDisco = [Math]::Round(($MuestraDisco.CounterSamples).CookedValue, 2)
+$ValorRAM = [Math]::Round(
+    ($MuestraRAM.CounterSamples).CookedValue, 2
+)
+$ValorLatLectura = [Math]::Round(
+    ($MuestraLatLectura.CounterSamples).CookedValue * 1000, 2
+)
+$ValorLatEscritura = [Math]::Round(
+    ($MuestraLatEscritura.CounterSamples).CookedValue * 1000, 2
+)
+$ValorCola = [Math]::Round(($MuestraCola.CounterSamples).CookedValue, 2)
 
 # Volcado analítico por consola
 Write-Host ""
-Write-Host "  ► Carga Total de CPU:        $ValorCPU %" -ForegroundColor (if ($ValorCPU -gt 85) { "Red" } else { "Green" })
-Write-Host "  ► Memoria RAM Disponible:    $ValorRAM MB" -ForegroundColor (if ($ValorRAM -lt 512) { "Red" } else { "Green" })
-Write-Host "  ► Cola de Espera de Disco:   $ValorDisco op." -ForegroundColor (if ($ValorDisco -gt 3) { "Red" } else { "Green" })
+Write-Host "  ► Carga Total de CPU:                     $ValorCPU %"
+Write-Host "  ► Memoria RAM Disponible:                 $ValorRAM MB"
+Write-Host "  ► Longitud media de la cola de disco:     $ValorCola"
+Write-Host "  ► Latencia Lectura:                       $ValorLatLectura ms"
+Write-Host "  ► Latencia Escritura:                     $ValorLatEscritura ms"
 Write-Host ""
 Write-Host "========================================================" -ForegroundColor Indigo
 ```
 
-🔍 Descubrimiento de Contadores vía Línea de Comandos
+### 🔍 Descubrimiento de Contadores vía Línea de Comandos
 Cuando nos enfrentamos a un servidor con una instalación limpia de un rol específico (como SQL Server o Active Directory), el administrador necesita descubrir qué contadores se han registrado en el sistema.
 
 
@@ -311,47 +420,53 @@ Get-Counter -ListSet * | Select-Object CounterSetName | Out-Host -Paging
 Get-Counter -ListSet Memoria | Select-Object -ExpandProperty Counter
 ```
 
-Extracción de Metadatos y Descripciones del SO (lodctr.exe)
-Para extraer la base de datos de descripciones técnicas de cada contador de rendimiento del servidor y filtrar los metadatos limpios, volcamos la configuración a un archivo Unicode y parseamos las cadenas mediante expresiones regulares:
-
-
-```powershell
-# 1. Exportar de forma binaria y segura las descripciones del sistema operativo
-lodctr /s:descripcionPerfMon.txt
-
-# 2. Parsear el archivo Unicode buscando patrones de cadenas descriptivas de los contadores
-Get-Content -Path "descripcionPerfMon.txt" -Encoding Unicode | Select-String -Pattern ".*=.*" | Out-File -FilePath ".\descripContadoresLlimpias.txt"
-```
-
 ---
 
 ## 💾 Supervisión Avanzada mediante Clases CIM (Common Information Model)
 
-Aunque los contadores de rendimiento (`Get-Counter`) son ideales para métricas en tiempo real que varían segundo a segundo (como el % de uso de CPU), la infraestructura de administración **CIM/WMI** es la herramienta idónea para supervisar el **estado de salud estático y estructural** del servidor (hardware, almacenamiento permanente, procesos y servicios del sistema).
+Aunque los contadores de rendimiento (`Get-Counter`) son especialmente adecuados para obtener **métricas de rendimiento que evolucionan con el tiempo**, como el porcentaje de uso de CPU, la actividad de memoria o la latencia de disco, la infraestructura **CIM/WMI** permite consultar principalmente **el estado, la configuración y las propiedades de los recursos del sistema**.
 
-En entornos modernos de producción y arquitecturas *Server Core*, se prioriza el uso de los cmdlets `*-CimInstance` sobre los antiguos cmdlets de WMI, ya que CIM opera de forma nativa sobre el protocolo estándar **WS-Man (WinRM)** de administración remota, garantizando conexiones seguras, rápidas y eficientes a través del cortafuegos corporativo.
+De forma simplificada, ambas tecnologías responden a preguntas diferentes:
 
-### 1. Supervisión del Almacenamiento Lógico (`CIM_LogicalDisk`)
-Es fundamental supervisar de forma automatizada el espacio disponible en los volúmenes del sistema para evitar caídas críticas del controlador de dominio por falta de almacenamiento.
+* **`Get-Counter`:** ¿cómo se está comportando el sistema?
+* **`Get-CimInstance`:** ¿qué recursos existen, cómo están configurados y cuál es su estado actual?
 
-Mediante la clase `CIM_LogicalDisk`, podemos filtrar los discos lógicos del servidor. Para entornos reales, debemos discriminar y analizar únicamente aquellas unidades que correspondan a discos duros reales o arreglos RAID del hipervisor (las cuales devuelven un identificador de tipo de medio o `MediaType` igual a `12`), ignorando unidades ópticas o pendrives extraíbles.
+Por ejemplo, mediante CIM podemos consultar los discos disponibles y su espacio libre, los procesos que se encuentran en ejecución, el estado de los servicios del sistema, la memoria instalada, los adaptadores de red o las características del sistema operativo.
+
+En entornos modernos de administración de Windows Server, se prioriza el uso de los cmdlets `*-CimInstance` frente a los antiguos cmdlets de WMI. Además, CIM facilita la administración remota mediante sesiones CIM y puede utilizar **WS-Man (WinRM)** como mecanismo de comunicación remota.
+
+### 1. Supervisión del Almacenamiento Lógico (`Win32_LogicalDisk`)
+
+Es fundamental supervisar de forma automatizada el espacio disponible en los volúmenes del sistema para evitar problemas derivados de la falta de almacenamiento.
+
+Mediante la clase `Win32_LogicalDisk` podemos consultar las unidades lógicas disponibles en el sistema y obtener información como su identificador, tamaño total y espacio libre.
+
+En este caso interesa analizar únicamente las unidades de almacenamiento fijo, excluyendo dispositivos extraíbles o unidades ópticas. Una forma sencilla de hacerlo es filtrar por aquellas unidades cuyo tipo corresponda a un disco local.
 
 ```powershell
-# Obtener el estado, tamaño total y espacio libre de los discos lógicos persistentes
-Get-CimInstance -ClassName CIM_LogicalDisk | Where-Object { $_.MediaType -eq 12 } | Select-Object DeviceID, 
-    @{Name="Tamaño_GB";Expression={[Math]::Round($_.Size / 1GB, 2)}}, 
-    @{Name="Libre_GB";Expression={[Math]::Round($_.FreeSpace / 1GB, 2)}},
-    @{Name="Ocupación_%";Expression={[Math]::Round((($_.Size - $_.FreeSpace) / $_.Size) * 100, 2)}}
+# Obtener el estado, tamaño total y espacio libre de los discos locales
+Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" |
+    Select-Object DeviceID,
+        @{Name="Tamaño_GB"; Expression={[Math]::Round($_.Size / 1GB, 2)}},
+        @{Name="Libre_GB";  Expression={[Math]::Round($_.FreeSpace / 1GB, 2)}},
+        @{Name="Ocupación_%"; Expression={
+            if ($_.Size -gt 0) {
+                [Math]::Round((($_.Size - $_.FreeSpace) / $_.Size) * 100, 2)
+            } else { 0 }
+        }}
 ```
 
-### 2. Supervisión de Procesos Críticos en Ejecución (CIM_Process)
-El administrador debe auditar de forma desatendida qué hilos o procesos están consumiendo los recursos de memoria y computación del servidor en un momento dado. La clase CIM_Process permite mapear el identificador del proceso (ProcessId), su consumo de memoria RAM física en el Working Set (WorkingSetSize) y la ruta del binario ejecutable:
+El valor `DriveType = 3` identifica unidades de disco local desde el punto de vista del sistema operativo. En una máquina virtual, estas unidades pueden corresponder a discos virtuales presentados por el hipervisor, por lo que esta consulta describe el almacenamiento lógico visible desde Windows, no necesariamente el dispositivo físico real subyacente.
+
+
+### 2. Supervisión de Procesos Críticos en Ejecución (Win32_Process)
+El administrador puede auditar qué procesos están consumiendo más memoria física en un momento determinado. Ejemplo de cómo la clase `Win32_Process` permite consultar propiedades como el identificador del proceso (ProcessId), su consumo de memoria física (WorkingSetSize) y otras características del proceso:
 
 ```powershell
 # Listar los 5 procesos que más memoria RAM física están consumiendo en el servidor
-Get-CimInstance -ClassName CIM_Process | 
+Get-CimInstance -ClassName Win32_Process | 
     Sort-Object WorkingSetSize -Descending | 
-    Select-Object ProcessId, Name, @{Name="RAM_Consumida_MB";Expression={[Math]::Round($_.WorkingSetSize / 1MB, 2)}} -First 5
+    Select-Object ProcessId, Name, ExecutablePath, @{Name="RAM_Consumida_MB";Expression={[Math]::Round($_.WorkingSetSize / 1MB, 2)}} -First 5
 ```
 
 ### 3. Supervisión del Estado de los Servicios del Sistema (Win32_Service)
@@ -365,29 +480,33 @@ Get-CimInstance -ClassName Win32_Service |
     Select-Object Name, DisplayName, StartMode, State
 ```
 
-📈 Integración en la Base de Datos del Proyecto (Métricas Mixtas)
+### 📈 Integración en la Base de Datos del Proyecto (Métricas Mixtas)
 La combinación de ambas herramientas dota a la organización de un sistema de monitorización centralizado profesional:
 
-Los scripts programados en PowerShell recolectan las métricas dinámicas con Get-Counter y los estados estructurales con Get-CimInstance.
+Los scripts programados en PowerShell recolectan métricas de rendimiento mediante Get-Counter y consultan el estado y las propiedades de los recursos del sistema mediante Get-CimInstance.
 
-Los datos limpios recopilados se procesan y se inyectan en la base de datos centralizada monitoriza de SQL Server mediante el comando Invoke-Sqlcmd, consolidando el cuadro de mando de salud de toda la red corporativa.
+Los datos recopilados se procesan y almacenan en la base de datos centralizada de monitorización de SQL Server mediante Invoke-Sqlcmd, consolidando así la información de supervisión de los diferentes servidores de la infraestructura.
 
-🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
+## 🔍 Laboratorio de Desafíos y Troubleshooting (Entorno Proxmox)
 
-💥 Caso Práctico: Desbordamiento de la Cola de la CPU por sobreasignación de vCPUs en Proxmox
-Síntoma: Al levantar de forma simultánea los servidores virtuales de bases de datos de los 4 equipos de alumnos sobre el hardware físico del host de aula, la latencia en las terminales PowerShell Remoting (WinRM) se eleva a niveles inaceptables. Al intentar capturar datos, el contador \System\Longitud de la cola de la CPU arroja valores de forma sostenida superiores a 15.
+### 💥 Caso práctico: Contención de CPU por sobreasignación de vCPU en Proxmox
+Síntoma: Al levantar de forma simultánea los servidores virtuales de bases de datos de los 4 equipos de alumnos sobre el hardware físico del host de aula, la latencia en las terminales PowerShell Remoting (WinRM) se eleva a niveles inaceptables. Al intentar capturar datos, el contador \Sistema\Longitud de la cola de la CPU arroja valores de forma sostenida superiores a 15.
 
-Causa Raíz: Incumplimiento del pilar de virtualización y análisis de recursos. Al disponer de procesadores físicos con configuraciones específicas de cores, si los scripts de despliegue automatizados de los alumnos asignan más CPUs virtuales de las físicas disponibles reales (Overcommitting), el planificador (Scheduler) del hipervisor Proxmox VE entra en un escenario de contención, obligando a las CPUs virtuales de los Windows Server a esperar en cola de forma prolongada antes de procesar los hilos del kernel.
+Hipótesis de diagnóstico: Una posible causa es una sobreasignación excesiva de vCPU respecto a la capacidad disponible del host. Si los scripts de despliegue automatizados de los alumnos asignan un número de vCPU significativamente superior a la capacidad de CPU física disponible en el host (Overcommitting), puede provocarse contención de CPU en el host, lo que puede aumentar los tiempos de espera percibidos por las máquinas virtuales.
 
-Solución Operativa en Clase: El alumno debe apagar la máquina virtual del servidor afectado y reconfigurar la asignación de hardware desde la CLI o la interfaz web del entorno de virtualización de Proxmox. Desde la terminal del hipervisor, audita la carga real y reduce los sockets/cores lógicos asignados a la máquina virtual para equilibrar el pool de hilos de ejecución del host:
+Solución Operativa en Clase: El alumno debe apagar la máquina virtual del servidor afectado y reconfigurar la asignación de hardware desde la CLI o la interfaz web del entorno de virtualización de Proxmox. Desde la terminal del hipervisor, audita la carga real y reduce el número de vCPU asignadas a la máquina virtual para reducir la contención de CPU en el host:
 
 ```bash
-# Auditar desde Proxmox el uso real de tiempo de CPU y contención por máquina virtual
+# Identificar las máquinas virtuales y contenedores activos
 pct list   # Para contenedores LXC
 qm list    # Para Máquinas Virtuales Windows Server
+# Examinar la carga del host y los procesos que consumen CPU
+top
+# Revisar carga global del host
+uptime
 ```
 
-📚 Referencias y Fuentes Consultadas
+## 📚 Referencias y Fuentes Consultadas
 !!! info "Documentación Oficial y Autoría"
 * Material Base: Basado en la presentación didáctica empresarial "UD3. Fundamentos de administración de Windows Server - Supervisión y mantenimiento" del Departamento de Informática del IES Marcos Zaragoza.
 * Diseño y Autoría: José Ramón Soria Nieto.
