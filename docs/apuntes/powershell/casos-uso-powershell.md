@@ -238,6 +238,89 @@ Invoke-Command -ComputerName NOMBRE-SERVIDOR -Credential $credencial -ScriptBloc
 
 ---
 
+## 📝 Ejercicios Prácticos
+
+A continuación se plantean algunos ejercicios para poner en práctica la administración y resolución de escenarios mediante PowerShell.
+
+1. **Gestión de Usuarios Locales**
+   **Problema:** Crea un usuario local llamado `Auditor` (te pedirá contraseña al ejecutar) y añádelo al grupo de `Administradores` de la máquina.
+    
+    ??? success "Ver solución"
+        ```powershell
+        # 1. Buscamos los comandos de usuarios locales
+        Get-Command *LocalUser*
+        Get-Command *LocalGroup*
+
+        # 2. Creamos el usuario (el parámetro -Password requiere un SecureString)
+        $Password = Read-Host "Introduce la contraseña" -AsSecureString
+        New-LocalUser -Name "Auditor" -Password $Password -Description "Cuenta de auditoría"
+
+        # 3. Lo añadimos al grupo Administradores
+        Add-LocalGroupMember -Group "Administradores" -Member "Auditor"
+        ```
+
+2. **Trabajar con el Registro de Windows**
+   **Problema:** Obtén la edición y versión de Windows instalada leyendo el registro. Debes consultar las propiedades `ProductName` y `DisplayVersion` ubicadas en la ruta `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion`.
+    
+    ??? success "Ver solución"
+        ```powershell
+        # Tratamos el registro como si fuera un sistema de archivos con Get-ItemProperty
+        Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" | Select-Object ProductName, DisplayVersion
+        ```
+
+3. **Gestión de Tareas Programadas**
+   **Problema:** Obtén un listado de todas las tareas programadas del sistema operativo que actualmente se encuentren deshabilitadas (estado `Disabled`).
+    
+    ??? success "Ver solución"
+        ```powershell
+        # Buscamos comandos relacionados con tareas programadas
+        Get-Command *ScheduledTask*
+
+        # Obtenemos las tareas y filtramos por el estado
+        Get-ScheduledTask | Where-Object State -eq 'Disabled'
+        ```
+
+4. **Información del Sistema (BIOS/UEFI)**
+   **Problema:** Necesitas averiguar la versión exacta de la BIOS/UEFI de tu equipo sin reiniciarlo. Sabes que debes usar el estándar CIM (Common Information Model), pero no recuerdas el comando exacto ni la clase.
+    
+    ??? success "Ver solución paso a paso"
+        Para resolver este problema aplicando la metodología de investigación:
+
+        1. **Buscar el comando:** Sabemos que es algo relacionado con "Cim", así que buscamos los comandos disponibles:
+           `Get-Command *Cim*`
+           *(Vemos que existe `Get-CimClass` para buscar clases y `Get-CimInstance` para obtener datos).*
+        2. **Buscar la clase:** Buscamos una clase relacionada con la BIOS:
+           `Get-CimClass *BIOS*`
+           *(Descubrimos la clase `Win32_BIOS`).*
+        3. **Explorar las propiedades:** Obtenemos la instancia y la pasamos por `Get-Member` para ver qué información nos ofrece:
+           `Get-CimInstance -ClassName Win32_BIOS | Get-Member -MemberType Property`
+           *(Vemos propiedades como `Name`, `Manufacturer`, `SMBIOSBIOSVersion`, etc).*
+        4. **Comando final:** Filtramos solo la información que nos interesa:
+           ```powershell
+           Get-CimInstance -ClassName Win32_BIOS | Select-Object Manufacturer, Name, SMBIOSBIOSVersion
+           ```
+
+5. **Manipulación del Portapapeles (Clipboard)**
+   **Problema:** Quieres coger el texto que tienes actualmente copiado en el portapapeles de Windows, ponerlo todo en mayúsculas y volver a dejarlo en el portapapeles.
+    
+    ??? success "Ver solución paso a paso"
+        Para descubrir cómo interactuar con el portapapeles:
+
+        1. **Buscar los comandos:** Buscamos si existe alguna herramienta para el portapapeles (clipboard):
+           `Get-Command *Clipboard*`
+           *(Nos devuelve `Get-Clipboard` y `Set-Clipboard`).*
+        2. **Consultar la ayuda:** Verificamos cómo se usan mirando los ejemplos:
+           `Get-Help Get-Clipboard -Examples`
+        3. **Investigar el objeto:** ¿Qué tipo de objeto devuelve el portapapeles? Lo comprobamos:
+           `Get-Clipboard | Get-Member`
+           *(Vemos que devuelve un objeto de tipo `System.String` (texto) y que tiene un método llamado `ToUpper()`).*
+        4. **Comando final:** Juntamos todas las piezas en el pipeline. Cogemos el texto, lo pasamos a mayúsculas y lo mandamos de vuelta al portapapeles:
+           ```powershell
+           Get-Clipboard | ForEach-Object { $_.ToUpper() } | Set-Clipboard
+           ```
+
+---
+
 ## 📚 Referencias y Fuentes Consultadas
 
 !!! info "Documentación Oficial y Autoría"

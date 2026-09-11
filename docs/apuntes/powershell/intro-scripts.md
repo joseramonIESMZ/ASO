@@ -56,6 +56,24 @@ Se debe usar la ruta del script para su ejecución:
 
 Al indicar explícitamente la ruta se consigue que no haya dudas del fichero que ejecutamos y evitar *hijacking* (secuestro, es decir, que otro script con el mismo nombre se ejecute en vez del nuestro). No se requiere la extensión del fichero aunque es recomendable.
 
+#### Ejecutar alterando la política de ejecución
+
+En ocasiones puede ser necesario ejecutar un script sin modificar la directiva global del sistema (lo cual requeriría permisos de Administrador). Existen dos formas habituales de hacerlo:
+
+1. **Invocando PowerShell con el parámetro `-ExecutionPolicy` (en la propia línea de comandos):**  
+   Al lanzar el intérprete (desde CMD, PowerShell, un archivo `.bat` o una tarea programada), se puede indicar la directiva puntualmente para esa única ejecución:
+   ```powershell
+   powershell.exe -ExecutionPolicy Bypass -File .\prueba.ps1
+   ```
+   *(También es válido `RemoteSigned` o `Unrestricted`, o su versión abreviada `powershell -ep Bypass -File .\prueba.ps1`)*.
+
+2. **Cambiando la directiva solo para el proceso actual (`-Scope Process`):**  
+   Si ya estamos dentro de una sesión de PowerShell, podemos aplicar la política exclusivamente a la ventana/sesión activa:
+   ```powershell
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+   ```
+   *(O `Bypass`). No requiere permisos de Administrador y la configuración se descartará automáticamente al cerrar la consola*.
+
 ## Ámbito (*Scope*) de los Scripts
 
 Cuando se lanza un script, las variables que crea se quedan dentro del ámbito de ejecución (*scope*), es decir, que si la ejecución finaliza, las variables se borran y desaparecen.
@@ -224,6 +242,127 @@ Get-NetIPAddress | Foreach-Object `
 -Process { Write-Host ($_.InterfaceAlias, $posicion1, $_.IPAddress, $posicion2, [string]((Get-DnsClientServerAddress -InterfaceAlias $_.InterfaceAlias).ServerAddresses)) } `
 -End { Write-Host "$lineaRayas" }
 ```
+
+---
+
+## 📝 Ejercicios Prácticos
+
+A continuación se plantean 3 ejercicios prácticos para afianzar los conceptos tratados en este tema (creación de scripts, parámetros, políticas de ejecución, ámbitos de variables, códigos de retorno y formato con ANSI), integrándolos con los contenidos previos de fundamentos, tuberías (*pipeline*) y administración del sistema.
+
+### Ejercicio 1. Variables Numéricas y Operaciones Aritméticas Básicas (`ej1.ps1`)
+
+**Problema:**  
+Crea un script llamado `ej1.ps1` que realice las siguientes acciones:
+
+- Crea dos variables que solo admitan valores numéricos (tipadas, por ejemplo, como `[int]`) y establece sus valores a `5` y `10` respectivamente.
+- Lleva a cabo varias operaciones aritméticas con esas variables (suma, resta, multiplicación y división) y muestra el resultado en pantalla.
+- Utiliza `Write-Output` para mostrar la información por pantalla. Las operaciones se pueden realizar directamente usando subexpresiones `$()` o almacenando el cálculo previamente en variables auxiliares.
+- El formato de la salida por consola debe ser exactamente el siguiente:
+  ```text
+  El resultado de la suma de 5 + 10 es 15
+  El resultado de la resta de 10 - 5 es 5
+  El resultado de la multiplicación es 10 * 5 es 50
+  El resultado de la división es 10 / 5 es 2
+  ```
+
+??? success "Ver solución"
+    ```powershell
+    # ej1.ps1
+    # Declaramos dos variables forzadas a tipo entero
+    [int]$num1 = 5
+    [int]$num2 = 10
+
+    # Mostramos los resultados de las operaciones aritméticas con Write-Output
+    Write-Output "El resultado de la suma de $num1 + $num2 es $($num1 + $num2)"
+    Write-Output "El resultado de la resta de $num2 - $num1 es $($num2 - $num1)"
+    Write-Output "El resultado de la multiplicación es $num2 * $num1 es $($num2 * $num1)"
+    Write-Output "El resultado de la división es $num2 / $num1 es $($num2 / $num1)"
+    ```
+
+    **Ejemplo de ejecución:**
+    ```powershell
+    .\ej1.ps1
+    ```
+
+---
+
+### Ejercicio 2. Variables de Entorno, Entrada de Datos y Consulta de Unidades (`ej2.ps1`)
+
+**Problema:**  
+Crea un script llamado `ej2.ps1` que obtenga y muestre información del sistema y de las unidades de almacenamiento del equipo:
+
+- Escribe el nombre del equipo obteniéndolo a partir de su variable de entorno correspondiente (`$env:COMPUTERNAME`).
+- Solicita al usuario una letra de unidad de disco (por ejemplo: `C`, `D`, etc.) mediante `Read-Host`.
+- Consulta la información de dicha unidad usando `Get-CimInstance Win32_LogicalDisk` (o `CIM_LogicalDisk`). Recuerda que para comparar la unidad es necesario añadir el carácter de dos puntos `:`, ya sea mediante concatenación (`$letra + ':'`) o mediante subexpresión de cadena (`"$($letra):"`).
+- Muestra el espacio total en GB, el espacio disponible en GB y el nombre del volumen (`VolumeName`).
+- La ejecución del script debe seguir el siguiente formato:
+  ```text
+  Equipo: DESKTOP-T09T2QK
+  Indica la letra de la unidad de disco (C,D, ...): C
+  Espacio total en C : 952.863277435303 GB
+  Espacio disponible en C : 619.167423248291 GB
+  Nombre del volumen C : Windows
+  ```
+
+??? success "Ver solución"
+    ```powershell
+    # ej2.ps1
+    # 1. Obtenemos y mostramos el nombre del equipo desde la variable de entorno
+    Write-Output "Equipo: $env:COMPUTERNAME"
+
+    # 2. Solicitamos la letra de la unidad de disco
+    $letra = Read-Host "Indica la letra de la unidad de disco (C,D, ...)"
+
+    # 3. Formamos la unidad con los dos puntos (ej: 'C:') y consultamos con Get-CimInstance
+    $unidad = "$($letra):"
+    $disco = Get-CimInstance Win32_LogicalDisk | Where-Object DeviceID -eq $unidad
+
+    # 4. Mostramos el espacio total, disponible y el nombre del volumen
+    Write-Output "Espacio total en $letra : $($disco.Size / 1GB) GB"
+    Write-Output "Espacio disponible en $letra : $($disco.FreeSpace / 1GB) GB"
+    Write-Output "Nombre del volumen $letra : $($disco.VolumeName)"
+    ```
+
+    **Ejemplo de ejecución:**
+    ```powershell
+    .\ej2.ps1
+    ```
+
+---
+
+### Ejercicio 3. Informe de Red con `Foreach-Object -Begin -Process -End` y Posicionamiento ANSI (`Informe-Red.ps1`)
+
+**Problema:**  
+Siguiendo la técnica explicada en el tema sobre formateo avanzado con secuencias ANSI, crea un script llamado `Informe-Red.ps1` que genere un informe en columnas de los adaptadores de red y sus direcciones IPv4:
+
+- En el bloque `-Begin`, define las secuencias de escape ANSI (`[char]27`), calcula las posiciones horizontales de las columnas (p. ej., columna 1 en posición 35 y columna 2 en posición 60) e imprime una cabecera con una línea separadora.
+- En el bloque `-Process`, recibe las direcciones IP obtenidas con `Get-NetIPAddress -AddressFamily IPv4` e imprime para cada una: el alias de la interfaz (`InterfaceAlias`), su dirección IP (`IPAddress`) y la longitud del prefijo de subred (`PrefixLength`) alineadas por columnas. Además, incrementa un contador de interfaces procesadas.
+- En el bloque `-End`, imprime una línea de cierre y un resumen con el total de interfaces procesadas.
+
+??? success "Ver solución"
+    ```powershell
+    # Informe-Red.ps1
+    $esc = [char]27
+    $columna1 = 35
+    $columna2 = 60
+    $posicion1 = "$esc`[$($columna1)G"
+    $posicion2 = "$esc`[$($columna2)G"
+    $separador = "=" * 75
+
+    Get-NetIPAddress -AddressFamily IPv4 | Foreach-Object `
+        -Begin {
+            $script:contador = 0
+            Write-Host "Interfaz${posicion1}Dirección IPv4${posicion2}Prefijo / CIDR`n$separador" -ForegroundColor Cyan
+        } `
+        -Process {
+            $script:contador++
+            Write-Host ($_.InterfaceAlias, $posicion1, $_.IPAddress, $posicion2, "/$($_.PrefixLength)")
+        } `
+        -End {
+            Write-Host "$separador" -ForegroundColor Cyan
+            Write-Host "Total de interfaces IPv4 registradas: $script:contador" -ForegroundColor Green
+        }
+    ```
 
 ---
 

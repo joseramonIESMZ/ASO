@@ -201,6 +201,257 @@ if (-not $procesoIniciado) {
 
 ---
 
+## 📝 Ejercicios Prácticos
+
+A continuación se plantean 4 ejercicios prácticos para afianzar el uso de bucles `for`, `while` y su aplicación en la automatización de tareas en PowerShell.
+
+### Ejercicio 1. Comprobación de apertura de puertos (`Comprobar-Puerto.ps1`)
+
+**Problema:**  
+Crea un script llamado `Comprobar-Puerto.ps1` que escanee el estado de un rango de puertos TCP en una dirección IP o nombre DNS:
+
+- **Parámetros:**
+    - `nameip`: Para introducir el nombre DNS o la dirección IP (obligatorio).
+    - `portini`: Puerto de inicio (opcional, valor por defecto `1`).
+    - `portfin`: Puerto de fin (opcional, valor por defecto `65535`).
+- Se encargará de revisar mediante `Test-Connection` la apertura de los puertos en `nameip`, evaluando todos los puertos comprendidos entre `portini` y `portfin`.
+
+??? success "Ver solución"
+    ```powershell
+    # Comprobar-Puerto.ps1
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$nameip,
+
+        [int]$portini = 1,
+        [int]$portfin = 65535
+    )
+
+    Write-Output "Escaneando host: $nameip"
+
+    for ($port = $portini; $port -le $portfin; $port++) {
+        $testPuerto = Test-Connection -ComputerName $nameip -TCPPort $port -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        if ($testPuerto) {
+            Write-Output "Puerto $($port): Abierto"
+        }
+        else {
+            Write-Output "Puerto $($port): Cerrado"
+        }
+    }
+    ```
+
+---
+
+### Ejercicio 2. Creación Automatizada de Carpetas con Bucle `For` (`Crea-carpetas.ps1`)
+
+**Problema:**  
+Crea un script llamado `Crea-carpetas.ps1` que cree tantas carpetas como se indique en el número pasado por parámetro en la ruta base también pasada:
+
+- Recibirá dos parámetros: `-NumCarpetas` (número entero de carpetas a generar) y `-RutaBase` (ruta del directorio padre donde se crearán, por ejemplo `D:\temp1\`).
+- Creará las carpetas numeradas secuencialmente como `Carpeta1`, `Carpeta2`, ..., `CarpetaN`.
+- Se debe hacer uso de un bucle `for` para recorrer el índice numérico de la carpeta a crear.
+- Para unir la ruta base con el nombre de la carpeta se debe usar el cmdlet `Join-Path`.
+- Si la carpeta ya estuviera creada previamente en el sistema, lo debe comprobar e indicar con el mensaje `Ya existe: <ruta_completa>`.
+
+**Ejemplos de ejecución esperados:**
+
+```powershell
+# 1. Creación de las carpetas cuando no existen:
+> .\Crea-carpetas.ps1 -NumCarpetas 5 -RutaBase D:\temp1\
+
+    Directorio: D:\temp1
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----           27/09/2025      8:10            Carpeta1
+Carpeta creada: D:\temp1\Carpeta1
+d-----           27/09/2025      8:10            Carpeta2
+Carpeta creada: D:\temp1\Carpeta2
+d-----           27/09/2025      8:10            Carpeta3
+Carpeta creada: D:\temp1\Carpeta3
+d-----           27/09/2025      8:10            Carpeta4
+Carpeta creada: D:\temp1\Carpeta4
+d-----           27/09/2025      8:10            Carpeta5
+Carpeta creada: D:\temp1\Carpeta5
+
+# 2. Ejecución cuando las carpetas ya existen:
+> .\Crea-carpetas.ps1 -NumCarpetas 5 -RutaBase D:\temp1\
+Ya existe: D:\temp1\Carpeta1
+Ya existe: D:\temp1\Carpeta2
+Ya existe: D:\temp1\Carpeta3
+Ya existe: D:\temp1\Carpeta4
+Ya existe: D:\temp1\Carpeta5
+```
+
+??? success "Ver solución"
+    ```powershell
+    # Crea-carpetas.ps1
+    param(
+        [Parameter(Mandatory = $true)]
+        [int]$NumCarpetas,
+
+        [Parameter(Mandatory = $true)]
+        [string]$RutaBase
+    )
+
+    for ($i = 1; $i -le $NumCarpetas; $i++) {
+        $nombreCarpeta = "Carpeta$i"
+        $rutaCompleta = Join-Path -Path $RutaBase -ChildPath $nombreCarpeta
+
+        if (Test-Path -Path $rutaCompleta) {
+            Write-Output "Ya existe: $rutaCompleta"
+        }
+        else {
+            New-Item -Path $rutaCompleta -ItemType Directory
+            Write-Output "Carpeta creada: $rutaCompleta"
+        }
+    }
+    ```
+
+    **Ejemplo de ejecución:**
+    ```powershell
+    .\Crea-carpetas.ps1 -NumCarpetas 5 -RutaBase "D:\temp1\"
+    ```
+
+---
+
+### Ejercicio 3. Menú de Administración de Usuarios con Bucle `While` (`Gest-Usu.ps1`)
+
+**Problema:**  
+Crea un script llamado `Gest-Usu.ps1` que muestre un menú interactivo en consola para la administración de usuarios del sistema:
+
+- **Opciones disponibles:**
+    - `1. Crear nuevo usuario`
+    - `2. Borrar usuario`
+    - `3. Modificar contraseña de usuario`
+    - `4. Salir`
+- Al elegir las opciones 1, 2 o 3, el script mostrará un mensaje indicando la opción elegida (por ejemplo: `Opción 3 seleccionada`) y volverá a mostrar el menú de opciones.
+- En la opción 4, mostrará `Saliendo del programa...` y finalizará la ejecución.
+- En cualquier otra opción elegida, dará el mensaje de aviso `Opción inválida. Intente de nuevo.` y volverá a desplegar el menú.
+
+**Ejemplo de ejecución esperado:**
+
+```powershell
+> .\Gest-Usu.ps1
+===== MENÚ DE ADMINISTRACIÓN DE USUARIOS =====
+1. Crear nuevo usuario
+2. Borrar usuario
+3. Modificar contraseña de usuario
+4. Salir
+=============================================
+Seleccione una opción (1-4): 3
+Opción 3 seleccionada
+===== MENÚ DE ADMINISTRACIÓN DE USUARIOS =====
+1. Crear nuevo usuario
+2. Borrar usuario
+3. Modificar contraseña de usuario
+4. Salir
+=============================================
+Seleccione una opción (1-4): 5
+Opción inválida. Intente de nuevo.
+===== MENÚ DE ADMINISTRACIÓN DE USUARIOS =====
+1. Crear nuevo usuario
+2. Borrar usuario
+3. Modificar contraseña de usuario
+4. Salir
+=============================================
+Seleccione una opción (1-4): 4
+Saliendo del programa...
+```
+
+??? success "Ver solución"
+    ```powershell
+    # Gest-Usu.ps1
+    $opcion = ""
+
+    while ($opcion -ne "4") {
+        Write-Output "===== MENÚ DE ADMINISTRACIÓN DE USUARIOS ====="
+        Write-Output "1. Crear nuevo usuario"
+        Write-Output "2. Borrar usuario"
+        Write-Output "3. Modificar contraseña de usuario"
+        Write-Output "4. Salir"
+        Write-Output "============================================="
+
+        $opcion = Read-Host "Seleccione una opción (1-4)"
+
+        switch ($opcion) {
+            "1" { Write-Output "Opción 1 seleccionada" }
+            "2" { Write-Output "Opción 2 seleccionada" }
+            "3" { Write-Output "Opción 3 seleccionada" }
+            "4" { Write-Output "Saliendo del programa..." }
+            default { Write-Output "Opción inválida. Intente de nuevo." }
+        }
+    }
+    ```
+
+    **Ejemplo de ejecución:**
+    ```powershell
+    .\Gest-Usu.ps1
+    ```
+
+---
+
+### Ejercicio 4. Monitorización Continua de Espacio en Disco (`Check-Unidad.ps1`)
+
+**Problema:**  
+Haz un script llamado `Check-Unidad.ps1` al que se le pase una letra de unidad por parámetro y compruebe su espacio libre y ocupado periódicamente:
+
+- Se le pasa la letra de la unidad por parámetro obligatorio (`-Unidad`, por ejemplo `C`).
+- Para consultar los datos de la unidad, se puede usar `Get-PSDrive` y propiedades como `Free` y `Used` (expresadas en bytes).
+- Para calcular el porcentaje y redondear a 2 decimales, se puede usar la función matemática de .NET:
+    ```powershell
+    $([math]::Round(($espacioUsado / $total) * 100, 2))
+    ```
+    que devuelve el porcentaje de espacio usado con 2 decimales.
+- El script se ejecutará continuamente (bucle infinito `while ($true)`), aplicando una demora de 10 segundos entre cada comprobación de disco mediante `Start-Sleep -Seconds 10`.
+
+**Ejemplo de ejecución esperado:**
+
+```powershell
+> .\Check-Unidad.ps1 -Unidad C
+Unidad: C
+Espacio libre: 50.14 %
+Espacio usado: 49.86 %
+Unidad: C
+Espacio libre: 50.14 %
+Espacio usado: 49.86 %
+```
+
+??? success "Ver solución"
+    ```powershell
+    # Check-Unidad.ps1
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Unidad
+    )
+
+    while ($true) {
+        $disco = Get-PSDrive -Name $Unidad -ErrorAction SilentlyContinue
+
+        if ($null -eq $disco) {
+            Write-Output "La unidad '$Unidad' no existe en el sistema."
+            break
+        }
+
+        $total = $disco.Used + $disco.Free
+        $espacioLibre = [math]::Round(($disco.Free / $total) * 100, 2)
+        $espacioUsado = [math]::Round(($disco.Used / $total) * 100, 2)
+
+        Write-Output "Unidad: $Unidad"
+        Write-Output "Espacio libre: $espacioLibre %"
+        Write-Output "Espacio usado: $espacioUsado %"
+
+        Start-Sleep -Seconds 10
+    }
+    ```
+
+    **Ejemplo de ejecución:**
+    ```powershell
+    .\Check-Unidad.ps1 -Unidad C
+    ```
+
+---
+
 ## 📚 Referencias y Fuentes Consultadas
 
 !!! info "Documentación Oficial y Autoría"

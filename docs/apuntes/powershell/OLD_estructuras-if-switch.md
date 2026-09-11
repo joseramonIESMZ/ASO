@@ -320,387 +320,244 @@ La fecha y hora actuales son: 11/08/2026 19:35:00
 
 ## 📝 Ejercicios Prácticos
 
-A continuación se plantean 6 ejercicios prácticos basados en casos reales de administración de sistemas para afianzar el uso de parámetros de entrada (`param()`), validación de valores (`ValidateSet`), estructuras condicionales (`If`, `ElseIf`, `Else`), cmdlets de gestión (`Get-LocalUser`, `Get-Process`) y tratamiento de objetos en PowerShell.
+A continuación se plantean 5 ejercicios prácticos para afianzar el uso de parámetros de entrada (`param()`), estructuras condicionales (`If`, `ElseIf`, `Else`), validación con `Test-Path`, tuberías (*pipeline*) y control de flujo en PowerShell.
 
-### Ejercicio 1. Parametrización de Script de Saludo (`saludo-param.ps1`)
+### Ejercicio 1. Parametrización de Operaciones Aritméticas Básicas (`ej3.ps1`)
 
 **Problema:**  
-Observa el siguiente script interactivo (`saludo-readhost.ps1`):
+Parametriza el script `ej1.ps1` (del tema de introducción a scripts) de modo que los dos números sean parámetros de entrada recibidos en la llamada al script en lugar de variables fijas. Guárdalo como `ej3.ps1`:
 
-```powershell
-$nombre = Read-Host "Introduce tu nombre"
-$edad = Read-Host "Introduce tu edad"
-Write-Output "Hola $nombre, tienes $edad años."
-```
-
-Parametrízalo en un script llamado `saludo-param.ps1` de modo que `$nombre` y `$edad` se introduzcan como parámetros obligatorios y con el tipo de datos adecuado en cada caso (`[string]` para el nombre y `[int]` para la edad).
-
-**Ejemplo de ejecución esperado:**
-
-```powershell
-> .\saludo-param.ps1 -Nombre María -Edad 30
-Hola María, tienes 30 años.
-```
+- Define un bloque `param()` al comienzo del script que reciba dos parámetros forzados a tipo numérico entero (por ejemplo, `[int]$num1` y `[int]$num2`).
+- Realiza las operaciones aritméticas básicas (suma, resta, multiplicación y división) e imprime los resultados por pantalla utilizando `Write-Output` y subexpresiones `$()`.
+- Muestra ejemplos de ejecución pasando los argumentos tanto por posición como por nombre de parámetro.
 
 ??? success "Ver solución"
     ```powershell
-    # saludo-param.ps1
+    # ej3.ps1
+    # Definición de parámetros forzados a entero
     param(
-        [Parameter(Mandatory = $true)]
-        [string]$Nombre,
-
-        [Parameter(Mandatory = $true)]
-        [int]$Edad
+        [int]$num1,
+        [int]$num2
     )
 
-    Write-Output "Hola $Nombre, tienes $Edad años."
-    ```
-
-    **Ejemplo de ejecución:**
-    ```powershell
-    .\saludo-param.ps1 -Nombre María -Edad 30
-    ```
-
----
-
-### Ejercicio 2. Parametrización de Copia de Archivos con Destino Opcional (`copiar-param.ps1`)
-
-**Problema:**  
-Observa el siguiente script interactivo (`copiar-readhost.ps1`):
-
-```powershell
-$origen = Read-Host "Introduce la ruta del archivo origen"
-$destino = Read-Host "Introduce la ruta de destino"
-Copy-Item -Path $origen -Destination $destino -Force
-Write-Output "Archivo copiado de $origen a $destino"
-```
-
-Parametrízalo en un script llamado `copiar-param.ps1` para que se ejecute con las siguientes condiciones:
-
-- `Origen` será un parámetro obligatorio (`[string]`).
-- `Destino` será un parámetro opcional con valor por defecto `C:\TEMP` (`[string]$Destino = "C:\TEMP"`).
-- Observa que si no se indica `-Destino` en la llamada, el archivo se copiará por defecto en `C:\TEMP`.
-
-**Ejemplos de ejecución esperados:**
-
-```powershell
-> .\copiar-param.ps1 -Origen "D:\temp1\prueba.txt" -Destino "D:\temp2\"
-Archivo copiado de D:\temp1\prueba.txt a D:\temp2\
-
-> .\copiar-param.ps1 -Origen "D:\temp1\prueba.txt"
-Archivo copiado de D:\temp1\prueba.txt a C:\TEMP
-```
-
-??? success "Ver solución"
-    ```powershell
-    # copiar-param.ps1
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Origen,
-
-        [Parameter(Mandatory = $false)]
-        [string]$Destino = "C:\TEMP"
-    )
-
-    Copy-Item -Path $Origen -Destination $Destino -Force
-    Write-Output "Archivo copiado de $Origen a $Destino"
+    # Mostramos los resultados de las operaciones aritméticas con Write-Output
+    Write-Output "El resultado de la suma de $num1 + $num2 es $($num1 + $num2)"
+    Write-Output "El resultado de la resta de $num2 - $num1 es $($num2 - $num1)"
+    Write-Output "El resultado de la multiplicación es $num2 * $num1 es $($num2 * $num1)"
+    Write-Output "El resultado de la división es $num2 / $num1 es $($num2 / $num1)"
     ```
 
     **Ejemplos de ejecución:**
     ```powershell
-    # 1. Indicando origen y destino explícitamente
-    .\copiar-param.ps1 -Origen "D:\temp1\prueba.txt" -Destino "D:\temp2\"
+    # Ejecución por posición:
+    .\ej3.ps1 5 10
 
-    # 2. Indicando únicamente el origen (usa destino predeterminado C:\TEMP)
-    .\copiar-param.ps1 -Origen "D:\temp1\prueba.txt"
+    # Ejecución con nombres de parámetro:
+    .\ej3.ps1 -num1 5 -num2 10
     ```
 
 ---
 
-### Ejercicio 3. Reporte de Usuario con Validación de Estudios (`informe-usuario.ps1`)
+### Ejercicio 2. Parametrización de Consulta de Unidades de Disco (`ej4.ps1`)
 
 **Problema:**  
-Realiza un script llamado `informe-usuario.ps1` que reciba los datos de un usuario y genere un reporte estructurado por consola, cumpliendo las siguientes directrices:
+Parametriza el script `ej2.ps1` (del tema de introducción a scripts) para que la letra de la unidad de disco no se solicite mediante `Read-Host`, sino que sea un parámetro de entrada obligatorio. Guárdalo como `ej4.ps1`:
 
-- Los parámetros `Nombre` (`[string]`) y `Edad` (`[int]`) serán obligatorios.
-- El parámetro `Estudios` será tal cual el siguiente código, lo que significa que únicamente permite los valores definidos dentro de la estructura `ValidateSet` y toma `"FPGS"` como valor predeterminado:
-    ```powershell
-    # Opcional: valor por defecto (nivel de estudios)
-    [ValidateSet("ESO","BACH","UNI","FPGM","FPGS")]
-    [string]$estudios = "FPGS",
-    ```
-- El parámetro `Localidad` (`[string]`) será opcional.
-
-**Ejemplo de ejecución esperado:**
-
-```powershell
-> .\informe-usuario.ps1 -Nombre Pepe -Edad 40 -estudios FPGS -Localidad Alicante
-=== Reporte de Usuario ===
-Usuario: Pepe
-Edad: 40
-Nivel de estudios: FPGS
-Localidad: Alicante
-```
+- Define un bloque `param()` con el parámetro `$letra` (de tipo `[string]`) configurado como obligatorio (`Mandatory = $true`) y con un mensaje de ayuda descriptivo.
+- Muestra el nombre del equipo obtenido de la variable de entorno `$env:COMPUTERNAME`.
+- Concatena los dos puntos `:` a la letra introducida (por ejemplo, `"$($letra):"`) y consulta la información de la unidad mediante `Get-CimInstance Win32_LogicalDisk`.
+- Muestra en pantalla el espacio total en GB, el espacio disponible en GB y la etiqueta o nombre del volumen (`VolumeName`).
+- Muestra ejemplos de cómo ejecutar el script pasando el parámetro por posición o por nombre.
 
 ??? success "Ver solución"
     ```powershell
-    # informe-usuario.ps1
+    # ej4.ps1
     param(
-        [Parameter(Mandatory = $true)]
-        [string]$Nombre,
-
-        [Parameter(Mandatory = $true)]
-        [int]$Edad,
-
-        # Opcional: valor por defecto (nivel de estudios)
-        [ValidateSet("ESO", "BACH", "UNI", "FPGM", "FPGS")]
-        [string]$estudios = "FPGS",
-
-        [Parameter(Mandatory = $false)]
-        [string]$Localidad
+        [Parameter(Mandatory = $true, HelpMessage = "Indica la letra de la unidad de disco (C, D, ...)")]
+        [string]$letra
     )
 
-    Write-Output "=== Reporte de Usuario ==="
-    Write-Output "Usuario: $Nombre"
-    Write-Output "Edad: $Edad"
-    Write-Output "Nivel de estudios: $estudios"
-    if ($Localidad) {
-        Write-Output "Localidad: $Localidad"
-    }
+    # 1. Obtenemos y mostramos el nombre del equipo desde la variable de entorno
+    Write-Output "Equipo: $env:COMPUTERNAME"
+
+    # 2. Formamos la unidad con los dos puntos (ej: 'C:') y consultamos con Get-CimInstance
+    $unidad = "$($letra):"
+    $disco = Get-CimInstance Win32_LogicalDisk | Where-Object DeviceID -eq $unidad
+
+    # 3. Mostramos el espacio total, disponible y el nombre del volumen
+    Write-Output "Espacio total en $letra : $($disco.Size / 1GB) GB"
+    Write-Output "Espacio disponible en $letra : $($disco.FreeSpace / 1GB) GB"
+    Write-Output "Nombre del volumen $letra : $($disco.VolumeName)"
     ```
 
-    **Ejemplo de ejecución:**
+    **Ejemplos de ejecución:**
     ```powershell
-    .\informe-usuario.ps1 -Nombre Pepe -Edad 40 -estudios FPGS -Localidad Alicante
+    # Ejecución pasando la letra de unidad por posición:
+    .\ej4.ps1 C
+
+    # Ejecución indicando el parámetro explícitamente:
+    .\ej4.ps1 -letra C
     ```
 
 ---
 
-### Ejercicio 4. Clasificación de Categorías de Fútbol con If..ElseIf (`Test-Categoria.ps1`)
+### Ejercicio 3. Monitorización de Servicios con Parámetros y Condicionales (`Comprobar-Servicio.ps1`)
 
 **Problema:**  
-Haz un script en PowerShell llamado `Test-Categoria.ps1` donde, dada la edad de una persona introducida por parámetro obligatorio (`[int]$edad`), muestre un mensaje indicando la categoría de fútbol en la que se encuentra.
+Crea un script llamado `Comprobar-Servicio.ps1` que reciba el nombre de un servicio del sistema mediante un parámetro obligatorio (utiliza el bloque `param`). El script debe consultar los servicios del equipo y evaluar su estado con condicionales `if/elseif/else`:
 
-Las categorías son:
-
-- **Prebenjamines**: 5 a 7 años
-- **Benjamines**: 8 a 9 años
-- **Alevines**: 10 a 11 años
-- **Infantiles**: 12 a 13 años
-- **Cadetes**: 14 a 15 años
-- **Juveniles**: 16 a 18 años
-- **Aficionados**: mayores de 18 años (19 a 29 años)
-- **Veteranos**: jugadores que han cumplido 30 años (30 o más años)
-
-> [!IMPORTANT]
-> **Requisito obligatorio:** DEBES UTILIZAR `IF .. ELSEIF`.
-
-**Ejemplos de ejecución esperados:**
-
-```powershell
-> .\Test-Categoria.ps1 -edad 16
-Categoría: Juveniles
-
-> .\Test-Categoria.ps1 -edad 11
-Categoría: Alevines
-
-> .\Test-Categoria.ps1 -edad 31
-Categoría: Veteranos
-```
+- Si el servicio existe y está en ejecución (`Running`), debe mostrar un mensaje en verde indicando que el servicio funciona correctamente.
+- Si el servicio existe pero está detenido (`Stopped`), debe advertir en color amarillo que el servicio se encuentra parado.
+- Si no existe ningún servicio con ese nombre, debe informar con un error en color rojo.
+- Además, muestra cómo lanzar este script pasando el parámetro y cómo saltarse puntualmente la directiva de ejecución mediante el parámetro `-ExecutionPolicy Bypass`.
 
 ??? success "Ver solución"
     ```powershell
-    # Test-Categoria.ps1
+    # Comprobar-Servicio.ps1
     param(
-        [Parameter(Mandatory = $true)]
-        [int]$edad
+        [Parameter(Mandatory = $true, HelpMessage = "Introduce el nombre del servicio a verificar")]
+        [string]$NombreServicio
     )
 
-    if ($edad -ge 5 -and $edad -le 7) {
-        Write-Output "Categoría: Prebenjamines"
+    # Buscamos el servicio silenciando posibles errores en caso de que no exista
+    $servicio = Get-Service -Name $NombreServicio -ErrorAction SilentlyContinue
+
+    if ($null -eq $servicio) {
+        Write-Host "ERROR: El servicio '$NombreServicio' no existe en el sistema." -ForegroundColor Red
     }
-    elseif ($edad -ge 8 -and $edad -le 9) {
-        Write-Output "Categoría: Benjamines"
+    elseif ($servicio.Status -eq 'Running') {
+        Write-Host "OK: El servicio '$($servicio.DisplayName)' está en ejecución (Running)." -ForegroundColor Green
     }
-    elseif ($edad -ge 10 -and $edad -le 11) {
-        Write-Output "Categoría: Alevines"
-    }
-    elseif ($edad -ge 12 -and $edad -le 13) {
-        Write-Output "Categoría: Infantiles"
-    }
-    elseif ($edad -ge 14 -and $edad -le 15) {
-        Write-Output "Categoría: Cadetes"
-    }
-    elseif ($edad -ge 16 -and $edad -le 18) {
-        Write-Output "Categoría: Juveniles"
-    }
-    elseif ($edad -gt 18 -and $edad -lt 30) {
-        Write-Output "Categoría: Aficionados"
-    }
-    elseif ($edad -ge 30) {
-        Write-Output "Categoría: Veteranos"
+    elseif ($servicio.Status -eq 'Stopped') {
+        Write-Host "ADVERTENCIA: El servicio '$($servicio.DisplayName)' está detenido (Stopped)." -ForegroundColor Yellow
     }
     else {
-        Write-Output "No entra en ninguna categoría oficial (menor de 5 años)."
+        Write-Host "ESTADO: El servicio '$($servicio.DisplayName)' se encuentra en estado: $($servicio.Status)." -ForegroundColor Cyan
     }
     ```
 
-    **Ejemplos de ejecución:**
+    **Ejecución desde PowerShell:**
     ```powershell
-    .\Test-Categoria.ps1 -edad 16
-    .\Test-Categoria.ps1 -edad 11
-    .\Test-Categoria.ps1 -edad 31
+    .\Comprobar-Servicio.ps1 -NombreServicio "wuauserv"
     ```
 
----
-
-### Ejercicio 5. Comprobación de Último Acceso de Usuario Local (`Check-ultimoAcceso.ps1`)
-
-**Problema:**  
-Haz un script llamado `Check-ultimoAcceso.ps1` que compruebe si la fecha de último acceso de un usuario local al sistema es más o menos antigua que una fecha introducida por parámetro, mostrando un mensaje indicándolo.
-
-**Requisitos y consideraciones:**
-
-- Tanto el `usuario` como la `fecha` se deben pasar como parámetros (`$usuario` y `$fecha`).
-- La información de los usuarios se obtiene mediante el cmdlet `Get-LocalUser`.
-- La fecha del último acceso corresponde a la propiedad `LastLogon`.
-- Las fechas se introducen como argumento con el formato `"año/mes/día Hora:min:seg"` (por ejemplo: `"2025/09/28 16:00:00"`).
-- *Nota sobre el formato de fecha:* Al imprimir la fecha con `Write-Output`, PowerShell puede sacarla en formato `"mes/día/año hora:min:seg"` (sistema americano), cambiando el mes y el día de posición. Esto no afecta al funcionamiento ni a la comparación, ya que el tipo `[datetime]` compara instantes temporales de forma correcta.
-
-**Ejemplos de ejecución esperados:**
-
-```powershell
-> .\Check-ultimoAcceso.ps1 -usuario joseramon -fecha "2025/09/28 16:00:00"
-El usuario joseramon accedió al sistema por última vez: 07/19/2024 17:46:56
-Fecha introducida, 09/28/2025 16:00:00, es posterior a la del último acceso del usuario
-
-> .\Check-ultimoAcceso.ps1 -usuario joseramon_2 -fecha "2025/09/01 16:00:00"
-El usuario joseramon_2 accedió al sistema por última vez: 09/13/2025 18:11:37
-Fecha introducida, 09/01/2025 16:00:00, es anterior a la del último acceso del usuario
-```
-
-??? success "Ver solución"
-    ```powershell
-    # Check-ultimoAcceso.ps1
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$usuario,
-
-        [Parameter(Mandatory = $true)]
-        [datetime]$fecha
-    )
-
-    # Obtenemos los datos del usuario local
-    $cuenta = Get-LocalUser -Name $usuario -ErrorAction SilentlyContinue
-
-    if ($null -eq $cuenta) {
-        Write-Output "El usuario '$usuario' no existe en el sistema local."
-        return
-    }
-
-    $ultimoAcceso = $cuenta.LastLogon
-
-    if ($null -eq $ultimoAcceso) {
-        Write-Output "El usuario '$usuario' nunca ha iniciado sesión en el sistema."
-        return
-    }
-
-    Write-Output "El usuario $usuario accedió al sistema por última vez: $ultimoAcceso"
-
-    # Evaluamos si la fecha introducida es anterior o posterior al último acceso
-    if ($fecha -gt $ultimoAcceso) {
-        Write-Output "Fecha introducida, $fecha, es posterior a la del último acceso del usuario"
-    }
-    elseif ($fecha -lt $ultimoAcceso) {
-        Write-Output "Fecha introducida, $fecha, es anterior a la del último acceso del usuario"
-    }
-    else {
-        Write-Output "Fecha introducida, $fecha, coincide exactamente con la del último acceso del usuario"
-    }
-    ```
-
-    **Ejemplos de ejecución:**
-    ```powershell
-    # 1. Fecha introducida posterior al último acceso
-    .\Check-ultimoAcceso.ps1 -usuario joseramon -fecha "2025/09/28 16:00:00"
-
-    # 2. Fecha introducida anterior al último acceso
-    .\Check-ultimoAcceso.ps1 -usuario joseramon_2 -fecha "2025/09/01 16:00:00"
+    **Ejecución desde línea de comandos saltando la política de ejecución:**
+    ```cmd
+    powershell.exe -ExecutionPolicy Bypass -File .\Comprobar-Servicio.ps1 -NombreServicio "wuauserv"
     ```
 
 ---
 
-### Ejercicio 6. Monitorización de Memoria de Procesos frente a un Umbral (`UsoMemoriaProceso.ps1`)
+### Ejercicio 4. Auditoría de Procesos con Parámetros, Ámbito de Variables y Pipeline (`Top-ProcesosMemoria.ps1`)
 
 **Problema:**  
-Haz un script llamado `UsoMemoriaProceso.ps1` que compruebe el uso de memoria de un proceso y lo compare con un umbral numérico en MB. Debe devolver un mensaje indicando si el consumo está por arriba o por debajo del umbral.
+Desarrolla un script llamado `Top-ProcesosMemoria.ps1` que analice los procesos que más memoria RAM consumen en el equipo:
 
-**Requisitos y notas:**
-
-- Recibe los parámetros obligatorios `-NombreProceso` (nombre del proceso) y `-UmbralMemoriaMB` (límite en MB).
-- La propiedad de uso de memoria física de un proceso es `WorkingSet` (obtenida con `Get-Process`).
-- Cuando un proceso está repetido varias veces en ejecución (múltiples instancias o subprocesos con el mismo nombre), hay que sumar todos los `WorkingSet` de todos los procesos con ese nombre. Para esto debes usar `Measure-Object` y sumar la propiedad (`Measure-Object -Property WorkingSet -Sum`).
-- La propiedad `WorkingSet` está expresada en bytes. Para pasar a MB se usa la siguiente expresión de .NET:
-    ```powershell
-    $memoriaMB = [math]::Round($usoMemProceso / 1MB, 2)
-    ```
-    la cual divide entre 1 Megabyte (`1MB`) y redondea a 2 decimales como máximo.
-
-**Ejemplos de ejecución esperados:**
-
-```powershell
-> .\UsoMemoriaProceso.ps1 -NombreProceso chrome -UmbralMemoriaMB 1000
-El proceso 'chrome' está usando más de 1000 MB: 5961.38 MB.
-
-> .\UsoMemoriaProceso.ps1 -NombreProceso chrome -UmbralMemoriaMB 10000
-El proceso 'chrome' está usando menos de 10000 MB: 5908.42 MB.
-```
+- Debe aceptar un parámetro opcional `$Cantidad` con valor predeterminado 5 definido mediante el bloque `param`.
+- Mediante la tubería (*pipeline*), debe obtener los procesos con `Get-Process`, ordenarlos de forma descendente por memoria de trabajo (`WorkingSet64` o `WS`) y seleccionar únicamente los `$Cantidad` primeros.
+- Debe proyectar una tabla con `Id`, `ProcessName` y la memoria consumida calculada en Megabytes (MB).
+- Para evitar sobreescribir variables en el entorno del usuario, debe almacenar la suma total de memoria consumida en una variable con ámbito explícito de script (`$script:TotalMemoriaMB`).
+- Al terminar, debe mostrar un resumen destacado con la memoria total acumulada por esos procesos.
 
 ??? success "Ver solución"
     ```powershell
-    # UsoMemoriaProceso.ps1
+    # Top-ProcesosMemoria.ps1
     param(
-        [Parameter(Mandatory = $true)]
-        [string]$NombreProceso,
-
-        [Parameter(Mandatory = $true)]
-        [double]$UmbralMemoriaMB
+        [int]$Cantidad = 5
     )
 
-    # Obtenemos todas las instancias activas del proceso indicado
-    $procesos = Get-Process -Name $NombreProceso -ErrorAction SilentlyContinue
+    Write-Host "=== Top $Cantidad procesos con mayor consumo de memoria ===" -ForegroundColor Cyan
 
-    if (-not $procesos) {
-        Write-Output "No se encontró ningún proceso con el nombre '$NombreProceso' en ejecución."
-        return
-    }
+    # Obtenemos y filtramos los procesos usando la canalización
+    $script:TopProcesos = Get-Process |
+        Sort-Object -Property WorkingSet64 -Descending |
+        Select-Object -First $Cantidad
 
-    # Sumamos el WorkingSet de todas las instancias del proceso
-    $medicion = $procesos | Measure-Object -Property WorkingSet -Sum
-    $usoMemProceso = $medicion.Sum
+    # Mostramos la tabla con una propiedad calculada para convertir bytes a MB
+    $script:TopProcesos | Select-Object Id, ProcessName, @{
+        Name       = "Memoria (MB)"
+        Expression = { [math]::Round($_.WorkingSet64 / 1MB, 2) }
+    } | Format-Table -AutoSize
 
-    # Convertimos los bytes a MB y redondeamos a 2 decimales
-    $memoriaMB = [math]::Round($usoMemProceso / 1MB, 2)
+    # Calculamos la suma total acumulada y la guardamos en el ámbito de script
+    $totalBytes = ($script:TopProcesos | Measure-Object -Property WorkingSet64 -Sum).Sum
+    $script:TotalMemoriaMB = [math]::Round($totalBytes / 1MB, 2)
 
-    # Comparamos con el umbral especificado
-    if ($memoriaMB -gt $UmbralMemoriaMB) {
-        Write-Output "El proceso '$NombreProceso' está usando más de $UmbralMemoriaMB MB: $memoriaMB MB."
-    }
-    elseif ($memoriaMB -lt $UmbralMemoriaMB) {
-        Write-Output "El proceso '$NombreProceso' está usando menos de $UmbralMemoriaMB MB: $memoriaMB MB."
-    }
-    else {
-        Write-Output "El proceso '$NombreProceso' está usando exactamente $UmbralMemoriaMB MB: $memoriaMB MB."
-    }
+    Write-Host "Memoria total consumida por estos $Cantidad procesos: $script:TotalMemoriaMB MB" -ForegroundColor Green
     ```
 
     **Ejemplos de ejecución:**
     ```powershell
-    # Caso 1: Consumo superior al umbral
-    .\UsoMemoriaProceso.ps1 -NombreProceso chrome -UmbralMemoriaMB 1000
+    # 1. Ejecución con valor por defecto (5 procesos)
+    .\Top-ProcesosMemoria.ps1
 
-    # Caso 2: Consumo inferior al umbral
-    .\UsoMemoriaProceso.ps1 -NombreProceso chrome -UmbralMemoriaMB 10000
+    # 2. Ejecución pasando el parámetro para consultar 10 procesos
+    .\Top-ProcesosMemoria.ps1 -Cantidad 10
+    ```
+
+---
+
+### Ejercicio 5. Script de Mantenimiento de Logs con `Test-Path`, Códigos de Retorno (`exit`) y Directiva de Proceso (`-Scope Process`) (`Auditar-Logs.ps1`)
+
+**Problema:**  
+Crea un script de mantenimiento llamado `Auditar-Logs.ps1` que verifique archivos en una carpeta y devuelva códigos de salida estándar para sistemas de monitorización:
+
+- Recibe un parámetro obligatorio `$RutaCarpeta` con el directorio a auditar y un parámetro opcional `$TamanoMinimoMB` (por defecto 2), definidos en el bloque `param`.
+- Comprueba con `Test-Path` mediante una estructura `if` si la carpeta existe. Si no existe, muestra un mensaje de error en rojo y finaliza inmediatamente el script devolviendo el código numérico de error `exit 1`.
+- Si la ruta existe, busca con `Get-ChildItem` todos los archivos con extensión `.log` o `.tmp` que superen el tamaño indicado (usando `Where-Object` y el operador `-gt`).
+- Muestra los ficheros encontrados ordenados de mayor a menor tamaño (con su nombre, tamaño en MB y fecha `LastWriteTime`).
+- Si no se encuentra ninguno que supere el tamaño, muestra un aviso en verde informando de que no hay ficheros excesivamente grandes. Al finalizar correctamente, devuelve `exit 0`.
+- Muestra cómo cambiarías la directiva en PowerShell únicamente para tu sesión de trabajo con `-Scope Process`, cómo ejecutarías el script pasando parámetros y cómo consultarías el código de salida obtenido con `$LASTEXITCODE`.
+
+??? success "Ver solución"
+    ```powershell
+    # Auditar-Logs.ps1
+    param(
+        [Parameter(Mandatory = $true, HelpMessage = "Introduce la ruta de la carpeta a auditar")]
+        [string]$RutaCarpeta,
+
+        [int]$TamanoMinimoMB = 2
+    )
+
+    # 1. Validación de la ruta
+    if (-not (Test-Path -Path $RutaCarpeta)) {
+        Write-Host "ERROR: La ruta '$RutaCarpeta' no existe." -ForegroundColor Red
+        exit 1
+    }
+
+    $limiteBytes = $TamanoMinimoMB * 1MB
+    Write-Host "Auditando archivos (.log, .tmp) superiores a $TamanoMinimoMB MB en: $RutaCarpeta" -ForegroundColor Cyan
+
+    # 2. Búsqueda y filtrado por tubería
+    $archivos = Get-ChildItem -Path $RutaCarpeta -Include *.log, *.tmp -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.Length -gt $limiteBytes } |
+        Sort-Object -Property Length -Descending
+
+    if ($archivos) {
+        $archivos | Select-Object Name, @{
+            Name       = "Tamaño (MB)"
+            Expression = { [math]::Round($_.Length / 1MB, 2) }
+        }, LastWriteTime | Format-Table -AutoSize
+
+        Write-Host "Se encontraron $($archivos.Count) archivo(s) que superan el límite." -ForegroundColor Yellow
+    }
+    else {
+        Write-Host "No se encontraron archivos que superen los $TamanoMinimoMB MB." -ForegroundColor Green
+    }
+
+    exit 0
+    ```
+
+    **Prueba en PowerShell configurando la directiva solo para la sesión actual:**
+    ```powershell
+    # 1. Establecer política solo para la ventana/sesión activa (no requiere privilegios de Administrador)
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+
+    # 2. Ejecutar el script indicando la ruta y el parámetro
+    .\Auditar-Logs.ps1 -RutaCarpeta "$env:TEMP" -TamanoMinimoMB 1
+
+    # 3. Consultar el código devuelto por el último comando/script ejecutado
+    $LASTEXITCODE
     ```
 
 ---
