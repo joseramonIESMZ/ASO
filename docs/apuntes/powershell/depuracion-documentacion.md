@@ -547,19 +547,3 @@ En los scripts desarrollados durante el módulo se recomienda:
 Que un script funcione correctamente en una situación concreta no significa que sea robusto. También debemos comprobar cómo se comporta cuando faltan ficheros, existen usuarios duplicados, un servicio no está disponible, se introducen parámetros incorrectos o el usuario no dispone de permisos suficientes.
 
 ---
-
-## Relación con el currículo
-
-Los contenidos de esta sección permiten trabajar específicamente los siguientes criterios del **RA7 — Utiliza lenguajes de guiones (scripts) en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo**:
-
-* **CE2-RA7:** Se han utilizado herramientas para depurar errores sintácticos y de ejecución.
-* **CE9-RA7:** Se han documentado los guiones creados.
-
-Además, el uso de control de errores, parámetros, funciones y técnicas de diagnóstico refuerza transversalmente:
-
-* **CE1-RA7:** utilización y combinación de estructuras del lenguaje;
-* **CE4-RA7:** modificación y adaptación de guiones;
-* **CE5-RA7:** creación y prueba de guiones de administración de servicios;
-* **CE6-RA7:** creación y prueba de guiones de automatización de tareas.
-
-De esta forma, el desarrollo de scripts durante los diferentes sprints no se limita a conseguir que una automatización funcione, sino que persigue crear soluciones **robustas, mantenibles, reutilizables y correctamente documentadas**, tal y como se requiere en un entorno profesional de administración de sistemas.
