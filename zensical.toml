@@ -46,7 +46,8 @@ nav = [
   { "Estructuras If y Switch" = "apuntes/powershell/estructuras-if-switch.md" },
   { "Bucles For y While" = "apuntes/powershell/bucles-for-while.md" },
   { "Estructura Foreach" = "apuntes/powershell/estructura-foreach.md" },
-  { "Funciones en PowerShell" = "apuntes/powershell/funciones-pwsh.md" }
+  { "Funciones en PowerShell" = "apuntes/powershell/funciones-pwsh.md" },
+  { "Depuración y documentación" = "apuntes/powershell/depuracion-documentacion.md" }
 ] },
 
 { "Bash Scripting" = [

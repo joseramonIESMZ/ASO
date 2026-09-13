@@ -1,5 +1,30 @@
 ﻿# Fundamentos de PowerShell y Comandos Básicos
 
+## 🎯 Relación con el Currículo (RA y CE)
+
+La asimilación de los conceptos y técnicas integrados en el bloque de **PowerShell** permite verificar y evaluar el grado de consecución de los siguientes objetivos curriculares:
+
+* **Resultado de Aprendizaje 7 (RA7) — Principal:** Utiliza lenguajes de guiones (scripts) en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.
+
+    * *Criterios de evaluación vinculados:* CE1-RA7, CE2-RA7, CE3-RA7, CE4-RA7, CE5-RA7, CE6-RA7, CE8-RA7, CE9-RA7 y CE10-RA7.
+    * Mediante el uso de cmdlets, objetos, pipeline, variables, arrays, estructuras de control, funciones y scripts se desarrollan soluciones de administración, automatización y monitorización del sistema.
+
+* **Resultado de Aprendizaje 3 (RA3) — Soporte Transversal:** Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.
+
+    * *Criterios de evaluación vinculados:* CE1-RA3, CE3-RA3 y CE5-RA3.
+    * PowerShell se utiliza como herramienta de automatización de tareas administrativas repetitivas, aplicando políticas de ejecución y automatizando, entre otras operaciones, la gestión de cuentas.
+
+* **Resultado de Aprendizaje 2 (RA2) — Soporte Transversal:** Administra procesos del sistema describiéndolos y aplicando criterios de seguridad y eficiencia.
+
+    * *Criterios de evaluación vinculados:* CE4-RA2 y CE6-RA2.
+    * Mediante cmdlets como `Get-Process` y `Stop-Process` se realizan operaciones de consulta, seguimiento, análisis y terminación de procesos del sistema.
+
+* **Resultado de Aprendizaje 4 (RA4) — Soporte Transversal:** Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
+
+    * *Criterios de evaluación vinculados:* CE1-RA4, CE3-RA4, CE4-RA4 y CE5-RA4.
+    * PowerShell Remoting y WinRM permiten introducir la administración remota mediante cmdlets como `New-PSSession`, `Enter-PSSession` e `Invoke-Command`, sentando las bases para la gestión centralizada de los servidores de la infraestructura.
+
+
 ## ¿Qué es el Shell de un Sistema Operativo?
 
 El **Shell** es la interfaz que permite que un usuario (ya sea administrador o desarrollador) interactúe con el Sistema Operativo. Se encuentra en el último paso de la secuencia de arranque de un equipo:
