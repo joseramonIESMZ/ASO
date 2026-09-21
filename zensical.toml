@@ -66,9 +66,12 @@ nav = [
 ] },
 
 { "Proxmox" = [
-  { "Fundamentos" = "apuntes/proxmox/fundamentos-proxmox.md" },
-  { "Instalación" = "apuntes/proxmox/instalacion-proxmox.md" },
-  { "Administración básica" = "apuntes/proxmox/administracion-proxmox.md" }
+  { "Fundamentos de virtualización" = "apuntes/proxmox/fundamentos-proxmox.md" },
+  { "Instalación y configuración" = "apuntes/proxmox/instalacion-proxmox.md" },
+  { "Redes y almacenamiento" = "apuntes/proxmox/redes-almacenamiento.md" },
+  { "Máquinas virtuales y contenedores" = "apuntes/proxmox/vm-contenedores.md" },
+  { "Administración y mantenimiento" = "apuntes/proxmox/administracion-proxmox.md" },
+  { "Clúster y alta disponibilidad" = "apuntes/proxmox/cluster-ha.md" }
 ] }
 
 ]
