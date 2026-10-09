@@ -333,7 +333,7 @@ $Contadores = @{
 }
 $Resultados = foreach (
     $Muestra in Get-Counter `
-	    -Counter ($Contadores.Values) `
+	    -Counter $($Contadores.Values) `
 	-SampleInterval $Intervalo `
 	-MaxSamples $Muestras
 ) {
