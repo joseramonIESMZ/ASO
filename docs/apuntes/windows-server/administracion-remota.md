@@ -440,19 +440,44 @@ Vídeo complementario con la demostración práctica de las técnicas de adminis
 
 En la gestión profesional de infraestructuras IT, **evitar el uso de la cuenta integrada predeterminada `Administrador`** es un principio elemental de bastionado y cumplimiento de normativas de seguridad (como el Esquema Nacional de Seguridad o ISO 27001).
 
-### 🎯 Justificación Técnica y Criterios de Seguridad
+### 🎯 Auditoría y Trazabilidad de las Operaciones Administrativas
 
-1. **Auditoría y Trazabilidad (No repudio):**  
-   Si todas las operaciones de mantenimiento se ejecutan bajo la cuenta genérica `Administrador`, el Visor de Eventos de Windows (`Security.evtx`) registrará los eventos críticos (inicios de sesión interactivos, modificaciones en Active Directory, detención de servicios o elevación de privilegios) sin identificar a la persona física responsable. El uso de cuentas nominativas (como `jrsoria`) garantiza la autoría inequívoca de cada acción.
-2. **Mitigación de Ataques de Fuerza Bruta:**  
-   La cuenta `Administrador` cuenta con un identificador relativo fijo y universal (`RID 500`). Los atacantes conocen este nombre por defecto y dirigen hacia él sus intentos de autenticación mediante fuerza bruta o ataques de diccionario.
-3. **Principio de Menor Privilegio y Cuentas Dedicadas:**  
-   En un entorno empresarial real, un técnico dispone de al menos dos identidades:
+En la operativa diaria de un centro de datos, la gestión de identidades administrativas debe asegurar tanto la rendición de cuentas como la detección ágil de incidentes:
 
-    * **Cuenta estándar:** Empleada en las tareas de ofimática, navegación web y correo diario (sin privilegios administrativos).
-    * **Cuenta de administración:** Utilizada exclusivamente para operar consolas de gestión o conexiones remotas (por ejemplo, `adm_jrsoria` o `jrsoria-adm`).
+* **El problema de las cuentas genéricas o compartidas (`Administrador`):** Si múltiples administradores utilizan la cuenta integrada `Administrador`, el Visor de Eventos de Windows (*Event Viewer*) reflejará qué cuenta ejecutó una acción, pero será imposible determinar **qué persona física concreta** estaba tras el teclado en ese instante. Esto anula el principio de **no repudio** e invalida cualquier auditoría forense rigurosa.
+* **La solución mediante cuentas nominativas (`jrsoria`):** Asignar credenciales individuales a cada técnico permite vincular cada suceso de seguridad a una persona física identificable, garantizando la trazabilidad integral de los cambios realizados sobre el sistema.
 
-   En nuestro entorno de aula, dotaremos al usuario `jrsoria` de privilegios administrativos para ilustrar el control de acceso remoto nominal sin necesidad de recurrir a la cuenta global `Administrador`.
+Esto permite auditar y rastrear con exactitud operaciones críticas como:
+
+* **Inicios y cierres de sesión:** Registro del origen de red (IP), protocolo utilizado (WinRM, RDP, consola) y marcas temporales (*eventos de Logon/Logoff*).
+* **Modificaciones en Active Directory:** Trazabilidad sobre la creación, modificación de atributos o baja de objetos (usuarios, equipos y Unidades Organizativas).
+* **Gestión de grupos y permisos:** Auditoría exhaustiva sobre asignaciones a grupos privilegiados (*Domain Admins*, etc.) y escaladas de derechos.
+* **Ejecución de tareas administrativas:** Monitorización del lanzamiento de scripts, cmdlets privilegiados y apertura de herramientas de gestión.
+* **Alteración de servicios y configuración del SO:** Cambios en el registro de Windows, instalación de roles o parada/arranque de servicios esenciales.
+
+!!! note "Auditoría vs. Atribución física real"
+    La utilización de una cuenta nominativa no garantiza por sí sola la presencia física ineludible del titular legítimo, dado que las credenciales podrían haberse visto comprometidas o compartidas indebidamente.
+
+    Por ello, la trazabilidad debe complementarse siempre con una estrategia de defensa en profundidad: **políticas de contraseñas robustas**, **bloqueo automático de sesiones inactivas**, **control de acceso y bastionado**, y **autenticación multifactor (MFA)** siempre que la infraestructura lo permita.
+
+#### 1. Protección de la Cuenta Integrada «Administrador» (RID 500)
+
+Tanto las instalaciones locales de Windows como los dominios de Active Directory disponen de una cuenta de administración nativa identificada internamente por el identificador relativo **RID 500** dentro de su SID:
+
+* **Persistencia del identificador:** Aunque la cuenta sea renombrada (por ejemplo, a `admin_local`), su RID `500` permanece inmutable en el SID del dominio, lo que permite a un atacante identificarla fácilmente mediante herramientas de enumeración.
+* **Uso exclusivo de contingencia:** Debido a sus privilegios omnipotentes e irrevocables, su uso debe deshabilitarse o limitarse estrictamente a tareas excepcionales de configuración inicial sin conectividad o recuperación ante desastres (*disaster recovery*).
+
+#### 2. Principio de Menor Privilegio y Cuentas Dedicadas
+
+En la administración profesional se aplica el principio de **separación de funciones** (*Separation of Duties*), evitando utilizar la misma identidad para las tareas cotidianas y para las labores de soporte o configuración:
+
+* **Cuenta estándar de usuario (`jrsoria`):** Destinada al trabajo ofimático habitual (navegación web, correo electrónico, redacción documental o aplicaciones corporativas). Carece por completo de privilegios administrativos en servidores y estaciones de trabajo, reduciendo al mínimo el impacto en caso de infección por malware o phishing.
+* **Cuenta administrativa dedicada (`adm_jrsoria` o `jrsoria-adm`):** Reservada con exclusividad para la administración de la infraestructura (apertura de consolas MMC, Windows Admin Center, elevación mediante UAC y conexiones remotas por PowerShell Remoting o SSH).
+
+> **Modelos avanzados de niveles (Tiering):** En infraestructuras empresariales con directivas estrictas de seguridad (como el *Enterprise Access Model* de Microsoft), se segregan incluso las identidades administrativas en distintos escalones: administración de puestos de trabajo (*Tier 2*), administración de servidores miembros (*Tier 1*) y administración de controladores de dominio y servicios de identidad (*Tier 0*).
+
+!!! tip "Criterio de Trabajo en el Laboratorio del Aula"
+    En nuestro entorno práctico, asignaremos los privilegios necesarios a la cuenta nominativa `jrsoria`. Esto nos permite replicar la metodología de trabajo corporativa, registrar con fidelidad la trazabilidad de nuestras intervenciones en el servidor y prescindir del uso habitual de la cuenta integrada `Administrador`.
 
 ---
 
@@ -473,7 +498,7 @@ Para ello podemos incorporarlo al grupo global **Domain Admins** (*Administrador
 Add-ADGroupMember -Identity "Domain Admins" -Members "jrsoria"
 ```
 
-> **Nota sobre el idioma del SO:** dependiendo del idioma y de la forma en que se haya desplegado Active Directory, algunos grupos pueden aparecer con su nombre localizado, por ejemplo, **"Administradores del dominio"** en lugar de **"Domain Admins"**.
+> **Nota sobre el idioma del SO:** dependiendo del idioma y de la forma en que se haya desplegado Active Directory, algunos grupos pueden aparecer con su nombre localizado, por ejemplo, **"Admins. del dominio"** en lugar de **"Domain Admins"**.
 
 Los miembros de Domain Admins disponen de privilegios administrativos elevados sobre Active Directory, los controladores de dominio y, por defecto, los equipos unidos al dominio.
 
@@ -530,6 +555,23 @@ Get-ADPrincipalGroupMembership -Identity "jrsoria" | Select-Object Name,GroupSco
 ```
 
 Esto permite verificar que la delegación administrativa se ha realizado correctamente.
+
+#### 🎬 Vídeo demostración: Cuenta nominativa administradora del dominio
+
+Vídeo complementario con la demostración práctica de la configuración y asignación de privilegios administrativos a una cuenta nominativa en Active Directory.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/ZLg2aKrekFc" 
+    title="Active Directory - Cuenta nominativa administradora del dominio" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/ZLg2aKrekFc)**
 
 ---
 

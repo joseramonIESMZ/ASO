@@ -203,8 +203,8 @@ Una actividad elevada de paginación no demuestra por sí sola falta de RAM. Deb
 
 | Contador de referencia | Interpretación |
 | :--- | :--- |
-| `\Disco físico(*)\Promedio de disco s/lectura` | Tiempo medio por lectura, expresado en segundos. |
-| `\Disco físico(*)\Promedio de disco s/escritura` | Tiempo medio por escritura, expresado en segundos. |
+| `\Disco físico(*)\Promedio de segundos de disco\lectura` | Tiempo medio por lectura, expresado en segundos. |
+| `\Disco físico(*)\Promedio de segundos de disco\escritura` | Tiempo medio por escritura, expresado en segundos. |
 | `\Disco físico(*)\Longitud media de la cola de disco` | Solicitudes de E/S en servicio o pendientes, como promedio del intervalo. |
 
 Para expresar la latencia en milisegundos, multiplicamos por 1.000: **0,015 s = 15 ms**. Conviene añadir operaciones por segundo y bytes por segundo, descubriendo sus rutas en el conjunto correspondiente.
@@ -214,6 +214,8 @@ Una cola elevada con latencia baja puede reflejar una carga que el dispositivo a
 El contador `% de tiempo de disco` puede consultarse como información complementaria, pero no debe tratarse como un porcentaje universal de saturación equivalente al de CPU. Para diagnosticar, priorizaremos latencia, operaciones, transferencia y su evolución.
 
 Utiliza `_Total` para una primera visión y después examina cada disco. En una VM, el objeto **Disco físico describe los dispositivos que Windows ve**, que pueden ser discos virtuales. El almacenamiento real y la competencia entre VM también deben revisarse en Proxmox.
+
+---
 
 ### 4.4. Red
 
@@ -226,182 +228,221 @@ Las métricas básicas son el tráfico enviado y recibido, los errores, los desc
 
 Por ejemplo, 25.000.000 bytes/s equivalen a 200 Mbit/s. Antes de concluir que la red está saturada, comprueba la dirección del tráfico, la capacidad real del recorrido y los síntomas del servicio.
 
+### 🎬 Vídeo demostración: Observación de contadores de rendimiento con PowerShell
+
+Vídeo complementario con la demostración práctica de la observación de contadores de rendimiento con PowerShell.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/tiAcCdp5-P4" 
+    title="Observación de contadores de rendimiento con PowerShell" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/tiAcCdp5-P4)**
+
+---
+
 ## 📈 5. Línea base de rendimiento
 
-Una **línea base** recoge el comportamiento habitual del servidor cuando funciona correctamente bajo cargas conocidas. Permite reconocer desviaciones que un umbral fijo podría pasar por alto.
+Una **línea base de rendimiento** describe cómo se comporta normalmente un servidor cuando funciona correctamente. Sirve como referencia para detectar cambios significativos.
 
-| Concepto | Función |
-| :--- | :--- |
-| Valor actual | Describe una medición concreta. |
-| Umbral | Define cuándo una condición requiere atención. |
-| Línea base | Describe el comportamiento esperado en un contexto comparable. |
+No existe un valor universal que indique por sí solo que un servidor funciona bien o mal. Una utilización elevada de CPU, una reducción de memoria disponible o un aumento de la latencia de disco deben interpretarse teniendo en cuenta la carga de trabajo y el comportamiento habitual del sistema.
 
-Ejemplo ilustrativo de una VM, no valores objetivo para todos los servidores:
+Por ejemplo:
 
-| Métrica | Comportamiento habitual | Observación posterior |
+| Métrica | Situación habitual | Situación que conviene investigar |
 | :--- | :--- | :--- |
-| CPU global | 10–25 % durante el trabajo normal | 65 % durante una hora con carga equivalente |
-| Memoria disponible | 3–4 GiB | Menos de 1 GiB de forma sostenida |
-| Latencia de lectura | 2–5 ms | 35 ms durante el mismo periodo |
+| CPU global | 10–25 % | 70 % de forma sostenida con una carga similar |
+| Memoria disponible | 3–4 GiB | Menos de 1 GiB durante un periodo prolongado |
+| Latencia de lectura | 2–5 ms | Aumento mantenido hasta 30–40 ms |
 
-La combinación merece investigación, pero no identifica por sí sola la causa. Una copia de seguridad o una importación de datos pueden explicar un comportamiento diferente.
+Estos valores son únicamente ilustrativos. Cada servidor debe compararse principalmente con su propio comportamiento anterior.
 
-Para construir la línea base:
+Para obtener una referencia básica:
 
-1. Anota roles, versiones, recursos asignados y carga prevista.
-2. Selecciona un conjunto pequeño de métricas relevantes.
-3. Registra periodos representativos: actividad normal, picos esperados y mantenimiento.
-4. Conserva las horas de las operaciones para interpretar las gráficas.
-5. Resume rangos habituales y periodos de actividad elevada.
-6. Actualiza la referencia después de cambios justificados en servicios o recursos.
+1. selecciona unas pocas métricas relevantes;
+2. registra varias muestras durante un periodo de funcionamiento normal;
+3. conserva los resultados;
+4. compara las mediciones posteriores con esos valores habituales.
 
-!!! note "Duración e intervalo"
-    En el aula puede hacerse una demostración de 10–15 minutos con muestras cada 5 segundos. Una línea base real debe abarcar los ciclos habituales del servicio, que pueden requerir varios días. Un intervalo más corto genera más datos y no siempre aporta información útil.
+!!! note "Línea base en el aula"
+    Una captura de pocos minutos permite practicar el procedimiento, pero no constituye una línea base completa de un servidor real. En producción sería necesario observar periodos más largos y diferentes situaciones de carga.
 
-## 💾 6. Registrar y consultar mediciones históricas
+### 5.1. Relacionar las métricas
 
-### 6.1. Conjuntos de recopiladores de datos
+Una sola métrica rara vez permite identificar la causa de un problema.
 
-Desde PerfMon, en un equipo con interfaz gráfica:
+Algunos ejemplos:
 
-1. Abre **Conjuntos de recopiladores de datos → Definidos por el usuario**.
-2. Crea un conjunto llamado `ASO-LineaBase` mediante creación manual.
-3. Selecciona un recopilador de contadores de rendimiento.
-4. Añade CPU global, memoria disponible y latencias por disco.
-5. Establece el intervalo de muestreo y la carpeta de salida.
-6. En las propiedades, configura una condición de parada y, cuando proceda, una programación.
-7. Inicia la captura, realiza la actividad prevista y detén el conjunto.
-8. En el Monitor de rendimiento, cambia la fuente a un archivo de registro y selecciona el `.blg` generado.
+- **CPU elevada:** revisar qué procesos están consumiendo procesador.
+- **Poca memoria disponible:** comprobar procesos, memoria comprometida y posible actividad de paginación.
+- **Latencia de disco elevada:** relacionarla con la actividad y la cola del almacenamiento.
+- **Servicio lento o inaccesible:** comprobar también su estado y los eventos producidos en ese periodo.
 
-Para Server Core puede utilizarse `logman` localmente o recoger un archivo con PowerShell y analizarlo desde Windows 11.
+El procedimiento básico de diagnóstico será:
 
-### 6.2. Guardar un archivo BLG con PowerShell
+**detectar → medir → formular una hipótesis → comprobar → actuar → verificar**
 
-Ejecuta este bloque en **Windows PowerShell 5.1**. Verifica primero las rutas en tu servidor.
+---
+
+## 🛠️ 6. Registrar mediciones con PowerShell
+
+`Get-Counter` permite recoger varias muestras consecutivas y conservarlas para analizarlas posteriormente.
+
+Un ejemplo sencillo:
 
 ```powershell
-$Rutas = @(
-    '\Procesador(_Total)\% de tiempo de procesador'
-    '\Memoria\MBytes disponibles'
-    '\Disco físico(*)\Promedio de disco s/lectura'
-    '\Disco físico(*)\Promedio de disco s/escritura'
+$Contadores = @(
+    '\Procesador(_Total)\% de tiempo de procesador',
+    '\Memoria\MBytes disponibles',
+    '\Disco físico(_Total)\Promedio de segundos de disco/lectura'
 )
-$Carpeta = 'C:\ASO\Registros'
-New-Item -Path $Carpeta -ItemType Directory -Force | Out-Null
-$Archivo = Join-Path $Carpeta ('LineaBase-{0}.blg' -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
 
-# Unos diez minutos de captura. La consola permanece ocupada hasta finalizar.
-Get-Counter -Counter $Rutas -SampleInterval 5 -MaxSamples 120 -ErrorAction Stop |
-    Export-Counter -Path $Archivo -FileFormat BLG -ErrorAction Stop
-
-$Archivo
+Get-Counter `
+    -Counter $Contadores `
+    -SampleInterval 5 `
+    -MaxSamples 12
 ```
 
-`Export-Counter` conserva los conjuntos de muestras en un formato que PerfMon puede abrir. No se debe aplicar `Format-Table` antes de exportar: transformaría los objetos en información de presentación.
+Este ejemplo realiza una medición cada cinco segundos durante aproximadamente un minuto.
 
-Al analizar las gráficas, revisa las unidades y el factor de escala de cada contador. Una línea situada a la misma altura que otra no significa que ambas midan la misma magnitud. Consulta también los valores numéricos del periodo seleccionado.
+Para conservar históricos utilizaremos un script que transforma las muestras en objetos más fáciles de consultar y exportar.
 
-## 🔗 7. Correlación y diagnóstico
+Guarda el siguiente código como:
 
-| Síntoma | Evidencias que interesa combinar | Hipótesis que se debe comprobar |
-| :--- | :--- | :--- |
-| Respuesta lenta y CPU alta | CPU global, por procesador lógico, por proceso y cola | Proceso intensivo, carga superior a la capacidad o competencia por CPU. |
-| Menor memoria disponible | Compromiso, paginación, procesos y latencia de disco | Presión de memoria, crecimiento de un proceso o actividad temporal. |
-| Operaciones de disco lentas | Latencia, cola, operaciones/s, procesos y métricas del host | Contención del almacenamiento o una carga de E/S concreta. |
-| Transferencias lentas | Tráfico por dirección, errores, descartes y recorrido de red | Capacidad insuficiente, problemas del enlace o del destino. |
-| Servicio que no responde | Estado, consulta funcional y eventos del mismo periodo | Error de configuración, dependencia o fallo de aplicación. |
-
-El procedimiento de trabajo será: **detectar el síntoma, delimitar el periodo, recoger evidencias, formular una hipótesis, contrastarla y verificar el resultado de la actuación**.
-
-No es necesario esperar a que la cola de CPU sea alta para investigar los procesos. Un único hilo puede limitar una aplicación mientras el promedio global y la cola parecen normales.
-
-## 🛠️ 8. Script de captura con PowerShell
-
-Guarda el siguiente código como `C:\ASO\Scripts\AuditarServidor.ps1`. Devuelve objetos, admite varias muestras y distingue datos no válidos de mediciones correctas. Las rutas deben ajustarse a la instalación antes de programar su ejecución.
+```text
+C:\ASO\Scripts\AuditarServidor.ps1
+```
 
 ```powershell
-<#
-.SYNOPSIS
-    Recoge CPU, memoria y latencias globales del servidor local.
-.DESCRIPTION
-    Diseñado para Windows PowerShell 5.1 y contadores en español.
-    Devuelve objetos; no diagnostica automáticamente la causa de una incidencia.
-#>
 [CmdletBinding()]
 param(
-    [ValidateRange(1, 3600)]
     [int]$Intervalo = 5,
-    [ValidateRange(1, 10000)]
-    [int]$Muestras = 12
+    [int]$Muestras = 12,
+    [string]$RutaExportacionCSV = ""
 )
-
-$Definiciones = @(
-    @{ Ruta = '\Procesador(_Total)\% de tiempo de procesador'; Nombre = 'CPU'; Unidad = '%'; Factor = 1 }
-    @{ Ruta = '\Memoria\MBytes disponibles'; Nombre = 'MemoriaDisponible'; Unidad = 'MiB'; Factor = 1 }
-    @{ Ruta = '\Disco físico(_Total)\Promedio de disco s/lectura'; Nombre = 'LatenciaLectura'; Unidad = 'ms'; Factor = 1000 }
-    @{ Ruta = '\Disco físico(_Total)\Promedio de disco s/escritura'; Nombre = 'LatenciaEscritura'; Unidad = 'ms'; Factor = 1000 }
-    @{ Ruta = '\Disco físico(_Total)\Longitud media de la cola de disco'; Nombre = 'ColaDisco'; Unidad = 'solicitudes'; Factor = 1 }
-)
-
-try {
-    $Rutas = @($Definiciones | ForEach-Object { $_.Ruta })
-    Get-Counter -Counter $Rutas -SampleInterval $Intervalo -MaxSamples $Muestras -ErrorAction Stop |
-        ForEach-Object {
-            $Conjunto = $_
-            foreach ($Definicion in $Definiciones) {
-                # Get-Counter añade el nombre del equipo a la ruta devuelta.
-                $Coincidencias = @($Conjunto.CounterSamples | Where-Object {
-                    $_.Path.EndsWith($Definicion.Ruta, [StringComparison]::OrdinalIgnoreCase)
-                })
-                if ($Coincidencias.Count -ne 1) {
-                    throw "No se encuentra una muestra única para $($Definicion.Ruta)"
-                }
-                $Dato = $Coincidencias[0]
-                $Valida = ($Dato.Status -in @(0, 1)) -and
-                    (-not [double]::IsNaN($Dato.CookedValue)) -and
-                    (-not [double]::IsInfinity($Dato.CookedValue))
-                $Valor = $null
-                if ($Valida) {
-                    $Valor = [Math]::Round(($Dato.CookedValue * $Definicion.Factor), 3)
-                }
-                [PSCustomObject]@{
-                    Fecha     = $Conjunto.Timestamp.ToString('o')
-                    Servidor  = $env:COMPUTERNAME
-                    Metrica   = $Definicion.Nombre
-                    Instancia = $Dato.InstanceName
-                    Valor     = $Valor
-                    Unidad    = $Definicion.Unidad
-                    Valida    = $Valida
-                    Estado    = $Dato.Status
-                    Ruta      = $Dato.Path
-                }
+$Contadores = @{
+    CPU = '\Procesador(_Total)\% de tiempo de procesador'
+    Memoria = '\Memoria\MBytes disponibles'
+    Disco = '\Disco físico(_Total)\Promedio de segundos de disco/lectura'
+}
+$Resultados = foreach (
+    $Muestra in Get-Counter `
+	    -Counter ($Contadores.Values) `
+	-SampleInterval $Intervalo `
+	-MaxSamples $Muestras
+) {
+    foreach ($Dato in $Muestra.CounterSamples) {
+        $Nombre = switch -Wildcard ($Dato.Path) {
+            '*\Procesador(_Total)\*' { 'CPU_Uso' }
+            '*\Memoria\*'            { 'Memoria_Disponible' }
+            '*\Disco físico(_Total)\*' { 'Disco_LatenciaLectura' }
+        }
+        # Solo procesamos muestras válidas:
+        # 0 = dato válido
+        # 1 = dato válido nuevo
+        if ($Dato.Status -in @(0,1)) {
+            $Valor = $Dato.CookedValue
+            $Unidad = ''
+            if ($Nombre -eq 'CPU_Uso') {
+                $Unidad = '%'
+            }
+            elseif ($Nombre -eq 'Memoria_Disponible') {
+                $Unidad = 'MiB'
+            }
+            elseif ($Nombre -eq 'Disco_LatenciaLectura') {
+                $Valor = $Valor * 1000
+                $Unidad = 'ms'
+            }
+            [PSCustomObject]@{
+                Fecha    = $Muestra.Timestamp
+                Servidor = $env:COMPUTERNAME
+                Metrica  = $Nombre
+                Valor    = [Math]::Round($Valor, 2)
+                Unidad   = $Unidad
             }
         }
+    }
 }
-catch {
-    throw "Captura interrumpida: $($_.Exception.Message). Comprueba rutas y permisos."
+if ($RutaExportacionCSV) {
+    $Resultados |
+        Export-Csv `
+            -Path $RutaExportacionCSV `
+            -NoTypeInformation `
+            -Delimiter ';' `
+            -Encoding UTF8
 }
+$Resultados
 ```
 
-Ejemplos de utilización:
+El script registra únicamente tres métricas fundamentales:
+
+- utilización global de CPU;
+- memoria disponible;
+- latencia media de lectura del almacenamiento.
+
+El objetivo no es construir una herramienta completa de monitorización, sino practicar la recogida periódica de información y disponer de datos con los que comparar el comportamiento del servidor.
+
+### Ejemplos de utilización
 
 ```powershell
-# Consulta breve por pantalla.
-C:\ASO\Scripts\AuditarServidor.ps1 -Muestras 3 | Format-Table -AutoSize
-
-# Guardar unos cinco minutos de datos en CSV, con un nombre distinto por captura.
-$Archivo = 'C:\ASO\Registros\Metricas-{0}.csv' -f (Get-Date -Format 'yyyyMMdd-HHmmss')
-C:\ASO\Scripts\AuditarServidor.ps1 -Intervalo 5 -Muestras 60 |
-    Export-Csv -Path $Archivo -NoTypeInformation -Encoding UTF8
+# Captura breve y visualización por pantalla.
+C:\ASO\Scripts\AuditarServidor.ps1 `
+    -Intervalo 5 `
+    -Muestras 12 |
+    Format-Table -AutoSize
 ```
 
-El CSV contiene una fila por métrica y momento. Si una muestra no es válida, su valor queda vacío y se conserva el estado; **no se convierte un error en cero**. Un fallo posterior puede dejar un archivo parcial: revisa el error y el periodo realmente registrado antes de utilizarlo.
+```powershell
+# Captura de aproximadamente cinco minutos y almacenamiento en CSV.
+$Archivo = 'C:\ASO\Registros\Metricas-{0}.csv' `
+    -f (Get-Date -Format 'yyyyMMdd-HHmmss')
 
-## 🔎 9. Estado y configuración mediante CIM
+C:\ASO\Scripts\AuditarServidor.ps1 `
+    -Intervalo 5 `
+    -Muestras 60 `
+    -RutaExportacionCSV $Archivo
+```
+
+El archivo CSV contiene una fila por métrica y momento:
+
+```text
+Fecha;Servidor;Metrica;Valor;Unidad
+09/10/2026 10:00:00;DC01;CPU_Uso;12,31;%
+09/10/2026 10:00:00;DC01;Memoria_Disponible;2514;MiB
+09/10/2026 10:00:00;DC01;Disco_LatenciaLectura;3,21;ms
+```
+
+Posteriormente puede importarse con PowerShell:
+
+```powershell
+$Datos = Import-Csv 'C:\ASO\Registros\Metricas-20261009-100000.csv' `
+    -Delimiter ';'
+
+$Datos |
+    Where-Object Metrica -eq 'CPU_Uso'
+```
+
+O calcular una media sencilla:
+
+```powershell
+$Datos |
+    Where-Object Metrica -eq 'CPU_Uso' |
+    Measure-Object Valor -Average -Minimum -Maximum
+```
+
+Lo importante es comparar los valores obtenidos con el comportamiento habitual del servidor y relacionarlos con la actividad que se estaba realizando en ese momento.
+
+## 🔎 7. Estado y configuración mediante CIM
 
 `Get-Counter` resulta cómodo para recoger series temporales. `Get-CimInstance` permite consultar clases que describen recursos, configuración y estado. La separación no es absoluta: también existen clases CIM de rendimiento.
 
-### 9.1. Capacidad y espacio libre
+### 7.1. Capacidad y espacio libre
 
 ```powershell
 Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' |
@@ -419,7 +460,7 @@ Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' |
 
 En Proxmox también hay que supervisar la capacidad del almacenamiento del host. El espacio libre dentro de una VM no describe cuánto queda en el almacenamiento que contiene sus discos virtuales.
 
-### 9.2. Procesos y memoria residente
+### 7.2. Procesos y memoria residente
 
 ```powershell
 Get-CimInstance -ClassName Win32_Process |
@@ -432,7 +473,7 @@ Get-CimInstance -ClassName Win32_Process |
 
 Un proceso grande o inactivo no debe finalizarse automáticamente. Primero se identifica su función, el servicio al que pertenece y si su comportamiento difiere de lo esperado.
 
-### 9.3. Servicios esperados y ausentes
+### 7.3. Servicios esperados y ausentes
 
 Este ejemplo corresponde a **un controlador de dominio que también presta DNS**. En otro servidor hay que adaptar la lista a sus roles.
 
@@ -457,7 +498,7 @@ foreach ($Nombre in $Esperados) {
 
 Compara el estado y el modo de inicio con la configuración esperada para cada rol. No cambies todos los servicios a automático de forma indiscriminada.
 
-### 9.4. Prueba funcional
+### 7.4. Prueba funcional
 
 Un estado `Running` es una primera evidencia, pero no certifica que el servicio responda correctamente. Desde un cliente, comprueba una operación real:
 
@@ -469,7 +510,7 @@ Resolve-DnsName -Name 'DC01.int.asix.info' -Type A `
 
 Verifica que la dirección devuelta sea la prevista. Para separar problemas de resolución del propio nombre del servidor DNS, puede indicarse su IP en `-Server`. Esta prueba valida una consulta concreta; no verifica por sí sola la salud completa de Active Directory ni su replicación.
 
-## 📜 10. Eventos y registro de incidencias
+## 📜 8. Eventos y registro de incidencias
 
 Los contadores muestran tendencias; los eventos aportan contexto sobre lo ocurrido. Comienza por **Sistema** y **Aplicación**, y consulta después los registros específicos del rol. El registro de Seguridad depende de la política de auditoría configurada.
 
@@ -495,7 +536,7 @@ Para investigar:
 
 No todas las advertencias requieren una intervención. Tampoco deben borrarse registros como procedimiento rutinario de solución: se perdería información útil.
 
-## 🚨 11. Alertas: condición, duración y respuesta
+## 🚨 9. Alertas: condición, duración y respuesta
 
 Una alerta necesita una condición medible, un periodo de observación, una forma de registro y una actuación prevista. Los umbrales siguientes son ejemplos de aula que deben ajustarse a la línea base:
 
@@ -545,9 +586,9 @@ Get-Counter -Counter $RutaCPU -SampleInterval 10 -MaxSamples 30 -ErrorAction Sto
 
 La persistencia se define aquí por muestras, aproximadamente un minuto de observación. El registro CSV no envía una notificación a un administrador: en un despliegue centralizado debe añadirse el mecanismo de aviso correspondiente. Un fallo de recogida también requiere atención; no implica que el servidor esté sano.
 
-## ⚙️ 12. Mantenimiento planificado y verificable
+## ⚙️ 10. Mantenimiento planificado y verificable
 
-### 12.1. Plan de mantenimiento
+### 10.1. Plan de mantenimiento
 
 Las frecuencias son orientativas y deben adaptarse a los servicios y al calendario del centro.
 
@@ -561,7 +602,7 @@ Las frecuencias son orientativas y deben adaptarse a los servicios y al calendar
 | Revisar cuentas, permisos y configuración | Periódicamente | Cambios justificados y documentados. |
 | Revisar recursos y línea base | Tras cambios relevantes | Comparación y referencia actualizada. |
 
-### 12.2. Actualizaciones
+### 10.2. Actualizaciones
 
 1. Identifica las actualizaciones y su posible impacto en los roles instalados.
 2. Comprueba las copias y el procedimiento de recuperación.
@@ -572,13 +613,13 @@ Las frecuencias son orientativas y deben adaptarse a los servicios y al calendar
 
 No basta con comprobar que el servidor vuelve a encenderse. El cierre de la tarea exige verificar los servicios que utiliza la organización.
 
-### 12.3. Copias y restauraciones
+### 10.3. Copias y restauraciones
 
 Una copia se considera útil cuando permite recuperar lo necesario. Deben verificarse destino, fecha, resultado y restauración. La replicación puede propagar errores o borrados, y una instantánea de VM no sustituye una política de copias independiente.
 
 En el aula, restaura un archivo de prueba en otra ubicación y compara su contenido. Las pruebas de recuperación de controladores de dominio requieren un procedimiento específico y un entorno aislado; no deben improvisarse sobre el dominio activo.
 
-### 12.4. Capacidad y limpieza
+### 10.4. Capacidad y limpieza
 
 Antes de liberar espacio, identifica qué crece y qué política de conservación se aplica. Trabaja únicamente sobre rutas conocidas y revisa primero la selección.
 
@@ -593,7 +634,7 @@ $Antiguos | Remove-Item -WhatIf
 
 `-WhatIf` simula la eliminación. Solo se retirará después de revisar la lista y confirmar que se cumple la política de conservación. No se deben borrar indiscriminadamente carpetas del sistema, bases de datos o registros de eventos.
 
-### 12.5. Programar una comprobación de capacidad
+### 10.5. Programar una comprobación de capacidad
 
 Guarda como `C:\ASO\Scripts\ComprobarCapacidad.ps1` el siguiente script. Cada ejecución produce un informe diferente y devuelve un código que permite distinguir ejecución correcta de fallo técnico.
 
@@ -667,15 +708,15 @@ Primero valida el funcionamiento con CSV o BLG. Después incorpora la inserción
 
 Separa la recogida de datos del almacenamiento: si la base de datos no está disponible, conserva temporalmente los registros para reenviarlos. La cuenta de monitorización necesita permisos limitados, y las credenciales no deben escribirse en claro dentro del script. Los valores externos se introducirán mediante consultas parametrizadas o un procedimiento de carga controlado.
 
-## 🔍 14. Laboratorio de diagnóstico en Proxmox
+## 🔍 11. Laboratorio de diagnóstico en Proxmox
 
-### 14.1. Escenario
+### 11.1. Escenario
 
 Cada equipo de cuatro alumnos dispone de su propio host Proxmox, con varias VM del proyecto. Durante una operación simultánea en las VM de **un mismo equipo**, Windows Server responde lentamente y aparecen periodos de CPU elevada.
 
 La sobreasignación es una hipótesis, pero asignar más vCPU en total que procesadores lógicos tiene el host no demuestra por sí solo un problema: influye cuánto demandan simultáneamente esas VM.
 
-### 14.2. Investigación
+### 11.2. Investigación
 
 **Dentro de Windows:** registra CPU global y por procesador lógico, procesos, cola, memoria y latencias durante el problema. Anota cuántas vCPU tiene asignadas la VM y qué operación se realiza.
 
@@ -703,13 +744,13 @@ La carga media que muestra `uptime` no es un porcentaje de CPU: en Linux incluye
 | Latencias de disco altas durante copias o importaciones | Contención del almacenamiento compartido. |
 | Lentitud con recursos aparentemente normales | Servicio, red, dependencias y eventos. |
 
-### 14.3. Actuación y validación
+### 11.3. Actuación y validación
 
 Elige una sola modificación respaldada por los datos: escalonar trabajos, corregir una operación, ajustar límites o redistribuir recursos. Reducir vCPU no es una solución automática y puede empeorar una VM que necesita esa capacidad.
 
 Si el cambio requiere apagar una VM, programa la interrupción. Repite después la misma operación con condiciones comparables y comprueba tanto el servidor afectado como las otras VM del host. Documenta también cómo volver a la configuración anterior.
 
-## 🧪 15. Práctica integrada y evidencias
+## 🧪 12. Práctica integrada y evidencias
 
 **Objetivo:** justificar con mediciones si un servidor funciona según lo esperado y comprobar que una tarea de mantenimiento se ejecuta correctamente.
 

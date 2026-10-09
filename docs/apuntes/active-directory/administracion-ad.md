@@ -1,21 +1,5 @@
 # Administración de Active Directory
 
-Una vez instalado el servicio **Active Directory Domain Services (AD DS)**, creado el dominio y definida su estructura mediante **Unidades Organizativas (UO), usuarios, grupos y equipos**, comienza el trabajo habitual de administración.
-
-En un entorno empresarial, Active Directory no es una infraestructura estática. Los usuarios cambian de departamento, se incorporan nuevos trabajadores, se retiran equipos, se modifican permisos, aparecen incidencias de autenticación y los controladores de dominio deben mantenerse operativos.
-
-En este apartado se trabajará la administración cotidiana del directorio, prestando especial atención a:
-
-- mantenimiento de usuarios, grupos y equipos;
-- administración de Unidades Organizativas;
-- administración del dominio y del bosque;
-- controladores de dominio;
-- roles FSMO;
-- replicación;
-- delegación administrativa;
-- comprobación del estado del servicio;
-- diagnóstico y resolución de problemas.
-
 ---
 
 ## 🎯 Relación con el currículo
@@ -33,6 +17,24 @@ Especialmente se trabajan los siguientes criterios de evaluación:
 
 !!! info "Administrar no es solamente crear"\
 Instalar un dominio y crear sus objetos es únicamente el comienzo. En una empresa real, la mayor parte del trabajo de un administrador consiste en **mantener, modificar, comprobar y solucionar problemas** sobre una infraestructura que ya existe.
+
+---
+
+Una vez instalado el servicio **Active Directory Domain Services (AD DS)**, creado el dominio y definida su estructura mediante **Unidades Organizativas (UO), usuarios, grupos y equipos**, comienza el trabajo habitual de administración.
+
+En un entorno empresarial, Active Directory no es una infraestructura estática. Los usuarios cambian de departamento, se incorporan nuevos trabajadores, se retiran equipos, se modifican permisos, aparecen incidencias de autenticación y los controladores de dominio deben mantenerse operativos.
+
+En este apartado se trabajará la administración cotidiana del directorio, prestando especial atención a:
+
+- mantenimiento de usuarios, grupos y equipos;
+- administración de Unidades Organizativas;
+- administración del dominio y del bosque;
+- controladores de dominio;
+- roles FSMO;
+- replicación;
+- delegación administrativa;
+- comprobación del estado del servicio;
+- diagnóstico y resolución de problemas.
 
 ---
 
