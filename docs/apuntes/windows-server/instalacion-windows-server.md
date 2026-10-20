@@ -220,7 +220,7 @@ Para confirmar que la instalación ha sido un éxito:
   ```
 * Y, por último, confirmar que el servicio de gestión dinámica de memoria (VirtIO Balloon Service) también se encuentra activo:
   ```powershell
-  Get-Service blnsrv
+  Get-Service BalloonService
   ```
 
 ---

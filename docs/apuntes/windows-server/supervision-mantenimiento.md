@@ -438,11 +438,175 @@ $Datos |
 
 Lo importante es comparar los valores obtenidos con el comportamiento habitual del servidor y relacionarlos con la actividad que se estaba realizando en ese momento.
 
+### 🎬 Vídeo demostración: Registro de mediciones y línea base de rendimiento
+
+Vídeo complementario con la demostración práctica del registro de mediciones y la obtención de la línea base de rendimiento con PowerShell.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/YDgtwSqiDYE" 
+    title="Registro de mediciones y línea base de rendimiento" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/YDgtwSqiDYE)**
+
+---
+
 ## 🔎 7. Estado y configuración mediante CIM
 
-`Get-Counter` resulta cómodo para recoger series temporales. `Get-CimInstance` permite consultar clases que describen recursos, configuración y estado. La separación no es absoluta: también existen clases CIM de rendimiento.
+Los contadores de rendimiento permiten observar **cómo evoluciona el sistema a lo largo del tiempo**. Sin embargo, para administrar un servidor también necesitamos conocer información como:
 
-### 7.1. Capacidad y espacio libre
+- qué sistema operativo está instalado;
+- qué discos y adaptadores de red existen;
+- cuánta memoria tiene el equipo;
+- qué procesos se están ejecutando;
+- qué servicios están instalados y cuál es su estado.
+
+Windows permite consultar gran parte de esta información mediante **CIM (Common Information Model)**.
+
+### 7.1. Modelo CIM
+
+CIM define una forma común de representar mediante objetos los elementos administrables de un sistema. Cada tipo de elemento se describe mediante una **clase**, y cada elemento real del sistema aparece como una **instancia** de esa clase.
+
+Por ejemplo:
+
+| Clase CIM | Información que representa |
+| :--- | :--- |
+| `Win32_OperatingSystem` | Sistema operativo instalado |
+| `Win32_ComputerSystem` | Equipo, memoria y configuración general |
+| `Win32_Processor` | Procesadores |
+| `Win32_LogicalDisk` | Unidades de disco |
+| `Win32_NetworkAdapter` | Adaptadores de red |
+| `Win32_Process` | Procesos en ejecución |
+| `Win32_Service` | Servicios instalados |
+
+Una clase contiene diferentes **propiedades**. Por ejemplo, las instancias de `Win32_Service` incluyen propiedades como `Name`, `State` o `StartMode`.
+
+Podemos imaginarlo de forma simplificada como:
+
+```text
+Clase CIM
+   │
+   ├── Propiedades
+   │
+   └── Instancias
+          │
+          ├── Objeto 1
+          ├── Objeto 2
+          └── Objeto 3
+```
+
+Por ejemplo, `Win32_LogicalDisk` es la clase y `C:` o `D:` son posibles instancias:
+
+```text
+Win32_LogicalDisk
+        │
+        ├── C:
+        │    ├── Size
+        │    └── FreeSpace
+        │
+        └── D:
+             ├── Size
+             └── FreeSpace
+```
+
+En PowerShell utilizaremos principalmente:
+
+```powershell
+Get-CimInstance
+```
+
+Su funcionamiento básico es:
+
+```powershell
+Get-CimInstance -ClassName NombreClase
+```
+
+Por ejemplo:
+
+```powershell
+Get-CimInstance -ClassName Win32_OperatingSystem
+```
+
+PowerShell obtiene las instancias de esa clase y las devuelve como **objetos**, por lo que podemos utilizar las herramientas habituales del lenguaje para seleccionarlos, filtrarlos u ordenarlos:
+
+```powershell
+Get-CimInstance -ClassName Win32_OperatingSystem |
+    Select-Object CSName, Caption, Version, LastBootUpTime
+```
+
+De la misma forma podemos consultar procesos:
+
+```powershell
+Get-CimInstance -ClassName Win32_Process |
+    Select-Object ProcessId, Name, WorkingSetSize
+```
+
+o servicios:
+
+```powershell
+Get-CimInstance -ClassName Win32_Service |
+    Select-Object Name, State, StartMode
+```
+
+!!! info "CIM y WMI"
+    En Windows, muchas de las clases que utilizaremos conservan nombres históricos como `Win32_Process`, `Win32_Service` o `Win32_LogicalDisk`. Estas clases proceden de la infraestructura de administración de Windows tradicionalmente asociada a **WMI (Windows Management Instrumentation)**. En PowerShell moderno utilizaremos los cmdlets CIM, como `Get-CimInstance`, para acceder a esta información.
+
+### 7.2. Descubrir clases y propiedades
+
+No es necesario memorizar todas las clases CIM. Podemos descubrirlas desde PowerShell.
+
+Por ejemplo, para buscar clases relacionadas con discos:
+
+```powershell
+Get-CimClass -ClassName '*Disk*' |
+    Select-Object CimClassName
+```
+
+Para servicios:
+
+```powershell
+Get-CimClass -ClassName '*Service*' |
+    Select-Object CimClassName
+```
+
+Una vez conocida una clase, podemos observar las propiedades que devuelve:
+
+```powershell
+Get-CimInstance -ClassName Win32_LogicalDisk |
+    Get-Member
+```
+
+También podemos examinar directamente un objeto:
+
+```powershell
+Get-CimInstance -ClassName Win32_LogicalDisk |
+    Select-Object -First 1 |
+    Format-List *
+```
+
+En administración normalmente seguiremos este procedimiento:
+
+```text
+localizar la clase
+        ↓
+consultar sus instancias
+        ↓
+seleccionar las propiedades necesarias
+        ↓
+filtrar u ordenar la información
+        ↓
+interpretar el estado del sistema
+```
+
+A partir de aquí utilizaremos algunas clases CIM especialmente útiles para supervisar el servidor.
+
+### 7.3. Capacidad y espacio libre
 
 ```powershell
 Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' |
@@ -460,7 +624,7 @@ Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' |
 
 En Proxmox también hay que supervisar la capacidad del almacenamiento del host. El espacio libre dentro de una VM no describe cuánto queda en el almacenamiento que contiene sus discos virtuales.
 
-### 7.2. Procesos y memoria residente
+### 7.4. Procesos y memoria residente
 
 ```powershell
 Get-CimInstance -ClassName Win32_Process |
@@ -473,7 +637,7 @@ Get-CimInstance -ClassName Win32_Process |
 
 Un proceso grande o inactivo no debe finalizarse automáticamente. Primero se identifica su función, el servicio al que pertenece y si su comportamiento difiere de lo esperado.
 
-### 7.3. Servicios esperados y ausentes
+### 7.5. Servicios esperados y ausentes
 
 Este ejemplo corresponde a **un controlador de dominio que también presta DNS**. En otro servidor hay que adaptar la lista a sus roles.
 
@@ -498,17 +662,37 @@ foreach ($Nombre in $Esperados) {
 
 Compara el estado y el modo de inicio con la configuración esperada para cada rol. No cambies todos los servicios a automático de forma indiscriminada.
 
-### 7.4. Prueba funcional
+!!! warning "Límite de la supervisión por CIM: verificación funcional"
+    Un estado `Running` en CIM es una primera evidencia, pero no certifica que el servicio responda correctamente a las peticiones (el proceso podría estar bloqueado o no responder en la red).
 
-Un estado `Running` es una primera evidencia, pero no certifica que el servicio responda correctamente. Desde un cliente, comprueba una operación real:
+    Siempre que sea posible, complementa la comprobación con una **prueba funcional** real desde un cliente. Por ejemplo, para verificar que el servicio DNS realmente resuelve consultas:
 
-```powershell
-# Adapta dominio, nombre del servidor y registro a tu laboratorio.
-Resolve-DnsName -Name 'DC01.int.asix.info' -Type A `
-    -Server 'DC01.int.asix.info' -DnsOnly -ErrorAction Stop
-```
+    ```powershell
+    # Adapta dominio, nombre del servidor y registro a tu laboratorio.
+    Resolve-DnsName -Name 'DC01.int.asix.info' -Type A `
+        -Server 'DC01.int.asix.info' -DnsOnly -ErrorAction Stop
+    ```
 
-Verifica que la dirección devuelta sea la prevista. Para separar problemas de resolución del propio nombre del servidor DNS, puede indicarse su IP en `-Server`. Esta prueba valida una consulta concreta; no verifica por sí sola la salud completa de Active Directory ni su replicación.
+    Verifica que la dirección devuelta sea la prevista. Para separar problemas de resolución del propio nombre del servidor DNS, puede indicarse su IP en `-Server`. Esta prueba valida una consulta concreta; no verifica por sí sola la salud completa de Active Directory ni su replicación.
+
+### 🎬 Vídeo demostración: Estado y configuración mediante el modelo CIM
+
+Vídeo complementario con la demostración práctica de la consulta de estado y configuración del sistema mediante el modelo CIM con PowerShell.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/blIu2OdlJUs" 
+    title="Estado y configuración mediante el modelo CIM" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/blIu2OdlJUs)**
+
+---
 
 ## 📜 8. Eventos y registro de incidencias
 
