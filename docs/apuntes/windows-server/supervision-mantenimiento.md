@@ -1,8 +1,10 @@
-# Supervisión y mantenimiento de sistemas
+# Supervisión de recursos en Windows Server
 
-La administración de un servidor continúa después de instalar sus servicios. Es necesario comprobar cómo funciona, reconocer desviaciones, investigar sus causas y realizar tareas que mantengan su disponibilidad y seguridad.
+En este tema aprenderemos a obtener, interpretar y conservar mediciones de **CPU, memoria y almacenamiento** en Windows Server mediante contadores de rendimiento y consultas CIM.
 
-En este tema aprenderemos a supervisar Windows Server mediante contadores de rendimiento, eventos y consultas CIM; conservar mediciones; programar comprobaciones; y verificar el resultado de las actuaciones de mantenimiento.
+Primero comprobaremos cómo se obtienen las mediciones y cómo se conservan en archivos para consultarlas posteriormente. También introduciremos su recogida periódica mediante tareas programadas.
+
+El estudio detallado de eventos y registro de incidencias, alertas, mantenimiento y diagnóstico en Proxmox se abordará en secciones independientes. Aquí nos centraremos en la obtención e interpretación de datos del sistema.
 
 ## 🎯 Relación con el currículo (RA y CE)
 
@@ -17,7 +19,7 @@ Los contenidos se relacionan con los siguientes resultados de aprendizaje del m�
 
 La monitorización general también conecta con el **RA6 de Implantación de Sistemas Operativos**. Esta conexión no convierte dicho RA en un resultado propio de ASO. La lectura de los apuntes, por sí sola, no acredita la consecución de los criterios: es necesario observar su aplicación práctica.
 
-## 🏢 1. Fundamentos de la supervisión y el mantenimiento
+## 🏢 1. Fundamentos de la supervisión
 
 ### 1.1. Qué supervisamos
 
@@ -31,16 +33,16 @@ La **supervisión** consiste en obtener e interpretar información sobre el func
 
 Una CPU poco utilizada no garantiza que DNS responda correctamente. Del mismo modo, un servicio en ejecución puede presentar errores funcionales. Por eso combinamos métricas, estados, eventos y pruebas del servicio.
 
-### 1.2. Tipos de mantenimiento
+### 1.2. Recursos y magnitudes
 
-- **Preventivo:** reduce la probabilidad de incidentes. Incluye comprobar copias, revisar capacidad, aplicar actualizaciones planificadas y verificar tareas programadas.
-- **Correctivo:** resuelve una incidencia identificada. Por ejemplo, corregir una configuración que impide iniciar un servicio.
-- **Evolutivo:** adapta el sistema a nuevas necesidades, como ampliar capacidad o modificar su configuración ante un crecimiento de la carga.
+- **CPU:** porcentaje global de utilización del procesador.
+- **Memoria:** memoria física disponible y porcentaje estimado de ocupación de RAM.
+- **Disco:** capacidad y porcentaje de ocupación de las unidades lógicas locales fijas.
 
-Toda actuación debe tener un objetivo, una comprobación previa y una validación posterior. Cuando modifica el sistema, también necesita una previsión de su impacto y un procedimiento de recuperación.
+La latencia de disco, la actividad por proceso y el tráfico de red aportan información complementaria. Cada magnitud describe un aspecto diferente del funcionamiento del sistema.
 
-!!! tip "Supervisar para decidir"
-    El objetivo no es reunir el mayor número de contadores, sino obtener información suficiente para detectar un problema, formular una hipótesis y comprobar si la actuación realizada lo resuelve.
+!!! tip "Mediciones con significado"
+    Cada valor debe indicar qué representa, su unidad, el equipo y el momento de captura. Un porcentaje aislado o una captura fallida sustituida por cero pueden llevar a conclusiones incorrectas.
 
 ## 🛠️ 2. Herramientas y entorno de trabajo
 
@@ -48,12 +50,11 @@ Toda actuación debe tener un objetivo, una comprobación previa y una validaci�
 | :--- | :--- | :--- |
 | Monitor de rendimiento | `perfmon.exe` | Visualizar contadores y analizar registros históricos. |
 | Monitor de recursos | `resmon.exe` | Relacionar procesos con actividad de CPU, memoria, disco y red. |
-| Visor de eventos | `eventvwr.msc` | Consultar registros del sistema, aplicaciones y servicios. |
 | Administrador de tareas | `taskmgr.exe` | Primera revisión de procesos y recursos en entornos con interfaz gráfica. |
 | Windows PowerShell 5.1 | `powershell.exe` | Ejecutar los ejemplos de administración de este tema. |
 | PowerShell 7 | `pwsh.exe` | Entorno adicional que se instala por separado; debe comprobarse la compatibilidad de los módulos utilizados. |
 | Recopiladores por comandos | `logman.exe` | Crear, iniciar y detener conjuntos de recopiladores de datos. |
-| Programador de tareas | `taskschd.msc` o módulo `ScheduledTasks` | Ejecutar comprobaciones y mantenimiento de forma planificada. |
+| Programador de tareas | `taskschd.msc` o módulo `ScheduledTasks` | Ejecutar los scripts de recogida de forma periódica. |
 | Windows Admin Center | Navegador y puerta de enlace previamente desplegada | Administración y supervisión remotas. |
 
 **Entorno de referencia:** Windows Server del laboratorio, preferentemente Server Core, y clientes Windows 11. Los ejemplos utilizan Windows PowerShell 5.1 y contadores de una instalación en español, salvo indicación expresa.
@@ -67,7 +68,7 @@ Antes de comenzar:
 
 1. Identifica el servidor, sus roles, vCPU, RAM y discos asignados.
 2. Comprueba la versión de PowerShell con `$PSVersionTable.PSVersion`.
-3. Revisa los permisos de consulta. Algunos contadores y registros requieren privilegios adicionales.
+3. Revisa los permisos de consulta. Algunos contadores requieren privilegios adicionales.
 4. Comprueba los nombres reales de los contadores de esa instalación.
 5. Reserva una carpeta para las mediciones y otra para los scripts.
 
@@ -169,6 +170,8 @@ Se obtienen cinco conjuntos de muestras, con un intervalo de dos segundos. Es un
 
 ## 📋 4. Interpretación de los contadores principales
 
+Los contadores permiten observar CPU, memoria, actividad del almacenamiento y red. La capacidad y el espacio libre de las unidades se consultan mediante CIM en el apartado 7.3.
+
 ### 4.1. Procesador
 
 | Contador de referencia | Qué aporta | Cómo interpretarlo |
@@ -183,23 +186,45 @@ El contador de CPU **por proceso puede superar el 100 %**, porque acumula activi
 
 Cuando existan varias instancias con el mismo nombre de proceso, hay que relacionarlas con su identificador mediante el contador de ID de proceso disponible en la instalación.
 
+#### Consulta del uso global de CPU
+
+```powershell
+Get-Counter -Counter '\Procesador(_Total)\% de tiempo de procesador'
+```
+
 ### 4.2. Memoria
 
-**`\Memoria\MBytes disponibles`** indica cuánta memoria física puede ponerse inmediatamente a disposición del sistema o de los procesos. Incluye memoria libre y memoria reutilizable sin necesidad de escribirla antes en disco.
+| Contador de referencia | Qué aporta | Cómo interpretarlo |
+| :--- | :--- | :--- |
+| `\Memoria\MBytes disponibles` | Memoria física disponible, expresada en MiB | Incluye memoria libre y memoria reutilizable sin necesidad de escribirla antes en disco. Una reducción sostenida debe relacionarse con la carga y los procesos del sistema. |
+| `\Memoria\% de bytes confirmados en uso` | Porcentaje utilizado del límite de memoria comprometida | Indica la proporción entre bytes comprometidos y límite de compromiso. **No representa el porcentaje de RAM física ocupada.** |
+| `\Memoria\Páginas/s` | Páginas leídas del disco para resolver fallos de página duros y páginas escritas para liberar memoria física, por segundo | Una actividad elevada no demuestra por sí sola falta de RAM. Debe relacionarse con memoria disponible, carga de trabajo, latencia de disco y evolución temporal. |
 
-**`\Memoria\% de bytes confirmados en uso`** mide qué proporción del límite de memoria comprometida utiliza el sistema. La memoria comprometida exige respaldo que el sistema pueda proporcionar mediante RAM o archivos de paginación; el límite depende principalmente de ambos recursos.
+La memoria comprometida exige respaldo que el sistema pueda proporcionar mediante RAM o archivos de paginación; el límite depende principalmente de ambos recursos.
 
 ```text
 Porcentaje comprometido = bytes comprometidos / límite de compromiso × 100
 ```
 
-**No es el porcentaje de RAM física ocupada.** Por ejemplo, con un límite de compromiso de 12 GiB y 6 GiB comprometidos, el contador será aproximadamente del 50 %. Esto no permite deducir cuánta RAM está ocupada en ese momento.
+Por ejemplo, con un límite de compromiso de 12 GiB y 6 GiB comprometidos, el contador será aproximadamente del 50 %. Esto no permite deducir cuánta RAM está ocupada en ese momento.
 
-**`\Memoria\Páginas/s`** contabiliza páginas leídas del disco para resolver fallos de página duros y páginas escritas al disco para liberar memoria física. Un fallo de página duro requiere acceder al almacenamiento, pero puede implicar archivos mapeados o ejecutables, no solamente el archivo de paginación.
+#### Consulta de la memoria física disponible
 
-Una actividad elevada de paginación no demuestra por sí sola falta de RAM. Debe relacionarse con memoria disponible, carga de trabajo, latencia de disco y evolución temporal. Si se necesita profundizar, pueden consultarse por separado las páginas de entrada y salida por segundo.
+```powershell
+Get-Counter -Counter '\Memoria\MBytes disponibles'
+```
 
-### 4.3. Almacenamiento
+Para conocer la memoria física total visible para Windows, puede consultarse `TotalVisibleMemorySize`, expresada en KiB:
+
+```powershell
+Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object TotalVisibleMemorySize
+```
+
+El contador de memoria disponible expresa su valor en MiB; la propiedad CIM anterior lo expresa en KiB. Son magnitudes distintas de la memoria comprometida.
+
+Un fallo de página duro requiere acceder al almacenamiento, pero puede implicar archivos mapeados o ejecutables, no solamente el archivo de paginación. Si se necesita profundizar en la paginación, pueden consultarse por separado las páginas de entrada y salida por segundo.
+
+### 4.3. Almacenamiento como ampliación
 
 | Contador de referencia | Interpretación |
 | :--- | :--- |
@@ -217,7 +242,7 @@ Utiliza `_Total` para una primera visión y después examina cada disco. En una 
 
 ---
 
-### 4.4. Red
+### 4.4. Red como ampliación
 
 Las métricas básicas son el tráfico enviado y recibido, los errores, los descartes y la capacidad del enlace. Busca sus nombres exactos en `Interfaz de red`; en inglés, las referencias son `Bytes Total/sec`, `Bytes Sent/sec`, `Bytes Received/sec` y `Packets Received Errors`.
 
@@ -274,6 +299,8 @@ Para obtener una referencia básica:
     Una captura de pocos minutos permite practicar el procedimiento, pero no constituye una línea base completa de un servidor real. En producción sería necesario observar periodos más largos y diferentes situaciones de carga.
 
 ### 5.1. Relacionar las métricas
+
+Las siguientes relaciones orientan la interpretación; el diagnóstico completo de servicios e incidencias se trabajará por separado.
 
 Una sola métrica rara vez permite identificar la causa de un problema.
 
@@ -386,7 +413,7 @@ El script registra únicamente tres métricas fundamentales:
 - memoria disponible;
 - latencia media de lectura del almacenamiento.
 
-El objetivo no es construir una herramienta completa de monitorización, sino practicar la recogida periódica de información y disponer de datos con los que comparar el comportamiento del servidor.
+Este ejemplo permite practicar la recogida y exportación de contadores. Las métricas elegidas pueden adaptarse a la información que necesitemos observar.
 
 ### Ejemplos de utilización
 
@@ -609,22 +636,14 @@ A partir de aquí utilizaremos algunas clases CIM especialmente útiles para sup
 ### 7.3. Capacidad y espacio libre
 
 ```powershell
-Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' |
-    Select-Object DeviceID,
-        @{Name='Tamano_GiB'; Expression={[Math]::Round($_.Size / 1GB, 2)}},
-        @{Name='Libre_GiB'; Expression={[Math]::Round($_.FreeSpace / 1GB, 2)}},
-        @{Name='Libre_Porcentaje'; Expression={
-            if ($_.Size -gt 0) {
-                [Math]::Round(100 * $_.FreeSpace / $_.Size, 2)
-            } else { $null }
-        }}
+Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType=3' | Select-Object DeviceID, Size, FreeSpace
 ```
 
-`DriveType=3` selecciona discos locales fijos visibles para Windows. En PowerShell, `1GB` equivale a 1.073.741.824 bytes; por eso las columnas se rotulan en **GiB**. Para estudiar volúmenes montados sin letra conviene ampliar la consulta con herramientas de volúmenes, como `Get-Volume`.
+`DeviceID` identifica la unidad; `Size` indica su capacidad total y `FreeSpace`, su espacio libre. Ambas capacidades se expresan en bytes. `DriveType=3` selecciona las unidades locales fijas visibles para Windows, incluidas las virtuales.
 
-En Proxmox también hay que supervisar la capacidad del almacenamiento del host. El espacio libre dentro de una VM no describe cuánto queda en el almacenamiento que contiene sus discos virtuales.
+Estos valores describen capacidad y espacio disponible, no actividad ni latencia del disco. En Proxmox, el espacio libre dentro de una VM tampoco indica cuánto queda en el almacenamiento del host.
 
-### 7.4. Procesos y memoria residente
+### 7.4. Procesos y memoria residente como ampliación
 
 ```powershell
 Get-CimInstance -ClassName Win32_Process |
@@ -637,7 +656,7 @@ Get-CimInstance -ClassName Win32_Process |
 
 Un proceso grande o inactivo no debe finalizarse automáticamente. Primero se identifica su función, el servicio al que pertenece y si su comportamiento difiere de lo esperado.
 
-### 7.5. Servicios esperados y ausentes
+### 7.5. Servicios esperados y ausentes como ampliación
 
 Este ejemplo corresponde a **un controlador de dominio que también presta DNS**. En otro servidor hay que adaptar la lista a sus roles.
 
@@ -694,270 +713,33 @@ Vídeo complementario con la demostración práctica de la consulta de estado y 
 
 ---
 
-## 📜 8. Eventos y registro de incidencias
+## ⚙️ 8. Ejecución periódica de los scripts
 
-Los contadores muestran tendencias; los eventos aportan contexto sobre lo ocurrido. Comienza por **Sistema** y **Aplicación**, y consulta después los registros específicos del rol. El registro de Seguridad depende de la política de auditoría configurada.
+Una vez comprobada la captura manual, el **Programador de tareas de Windows** permite repetirla sin mantener una consola abierta. No es necesario dejar un bucle infinito ejecutándose en una sesión remota.
 
-```powershell
-$Filtro = @{
-    LogName   = 'System'
-    StartTime = (Get-Date).AddHours(-2)
-    Level     = 1, 2, 3  # Crítico, error y advertencia
-}
-Get-WinEvent -FilterHashtable $Filtro -MaxEvents 50 |
-    Select-Object TimeCreated, ProviderName, Id, LevelDisplayName, Message
-```
+Para preparar la tarea:
 
-La ausencia de coincidencias puede producir un mensaje indicando que no se encontraron eventos. Distínguelo de un error de permisos o de consulta.
+1. Guarda los scripts y su configuración en una ruta estable, por ejemplo `C:\ASO\Scripts`.
+2. Define el ejecutable de PowerShell, la ruta del script, sus argumentos y el directorio de trabajo. En Windows PowerShell 5.1 se utiliza `powershell.exe`; PowerShell 7 utiliza `pwsh.exe` y requiere instalación previa.
+3. Elige una frecuencia adecuada al objetivo de la recogida y evita que se solapen ejecuciones.
+4. Elige la identidad que ejecutará la tarea y comprueba sus permisos para consultar métricas y escribir los archivos de resultados.
+5. Verifica una ejecución programada real: hora, estado final y datos nuevos. Poder lanzar el script manualmente no demuestra que la tarea funcione.
 
-Para investigar:
-
-1. Delimita la hora del síntoma y comprueba la sincronización horaria.
-2. Identifica **registro, proveedor e ID**; el número de evento aislado no basta.
-3. Lee el mensaje completo y los eventos inmediatamente anteriores.
-4. Relaciona la información con métricas y cambios realizados.
-5. Documenta qué evidencia apoya o descarta la hipótesis.
-
-No todas las advertencias requieren una intervención. Tampoco deben borrarse registros como procedimiento rutinario de solución: se perdería información útil.
-
-## 🚨 9. Alertas: condición, duración y respuesta
-
-Una alerta necesita una condición medible, un periodo de observación, una forma de registro y una actuación prevista. Los umbrales siguientes son ejemplos de aula que deben ajustarse a la línea base:
-
-| Condición orientativa | Persistencia | Primera respuesta |
-| :--- | :--- | :--- |
-| CPU global superior al 85 % | 6 muestras consecutivas cada 10 s | Examinar procesos y carga del host. |
-| Espacio libre inferior al 15 % | Confirmar la medición y estudiar su evolución | Estimar crecimiento e identificar su origen. |
-| Servicio esperado ausente o detenido | Comprobación inmediata | Revisar rol, eventos y cambios recientes. |
-
-Una alerta de CPU sostenida puede demostrarse con el siguiente bloque. Registra una sola alerta al alcanzar seis muestras consecutivas; una muestra válida por debajo del umbral permite volver a alertar si el problema reaparece.
+Después de registrar la tarea, puedes consultar su estado desde el servidor o dentro de una sesión remota:
 
 ```powershell
-$RutaCPU = '\Procesador(_Total)\% de tiempo de procesador'
-$Umbral = 85
-$Consecutivas = 0
-$Avisado = $false
-$Registro = 'C:\ASO\Registros\AlertasCPU.csv'
-New-Item -Path (Split-Path $Registro) -ItemType Directory -Force | Out-Null
+# Sustituye el nombre por el de la tarea registrada.
+Get-ScheduledTask -TaskName 'ASO-Monitorizacion' |
+    Select-Object TaskName, State
 
-Get-Counter -Counter $RutaCPU -SampleInterval 10 -MaxSamples 30 -ErrorAction Stop |
-    ForEach-Object {
-        $Dato = $_.CounterSamples[0]
-        if (($Dato.Status -notin @(0, 1)) -or
-            [double]::IsNaN($Dato.CookedValue) -or
-            [double]::IsInfinity($Dato.CookedValue)) {
-            $Consecutivas = 0
-            Write-Warning 'Muestra no válida: no se utiliza para evaluar la persistencia.'
-        } elseif ($Dato.CookedValue -gt $Umbral) {
-            $Consecutivas++
-            if (($Consecutivas -ge 6) -and (-not $Avisado)) {
-                [PSCustomObject]@{
-                    Fecha = $_.Timestamp.ToString('o')
-                    Servidor = $env:COMPUTERNAME
-                    Alerta = 'CPU alta durante seis muestras consecutivas'
-                    CPU = [Math]::Round($Dato.CookedValue, 2)
-                    Umbral = $Umbral
-                } | Export-Csv -Path $Registro -Append -NoTypeInformation -Encoding UTF8
-                Write-Warning 'CPU alta sostenida: revisar procesos y carga del host.'
-                $Avisado = $true
-            }
-        } else {
-            $Consecutivas = 0
-            $Avisado = $false
-        }
-    }
-```
-
-La persistencia se define aquí por muestras, aproximadamente un minuto de observación. El registro CSV no envía una notificación a un administrador: en un despliegue centralizado debe añadirse el mecanismo de aviso correspondiente. Un fallo de recogida también requiere atención; no implica que el servidor esté sano.
-
-## ⚙️ 10. Mantenimiento planificado y verificable
-
-### 10.1. Plan de mantenimiento
-
-Las frecuencias son orientativas y deben adaptarse a los servicios y al calendario del centro.
-
-| Tarea | Frecuencia orientativa | Evidencia de finalización |
-| :--- | :--- | :--- |
-| Revisar servicios, alertas y tareas automáticas | Cada jornada de administración | Registro de comprobación e incidencias. |
-| Revisar espacio libre y crecimiento | Semanal | Capacidad, tendencia y decisión adoptada. |
-| Comprobar copias de seguridad | Tras cada copia | Resultado, destino y fecha de la última copia válida. |
-| Probar restauraciones | Periódicamente y tras cambios relevantes | Archivo o servicio restaurado y prueba funcional. |
-| Aplicar actualizaciones | Según criticidad y ventana acordada | Actualizaciones aplicadas y comprobaciones posteriores. |
-| Revisar cuentas, permisos y configuración | Periódicamente | Cambios justificados y documentados. |
-| Revisar recursos y línea base | Tras cambios relevantes | Comparación y referencia actualizada. |
-
-### 10.2. Actualizaciones
-
-1. Identifica las actualizaciones y su posible impacto en los roles instalados.
-2. Comprueba las copias y el procedimiento de recuperación.
-3. Planifica una ventana y comunica la interrupción prevista.
-4. Aplica las actualizaciones mediante la herramienta establecida; en Core puede utilizarse SConfig cuando corresponda.
-5. Reinicia si es necesario y comprueba eventos, servicios y operaciones reales.
-6. Registra el resultado y las incidencias.
-
-No basta con comprobar que el servidor vuelve a encenderse. El cierre de la tarea exige verificar los servicios que utiliza la organización.
-
-### 10.3. Copias y restauraciones
-
-Una copia se considera útil cuando permite recuperar lo necesario. Deben verificarse destino, fecha, resultado y restauración. La replicación puede propagar errores o borrados, y una instantánea de VM no sustituye una política de copias independiente.
-
-En el aula, restaura un archivo de prueba en otra ubicación y compara su contenido. Las pruebas de recuperación de controladores de dominio requieren un procedimiento específico y un entorno aislado; no deben improvisarse sobre el dominio activo.
-
-### 10.4. Capacidad y limpieza
-
-Antes de liberar espacio, identifica qué crece y qué política de conservación se aplica. Trabaja únicamente sobre rutas conocidas y revisa primero la selección.
-
-```powershell
-# Solo informes CSV de métricas del laboratorio con más de 30 días.
-$Limite = (Get-Date).AddDays(-30)
-$Antiguos = Get-ChildItem -LiteralPath 'C:\ASO\Registros' -Filter 'Metricas-*.csv' -File |
-    Where-Object LastWriteTime -LT $Limite
-$Antiguos | Select-Object FullName, Length, LastWriteTime
-$Antiguos | Remove-Item -WhatIf
-```
-
-`-WhatIf` simula la eliminación. Solo se retirará después de revisar la lista y confirmar que se cumple la política de conservación. No se deben borrar indiscriminadamente carpetas del sistema, bases de datos o registros de eventos.
-
-### 10.5. Programar una comprobación de capacidad
-
-Guarda como `C:\ASO\Scripts\ComprobarCapacidad.ps1` el siguiente script. Cada ejecución produce un informe diferente y devuelve un código que permite distinguir ejecución correcta de fallo técnico.
-
-```powershell
-$ErrorActionPreference = 'Stop'
-try {
-    $Carpeta = 'C:\ASO\Registros'
-    New-Item -Path $Carpeta -ItemType Directory -Force | Out-Null
-    $Fecha = Get-Date
-    $Informe = foreach ($Disco in Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3') {
-        if ($Disco.Size -gt 0) {
-            $Libre = 100 * $Disco.FreeSpace / $Disco.Size
-            [PSCustomObject]@{
-                Fecha = $Fecha.ToString('o')
-                Servidor = $env:COMPUTERNAME
-                Unidad = $Disco.DeviceID
-                Libre_GiB = [Math]::Round($Disco.FreeSpace / 1GB, 2)
-                Libre_Porcentaje = [Math]::Round($Libre, 2)
-                RequiereRevision = ($Libre -lt 15)
-            }
-        }
-    }
-    if (@($Informe).Count -eq 0) { throw 'No se han obtenido unidades con capacidad válida.' }
-    $Archivo = Join-Path $Carpeta ('Capacidad-{0}.csv' -f $Fecha.ToString('yyyyMMdd-HHmmss-fff'))
-    $Informe | Export-Csv -Path $Archivo -NoTypeInformation -Encoding UTF8
-    exit 0
-}
-catch {
-    Write-Error "No se pudo completar la comprobación: $($_.Exception.Message)" -ErrorAction Continue
-    exit 1
-}
-```
-
-Configura una tarea desde el Programador de tareas o utiliza, en una consola elevada del servidor, este ejemplo de laboratorio:
-
-```powershell
-$Ejecutable = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
-$Accion = New-ScheduledTaskAction -Execute $Ejecutable `
-    -Argument '-NoProfile -NonInteractive -File "C:\ASO\Scripts\ComprobarCapacidad.ps1"'
-$Disparador = New-ScheduledTaskTrigger -Daily -At '18:00'
-$Principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount
-$Ajustes = New-ScheduledTaskSettingsSet -StartWhenAvailable `
-    -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 5)
-Register-ScheduledTask -TaskName 'ASO-ComprobarCapacidad' -Action $Accion `
-    -Trigger $Disparador -Principal $Principal -Settings $Ajustes `
-    -Description 'Genera un informe diario del espacio libre del servidor.'
-```
-
-El ejemplo utiliza **SYSTEM** para una tarea local de laboratorio. Esta cuenta tiene amplios privilegios: la carpeta de scripts solo debe poder ser modificada por administradores y SYSTEM. En un despliegue real se elegirá una identidad con los permisos mínimos necesarios. Comprueba la política de ejecución y los permisos antes de registrar la tarea; no es necesario desactivar globalmente la política para este ejercicio.
-
-Prueba y verifica:
-
-```powershell
-Start-ScheduledTask -TaskName 'ASO-ComprobarCapacidad'
-
-# Consultar cuando la tarea haya finalizado.
-Get-ScheduledTask -TaskName 'ASO-ComprobarCapacidad' | Select-Object TaskName, State
-Get-ScheduledTaskInfo -TaskName 'ASO-ComprobarCapacidad' |
+Get-ScheduledTaskInfo -TaskName 'ASO-Monitorizacion' |
     Select-Object LastRunTime, LastTaskResult, NextRunTime
-Get-ChildItem 'C:\ASO\Registros\Capacidad-*.csv' |
-    Sort-Object LastWriteTime -Descending | Select-Object -First 1
 ```
 
-Un `LastTaskResult` igual a `0` indica que el script terminó correctamente según sus códigos. **No significa que haya suficiente espacio**: el informe puede contener `RequiereRevision=True`. Comprueba fecha, contenido y estado de finalización; si falla, revisa el historial y el registro operativo del Programador de tareas.
+El script debe distinguir una ejecución correcta de un fallo técnico mediante su código de salida. Un resultado `0` solo será significativo si el script comunica correctamente sus errores; comprueba también la fecha y el contenido de los registros generados.
 
-## 🧩 13. Integración con la base de datos del proyecto
-
-Una vez comprobada la captura local, los equipos pueden centralizarla en SQL Server. Cada registro debe conservar como mínimo **fecha con zona horaria o UTC, servidor, métrica, instancia, valor, unidad y validez**.
-
-Primero valida el funcionamiento con CSV o BLG. Después incorpora la inserción mediante el mecanismo de acceso a SQL Server elegido. `Invoke-Sqlcmd` requiere el módulo `SqlServer`; no está disponible por el mero hecho de tener PowerShell instalado.
-
-Separa la recogida de datos del almacenamiento: si la base de datos no está disponible, conserva temporalmente los registros para reenviarlos. La cuenta de monitorización necesita permisos limitados, y las credenciales no deben escribirse en claro dentro del script. Los valores externos se introducirán mediante consultas parametrizadas o un procedimiento de carga controlado.
-
-## 🔍 11. Laboratorio de diagnóstico en Proxmox
-
-### 11.1. Escenario
-
-Cada equipo de cuatro alumnos dispone de su propio host Proxmox, con varias VM del proyecto. Durante una operación simultánea en las VM de **un mismo equipo**, Windows Server responde lentamente y aparecen periodos de CPU elevada.
-
-La sobreasignación es una hipótesis, pero asignar más vCPU en total que procesadores lógicos tiene el host no demuestra por sí solo un problema: influye cuánto demandan simultáneamente esas VM.
-
-### 11.2. Investigación
-
-**Dentro de Windows:** registra CPU global y por procesador lógico, procesos, cola, memoria y latencias durante el problema. Anota cuántas vCPU tiene asignadas la VM y qué operación se realiza.
-
-**En el host Proxmox:** revisa las gráficas del nodo y de las VM en el mismo periodo. Desde su terminal:
-
-```bash
-# Inventario de máquinas virtuales y contenedores.
-qm list
-pct list
-
-# Configuración de una VM. Sustituye 101 por su identificador real.
-qm config 101
-
-# Procesos y carga del host.
-top
-uptime
-```
-
-La carga media que muestra `uptime` no es un porcentaje de CPU: en Linux incluye tareas ejecutables y tareas en espera ininterrumpible, frecuentemente asociadas a E/S. Debe interpretarse junto con CPU, almacenamiento y otros datos del host.
-
-| Evidencia | Línea de investigación |
-| :--- | :--- |
-| VM ocupada y host con capacidad disponible | Aplicación, paralelismo, límites y recursos de esa VM. |
-| Varias VM con demanda simultánea y host ocupado | Competencia entre cargas y planificación de trabajos. |
-| Latencias de disco altas durante copias o importaciones | Contención del almacenamiento compartido. |
-| Lentitud con recursos aparentemente normales | Servicio, red, dependencias y eventos. |
-
-### 11.3. Actuación y validación
-
-Elige una sola modificación respaldada por los datos: escalonar trabajos, corregir una operación, ajustar límites o redistribuir recursos. Reducir vCPU no es una solución automática y puede empeorar una VM que necesita esa capacidad.
-
-Si el cambio requiere apagar una VM, programa la interrupción. Repite después la misma operación con condiciones comparables y comprueba tanto el servidor afectado como las otras VM del host. Documenta también cómo volver a la configuración anterior.
-
-## 🧪 12. Práctica integrada y evidencias
-
-**Objetivo:** justificar con mediciones si un servidor funciona según lo esperado y comprobar que una tarea de mantenimiento se ejecuta correctamente.
-
-1. **Inventario:** describe rol, recursos y servicios del servidor.
-2. **Descubrimiento:** obtiene las rutas reales de CPU, memoria, disco y red.
-3. **Captura inicial:** registra un periodo breve de actividad conocida y conserva el BLG o CSV.
-4. **Carga controlada:** realiza una operación acordada, como una copia de archivos de prueba, anotando inicio y fin. No utilices datos de producción ni llenes el volumen del sistema.
-5. **Interpretación:** compara ambos periodos y relaciona al menos dos métricas.
-6. **Disponibilidad:** comprueba un servicio y realiza una operación funcional desde el cliente.
-7. **Eventos:** consulta el periodo y distingue coincidencias temporales de posibles causas.
-8. **Automatización:** programa la comprobación de capacidad, ejecútala y verifica su informe y resultado.
-9. **Alerta:** prueba la lógica en una VM de laboratorio con un umbral temporal ajustado al ejercicio; documenta el cambio y restablece el valor previsto.
-10. **Conclusión:** propone una actuación o justifica por qué no es necesario modificar nada.
-
-| Evidencia que se entrega | Qué debe demostrar |
-| :--- | :--- |
-| Script utilizado y parámetros | Adaptación al entorno y comprensión de sus instrucciones. |
-| Registro BLG o CSV | Datos identificados por servidor, instante, instancia y unidad. |
-| Gráfica comentada | Selección del periodo y explicación de la tendencia. |
-| Informe breve de diagnóstico | Síntoma, hipótesis, evidencias, decisión y comprobación posterior. |
-| Informe de la tarea programada | Ejecución real, resultado e interpretación del contenido. |
-
-El informe no necesita reproducir cada clic. Debe permitir verificar las decisiones y repetir la comprobación. Cada alumno deberá explicar una métrica y adaptar una consulta o una condición del script durante una breve comprobación individual.
+!!! warning "Identidad de ejecución"
+    La tarea no utiliza necesariamente la cuenta de tu consola. Elige una identidad con los permisos necesarios y comprueba el acceso a las carpetas de scripts y resultados. SYSTEM tiene amplios privilegios locales y no debe elegirse automáticamente para cualquier tarea. Protege los scripts frente a modificaciones por usuarios sin autorización y no guardes contraseñas en el código.
 
 ## 📚 Referencias y autoría
 
