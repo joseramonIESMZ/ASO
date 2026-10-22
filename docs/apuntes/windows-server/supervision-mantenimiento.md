@@ -259,7 +259,7 @@ Vídeo complementario con la demostración práctica de la observación de conta
 
 <div class="video-embed">
   <iframe 
-    src="https://www.youtube.com/embed/tiAcCdp5-P4" 
+    src="https://www.youtube.com/embed/QIH8xGctuQ0" 
     title="Observación de contadores de rendimiento con PowerShell" 
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
     allowfullscreen>
@@ -268,7 +268,7 @@ Vídeo complementario con la demostración práctica de la observación de conta
 
 !!! info "Ver en YouTube"
     Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
-    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/tiAcCdp5-P4)**
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/QIH8xGctuQ0)**
 
 ---
 
