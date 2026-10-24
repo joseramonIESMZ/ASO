@@ -218,6 +218,23 @@ y comprobar el fichero de registro:
 Get-Content C:\ASO\logs\pruebatarea.log
 ```
 
+### 🎬 Vídeo demostración: Programación de una tarea básica
+
+Vídeo complementario con la demostración práctica de la programación y comprobación de una tarea básica con PowerShell en Windows Server.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/zIQYpyshnCo" 
+    title="Programar tarea básica en Windows Server" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/zIQYpyshnCo)**
+
 ---
 
 ## 7. Ejecución desatendida con una cuenta específica
