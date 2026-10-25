@@ -165,7 +165,7 @@ $Action = New-ScheduledTaskAction `
 
 ```powershell
 $Trigger = New-ScheduledTaskTrigger `
-    -Daily `
+    -Once `
     -At 16:30
 ```
 
@@ -337,6 +337,23 @@ Con este tipo de inicio de sesión, la tarea puede ejecutarse de forma **no inte
 
 Existe también `LogonType S4U`, que evita almacenar una contraseña, pero tiene una limitación importante: la tarea no puede acceder normalmente a recursos de red ni a archivos cifrados utilizando las credenciales del usuario.
 
+### 🎬 Vídeo demostración: Programación de una tarea desatendida
+
+Vídeo complementario con la demostración práctica de la programación y registro de una tarea desatendida con una cuenta específica en Windows Server.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/nxYMOYbL1kQ" 
+    title="Programar tarea desatendida en Windows Server" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/nxYMOYbL1kQ)**
+
 ---
 
 ## 8. Configuración avanzada de la tarea
@@ -445,6 +462,117 @@ Register-ScheduledTask `
 
 !!! note
     Si el script necesita acceder a recursos de red mediante una identidad de dominio, habrá que utilizar una cuenta adecuada y configurar correctamente su contexto de seguridad.
+
+### 10.1. Caso avanzado: ejecución al inicio, cada cinco minutos indefinidamente y sin solapamientos
+
+Este caso combina la ejecución desatendida del apartado 7, los ajustes del apartado 8, la repetición del apartado 9 y el arranque del apartado 10. Vamos a aplicar estos elementos al mismo script de prueba utilizado en los ejemplos anteriores.
+
+!!! important "Una ejecución realiza su trabajo y finaliza"
+    El script `pruebatarea.ps1` escribe la fecha y hora en `C:\ASO\logs\pruebatarea.log` y finaliza. El Programador de tareas se encarga de volver a lanzarlo; no necesita un bucle infinito ni una espera de cinco minutos en su interior.
+
+    La cuenta de servicio debe tener permisos para ejecutar el script y escribir en su fichero de registro.
+
+Para ejecutar periódicamente el script `pruebatarea.ps1` desde el arranque del servidor, combinamos un desencadenador de inicio con un patrón de repetición: **`-AtStartup` inicia el ciclo y `Repetition.Interval = "PT5M"` mantiene la periodicidad**.
+
+Los parámetros `-AtStartup` y `-RepetitionInterval` pertenecen a conjuntos de parámetros diferentes de `New-ScheduledTaskTrigger`, por lo que primero creamos el trigger de inicio y después configuramos su propiedad `Repetition`. El valor `PT5M` representa cinco minutos en formato ISO 8601. Dejamos `Repetition.Duration` sin duración definida (`""`) para que el patrón se repita indefinidamente mientras el servidor permanezca encendido y la tarea esté habilitada.
+
+!!! info "Intervalos en formato ISO 8601"
+    En estas duraciones, `P` indica el comienzo de la duración y `T` introduce la parte de horas, minutos y segundos. Por ejemplo:
+
+    - `PT30S`: 30 segundos.
+    - `PT1M`: 1 minuto.
+    - `PT5M`: 5 minutos.
+    - `PT15M`: 15 minutos.
+    - `PT30M`: 30 minutos.
+    - `PT1H`: 1 hora.
+    - `PT2H30M`: 2 horas y 30 minutos.
+    - `P1D`: 1 día.
+    - `P1DT2H30M`: 1 día, 2 horas y 30 minutos.
+
+    Para repetir la tarea cada media hora, utilizaríamos:
+
+    ```powershell
+    $Trigger.Repetition.Interval = "PT30M"
+    ```
+
+    La posición de `M` importa: después de `T` significa **minutos** (`PT1M`); antes de `T`, significa **meses** (`P1M`). Para el intervalo de repetición del Programador de tareas utiliza días, horas, minutos y segundos, dentro de sus límites admitidos.
+
+    Aunque `PT30S` es una duración válida en ISO 8601, **no es un intervalo de repetición válido para el Programador de tareas**: el mínimo admitido es **un minuto** (`PT1M`) y el máximo es **31 días** (`P31D`).
+
+```powershell
+# Paso 1: Definir la acción y la cuenta de ejecución desatendida
+$Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -File C:\ASO\scripts\pruebatarea.ps1"
+$Credencial = Get-Credential -UserName "INT\svc_tareas" -Message "Credenciales de ejecución de la tarea"
+$Principal = New-ScheduledTaskPrincipal -UserId $Credencial.UserName -LogonType Password
+
+# Paso 2: Iniciar el ciclo al arrancar el servidor
+$Trigger = New-ScheduledTaskTrigger -AtStartup
+
+# Inicializar el patrón si el proveedor no lo crea con el trigger de inicio
+if ($null -eq $Trigger.Repetition) {
+    $Trigger.Repetition = (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 5)).Repetition
+}
+
+# Repetir cada cinco minutos, sin limitar la duración del patrón
+$Trigger.Repetition.Interval = "PT5M"
+$Trigger.Repetition.Duration = ""
+
+# Paso 3: Evitar que dos ejecuciones de esta misma tarea se solapen
+$Settings = New-ScheduledTaskSettingsSet -MultipleInstances IgnoreNew
+
+# Paso 4: Incorporar el trigger y los settings al objeto de tarea
+$ObjectTareaInicioRecurrente = New-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings -Description "Script de prueba al inicio y cada 5 minutos sin solapamientos"
+
+# Paso 5: Registrar la tarea con las credenciales de ejecución
+Register-ScheduledTask -TaskName "PruebaTareaInicioRecurrente" -InputObject $ObjectTareaInicioRecurrente -User $Credencial.UserName -Password $Credencial.GetNetworkCredential().Password
+```
+
+El desencadenador se activa en el siguiente arranque del servidor y programa nuevas ejecuciones cada cinco minutos a partir de ese inicio. Registrar la tarea con `-AtStartup` no provoca por sí mismo su ejecución inmediata.
+
+!!! info "Control de instancias con IgnoreNew"
+    Si una ejecución tarda más de cinco minutos, `-MultipleInstances IgnoreNew` descarta las nuevas solicitudes de inicio mientras esa instancia siga activa. No detiene la ejecución actual ni acumula ejecuciones pendientes. Cuando termine, la tarea podrá ejecutarse en el siguiente intervalo previsto. Por ejemplo, si empieza en el minuto 0 y termina en el minuto 7, se omite el inicio del minuto 5 y podrá iniciarse de nuevo en el minuto 10.
+
+La duración indefinida corresponde al **patrón de repetición**, no al tiempo máximo permitido a cada ejecución del script. Esta configuración está pensada para scripts que realizan su trabajo y finalizan; en cada reinicio del servidor comienza un nuevo ciclo.
+
+#### Comprobar la tarea y su repetición
+
+Inspecciona el patrón y los ajustes registrados:
+
+```powershell
+$TareaRegistrada = Get-ScheduledTask -TaskName "PruebaTareaInicioRecurrente"
+
+$TareaRegistrada.Triggers | Format-List *
+$TareaRegistrada.Triggers.Repetition | Format-List *
+$TareaRegistrada.Settings |
+    Select-Object MultipleInstances, ExecutionTimeLimit
+
+Get-ScheduledTaskInfo -TaskName "PruebaTareaInicioRecurrente"
+```
+
+Puedes comprobar inmediatamente la acción con el script de prueba:
+
+```powershell
+Start-ScheduledTask -TaskName "PruebaTareaInicioRecurrente"
+Get-Content C:\ASO\logs\pruebatarea.log -Tail 20
+```
+
+!!! important "Comprobar el arranque real"
+    El inicio manual permite comprobar la acción, pero no demuestra el ciclo iniciado por el arranque. Reinicia el servidor en un momento previsto para la práctica y deja transcurrir varios intervalos antes de revisar las marcas de tiempo.
+
+Para comprobar el comportamiento completo:
+
+1. Revisa la ruta de `pruebatarea.ps1`, la cuenta utilizada y sus permisos.
+2. Comprueba el desencadenador de arranque, el intervalo `PT5M`, la duración sin definir y la política `IgnoreNew`.
+3. Verifica que el fichero de registro contiene una entrada tras reiniciar, sin iniciar una sesión para lanzar el script.
+4. Comprueba que aparecen varias entradas en `pruebatarea.log`, con marcas de tiempo separadas aproximadamente cinco minutos.
+5. Si quieres comprobar los solapamientos, utiliza en un entorno de prueba una copia del script que tarde más de cinco minutos y registre su inicio y su fin. Verifica que se omite el nuevo inicio mientras continúa la instancia anterior.
+
+!!! note "Alcance de IgnoreNew y límite de ejecución"
+    `IgnoreNew` controla las instancias de esta misma tarea. Evita registrar otra tarea con el mismo script o ejecutarlo manualmente a la vez.
+
+    La repetición indefinida no elimina el límite de tiempo de cada ejecución explicado en el apartado 11. Si una instancia se bloquea, se seguirán descartando nuevos inicios mientras permanezca activa. Conviene controlar los tiempos de espera del script y establecer un límite de ejecución acorde con su duración prevista.
+
+Documentación de apoyo: [repetición de tareas](https://learn.microsoft.com/en-us/windows/win32/taskschd/repeating-a-task) y [configuración de instancias](https://learn.microsoft.com/powershell/module/scheduledtasks/new-scheduledtasksettingsset).
 
 ---
 
