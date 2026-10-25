@@ -574,6 +574,23 @@ Para comprobar el comportamiento completo:
 
 Documentación de apoyo: [repetición de tareas](https://learn.microsoft.com/en-us/windows/win32/taskschd/repeating-a-task) y [configuración de instancias](https://learn.microsoft.com/powershell/module/scheduledtasks/new-scheduledtasksettingsset).
 
+### 🎬 Vídeo demostración: Programación de tarea de inicio repetida indefinidamente
+
+Vídeo complementario con la demostración práctica de la configuración y comprobación de una tarea al arranque con repetición periódica indefinida en Windows Server.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/ofpSGjMAzsc" 
+    title="Programar tarea de inicio repetida indefinidamente en Windows Server" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/ofpSGjMAzsc)**
+
 ---
 
 ## 11. Límite de tiempo de ejecución
