@@ -68,8 +68,8 @@ nav = [
 { "SQL Server" = [
   { "Fundamentos de SQL Server" = "apuntes/sql-server/fundamentos-sql-server.md" },
   { "Instalación y configuración en Proxmox" = "apuntes/sql-server/instalacion-configuracion-sql-server.md" },
-  { "Administración con PowerShell y SSMS" = "apuntes/sql-server/administracion-sql-server.md" },
-  { "Operaciones CRUD y automatización" = "apuntes/sql-server/operaciones-crud.md" }
+  { "Administración con PowerShell y SSMS" = "apuntes/sql-server/administracion-sql-server.md" }
+#  { "Operaciones CRUD y automatización" = "apuntes/sql-server/operaciones-crud.md" }
 ] },
 
 { "Proxmox" = [
