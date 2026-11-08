@@ -677,6 +677,25 @@ No es suficiente comprobar que existe el objeto: un vínculo existente puede est
 
 La documentación de cada directiva indica ruta, nombre, tipo y valores. `HKCU` selecciona la rama de usuario y `HKLM` la de equipo **dentro de la GPO**. No son operaciones sobre el registro del equipo administrador.
 
+Para conocer la clave del registro concreta (`Key`), el nombre del valor (`ValueName`) y los datos admitidos a los que corresponde cada directiva de plantillas administrativas, se puede consultar la hoja de cálculo Excel de referencia (*Group Policy Settings Reference Spreadsheet*) que publica oficialmente Microsoft para cada versión concreta de Windows y Windows Server, o bien inspeccionar directamente el archivo `.admx` que la define.
+
+#### 🎬 Vídeo demostración: Claves de registro de las plantillas administrativas
+
+Vídeo complementario sobre cómo localizar las claves y valores del registro asociados a las directivas de las plantillas administrativas para su configuración mediante PowerShell.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/iUB50Bj2EsU" 
+    title="Active Directory - GPO - Claves de registro de las plantillas administrativas" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/iUB50Bj2EsU)**
+
 Continuando el ejemplo anterior:
 
 ```powershell
@@ -696,6 +715,23 @@ El valor de estilo del ejemplo representa estirar la imagen. Comprueba el result
 
 !!! warning "Límites del módulo GroupPolicy"
     `Set-GPRegistryValue` no configura automáticamente permisos NTFS, directivas de seguridad, preferencias de unidades, instalación de paquetes o colas de impresión. Elige la herramienta de cada componente. No inventes valores del registro para sustituir una función que requiere otra extensión.
+
+#### 🎬 Vídeo demostración: Crear GPO, editar claves y vincular con PowerShell
+
+Vídeo complementario con la demostración práctica de cómo crear objetos de directiva de grupo (GPO), configurar claves de registro y vincularlas a unidades organizativas mediante PowerShell.
+
+<div class="video-embed">
+  <iframe 
+    src="https://www.youtube.com/embed/OvzjKkdZbHU" 
+    title="Active Directory - GPO - Crear GPO, editar claves y vincular con PowerShell" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+!!! info "Ver en YouTube"
+    Si prefieres abrir el tutorial directamente en la plataforma o guardarlo en tus listas de reproducción, puedes acceder a través del siguiente enlace:  
+    **[▶ Abrir vídeo directamente en YouTube](https://youtu.be/OvzjKkdZbHU)**
 
 ### 12.3. Reutilizar configuración gráfica
 
