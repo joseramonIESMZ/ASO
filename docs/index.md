@@ -13,7 +13,7 @@ Esta documentación ha sido diseñada para servir como tu base de conocimiento e
 A lo largo del curso, operarás sobre un clúster físico de alta fidelidad empresarial, desplegando servicios críticos sin entorno gráfico y bajo esquemas de automatización estricta.
 
 !!! info "Dimensionamiento de Hardware Real"
-    * **Servidores Físicos (Por Equipo):** Intel Core i7-14700KF (20 Núcleos), 32 GB RAM DDR4, Almacenamiento NVMe de 1 TB corriendo **Proxmox VE Server**.
+    * **Servidores Físicos (Por Equipo):** Intel Core i7-14700KF (20 Núcleos), 32 GB RAM DDR5, Almacenamiento NVMe de 1 TB corriendo **Proxmox VE Server**.
     * **Sistema de virtualización:** La parte de servidor será virtualizada mediante hipervisor Proxmox VE. 
 
 ---

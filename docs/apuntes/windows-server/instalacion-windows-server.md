@@ -245,7 +245,7 @@ Vídeo complementario con el procedimiento paso a paso para instalar los drivers
 !!! tip "Momento ideal para realizar un Backup (Modo Stop)"
     Una vez instalados los drivers VirtIO y el agente QEMU, y **antes** de continuar con la configuración de red y del servidor, es el momento idóneo para realizar una copia de seguridad de la máquina virtual.
     
-    Se recomienda realizar el backup en **modo Stop** para garantizar la máxima consistencia del sistema. Puedes consultar cómo realizar este proceso paso a paso en la sección de administración de Proxmox: [Procedimiento para realizar un Backup en modo Stop](../proxmox/administracion-proxmox.md#procedimiento-para-realizar-un-backup-en-modo-stop).
+    Se recomienda realizar el backup en **modo Stop** para garantizar la máxima consistencia del sistema. Puedes consultar cómo realizar este proceso paso a paso en la sección de administración de Proxmox: [Modos snapshot / suspend / stop](../proxmox/administracion-proxmox.md#modos-snapshot-suspend-stop).
 
 ## 🌐 Fase IV: Configuración de red e identificación del host
 
